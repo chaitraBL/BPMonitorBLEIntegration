@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
     private ScanSettings settings;
     private List<ScanFilter> filters;
     private BluetoothGatt mGatt;
-    private final int PERMISSIONS_REQUEST_LOCATION = 101;
+    private static final int PERMISSIONS_REQUEST_LOCATION = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -216,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
         public void onScanResult(int callbackType, ScanResult result) {
             Log.i("callbackType", String.valueOf(callbackType));
             Log.i("result", result.toString());
-//            Toast.makeText(getApplicationContext(), "Scan Result" + result.toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Scan Result" + result.toString(), Toast.LENGTH_SHORT).show();
             BluetoothDevice btDevice = result.getDevice();
             connectToDevice(btDevice);
         }
@@ -289,30 +289,46 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public static void checkPermissions(Activity activity, Context context){
-        int PERMISSION_ALL = 1;
-        String[] PERMISSIONS = {
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.BLUETOOTH,
-                Manifest.permission.BLUETOOTH_ADMIN,
-                Manifest.permission.INTERNET,
-        };
-
-        if(!hasPermissions(context, PERMISSIONS)){
-            ActivityCompat.requestPermissions( activity, PERMISSIONS, PERMISSION_ALL);
+    public void checkPermissions(Activity activity, Context context)
+    {
+        if (ContextCompat.checkSelfPermission(context,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        } else {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSIONS_REQUEST_LOCATION);
         }
-    }
 
-    public static boolean hasPermissions(Context context, String... permissions) {
-        if (context != null && permissions != null) {
-            for (String permission : permissions) {
-                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
+//    public static void checkPermissions(Activity activity, Context context){
+//        int PERMISSION_ALL = 1;
+//        String[] PERMISSIONS = {
+//                Manifest.permission.ACCESS_FINE_LOCATION,
+//                Manifest.permission.BLUETOOTH,
+//                Manifest.permission.BLUETOOTH_ADMIN,
+//                Manifest.permission.INTERNET,
+//        };
+//
+//        if(!hasPermissions(context, PERMISSIONS)){
+//            ActivityCompat.requestPermissions( activity, PERMISSIONS, PERMISSION_ALL);
+//        }
+//    }
+//
+//    public static boolean hasPermissions(Context context, String... permissions) {
+////        if (context != null && permissions != null) {
+////            for (String permission : permissions) {
+////                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+////                    return false;
+////                }
+////            }
+////        }
+//        if (ContextCompat.checkSelfPermission(context,
+//                android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+//        } else {
+//            ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+//                    PERMISSIONS_REQUEST_LOCATION);
+//        }
+//        return true;
+//    }
 
 //    public void checkPermission()
 //    {
