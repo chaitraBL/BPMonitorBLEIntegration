@@ -2,19 +2,24 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.bpmonitorbleintegration">
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
-    <uses-permission android:name="android.permission.BLUETOOTH"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
 
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
-<!--    <uses-permission android:name="android.permission.BLUETOOTH_PRIVILEGED"/>-->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-feature android:name="android.hardware.location.network"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-feature android:name="android.hardware.location.gps"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" /> <!-- <uses-permission android:name="android.permission.BLUETOOTH_PRIVILEGED"/> -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <uses-feature android:name="android.hardware.location.network" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-feature android:name="android.hardware.location.gps" />
 
     <application
         android:allowBackup="true"
@@ -24,6 +29,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BPMonitorBLEIntegration">
         <activity
+            android:name=".DataTransferActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -32,7 +40,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".BLEService" android:enabled="true"/>
+
+        <service
+            android:name=".BLEService"
+            android:enabled="true" />
     </application>
 
 </manifest>

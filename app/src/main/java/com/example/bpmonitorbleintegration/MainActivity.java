@@ -25,9 +25,11 @@ import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -79,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothGatt mGatt;
     private static final int PERMISSIONS_REQUEST_LOCATION = 101;
     ListView listView;
+    String BLE_PIN = "1234";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,12 +126,15 @@ public class MainActivity extends AppCompatActivity {
         final BluetoothManager bluetoothManager =
                 (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
+
+
     }
 
     AdapterView.OnItemClickListener scanResultOnItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             final BluetoothDevice device = (BluetoothDevice) adapterView.getItemAtPosition(i);
+
 
             String msg = device.getAddress() + "\n"
                     + device.getBluetoothClass().toString() + "\n"
@@ -140,7 +146,10 @@ public class MainActivity extends AppCompatActivity {
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-
+//                            connectToDevice(device);
+                            IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_PAIRING_REQUEST);
+                            intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
+                            registerReceiver(broadCastReceiver,intentFilter);
                         }
                     })
                     .show();
@@ -309,7 +318,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             Log.i("onLeScan", device.toString());
-                            connectToDevice(device);
+//                            connectToDevice(device);
                         }
                     });
                 }
@@ -364,6 +373,23 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    private BroadcastReceiver broadCastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if(BluetoothDevice.ACTION_PAIRING_REQUEST.equals(action))
+            {
+                BluetoothDevice bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                bluetoothDevice.setPin(BLE_PIN.getBytes());
+//                Log.e("Pin TAG","Auto-entering pin: " + BLE_PIN);
+                Toast.makeText(getApplicationContext(), "Auto-entering pin:" + BLE_PIN, Toast.LENGTH_SHORT).show();
+                bluetoothDevice.createBond();
+                Log.e("Pin TAG","pin entered and request sent...");
+                Toast.makeText(getApplicationContext(), "pin entered and request sent...", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
 //    public static void checkPermissions(Activity activity, Context context){
 //        int PERMISSION_ALL = 1;
 //        String[] PERMISSIONS = {
