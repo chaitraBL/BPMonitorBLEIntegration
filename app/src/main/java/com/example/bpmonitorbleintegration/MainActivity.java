@@ -4,6 +4,7 @@ import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -25,6 +26,7 @@ import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -33,6 +35,8 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -57,8 +61,8 @@ public class MainActivity extends AppCompatActivity {
 //    private static final long SCAN_PERIOD = 10000;
 //    ListView listViewLE;
 //
-//    List<BluetoothDevice> listBluetoothDevice;
-//    ListAdapter adapterLeScanResult;
+    List<BluetoothDevice> listBluetoothDevice;
+    ListAdapter adapterLeScanResult;
 //    private final int LOCATION_PERMISSION_REQUEST = 101;
 //    private Context context;
 //
@@ -74,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
     private List<ScanFilter> filters;
     private BluetoothGatt mGatt;
     private static final int PERMISSIONS_REQUEST_LOCATION = 101;
+    ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +108,11 @@ public class MainActivity extends AppCompatActivity {
 //
 //        handler = new Handler();
 
+        listView = findViewById(R.id.lelist);
+        listBluetoothDevice = new ArrayList<>();
+        adapterLeScanResult = new ArrayAdapter<BluetoothDevice>(this, android.R.layout.simple_list_item_1, listBluetoothDevice);
+        listView.setAdapter(adapterLeScanResult);
+        listView.setOnItemClickListener(scanResultOnItemClickListener);
         checkPermissions(MainActivity.this, this);
         mHandler = new Handler();
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
@@ -113,6 +123,52 @@ public class MainActivity extends AppCompatActivity {
         final BluetoothManager bluetoothManager =
                 (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
+    }
+
+    AdapterView.OnItemClickListener scanResultOnItemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            final BluetoothDevice device = (BluetoothDevice) adapterView.getItemAtPosition(i);
+
+            String msg = device.getAddress() + "\n"
+                    + device.getBluetoothClass().toString() + "\n"
+                    + getBTDevieType(device);
+
+            new AlertDialog.Builder(MainActivity.this)
+                    .setTitle(device.getName())
+                    .setMessage(msg)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    })
+                    .show();
+
+        }
+    };
+
+    private String getBTDevieType(BluetoothDevice d) {
+        String type = "";
+
+        switch (d.getType()) {
+            case BluetoothDevice.DEVICE_TYPE_CLASSIC:
+                type = "DEVICE_TYPE_CLASSIC";
+                break;
+            case BluetoothDevice.DEVICE_TYPE_DUAL:
+                type = "DEVICE_TYPE_DUAL";
+                break;
+            case BluetoothDevice.DEVICE_TYPE_LE:
+                type = "DEVICE_TYPE_LE";
+                break;
+            case BluetoothDevice.DEVICE_TYPE_UNKNOWN:
+                type = "DEVICE_TYPE_UNKNOWN";
+                break;
+            default:
+                type = "unknown...";
+        }
+
+        return type;
     }
 
     @Override
@@ -216,8 +272,9 @@ public class MainActivity extends AppCompatActivity {
         public void onScanResult(int callbackType, ScanResult result) {
             Log.i("callbackType", String.valueOf(callbackType));
             Log.i("result", result.toString());
-            Toast.makeText(getApplicationContext(), "Scan Result" + result.toString(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getApplicationContext(), "Scan Result" + result.toString(), Toast.LENGTH_SHORT).show();
             BluetoothDevice btDevice = result.getDevice();
+            addBluetoothDevice(btDevice);
             connectToDevice(btDevice);
         }
         @Override
@@ -225,13 +282,21 @@ public class MainActivity extends AppCompatActivity {
             for (ScanResult sr : results) {
                 Log.i("ScanResult - Results", sr.toString());
                 Log.i("ScanDevice - Results", sr.getDevice().getAddress());
-                Toast.makeText(getApplicationContext(), "Scan Result" + sr.toString() , Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "Scan Result " + sr.getDevice().getAddress() , Toast.LENGTH_SHORT).show();
+                addBluetoothDevice(sr.getDevice());
             }
         }
         @Override
         public void onScanFailed(int errorCode) {
             Log.e("Scan Failed", "Error Code: " + errorCode);
             Toast.makeText(getApplicationContext(), "error code" + errorCode, Toast.LENGTH_SHORT).show();
+        }
+
+        private void addBluetoothDevice(BluetoothDevice device){
+            if(!listBluetoothDevice.contains(device)){
+                listBluetoothDevice.add(device);
+                listView.invalidateViews();
+            }
         }
     };
 
