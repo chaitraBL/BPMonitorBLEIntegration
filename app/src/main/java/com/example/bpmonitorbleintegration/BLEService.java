@@ -18,6 +18,7 @@ import android.os.IBinder;
 import android.os.ParcelUuid;
 import android.renderscript.Sampler;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -68,20 +69,43 @@ public class BLEService extends Service {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             String intentAction;
-            if (newState == BluetoothProfile.STATE_CONNECTED) {
-                intentAction = ACTION_GATT_CONNECTED;
-                mConnectionState = STATE_CONNECTED;
-                broadcastUpdate(intentAction);
-                Log.i(TAG, "Connected to GATT server.");
-                // Attempts to discover services after successful connection.
-                Log.i(TAG, "Attempting to start service discovery:" +
-                        mBluetoothGatt.discoverServices());
+//            if (newState == BluetoothProfile.STATE_CONNECTED) {
+//                intentAction = ACTION_GATT_CONNECTED;
+//                mConnectionState = STATE_CONNECTED;
+//                broadcastUpdate(intentAction);
+//                Log.i(TAG, "Connected to GATT server.");
+//                // Attempts to discover services after successful connection.
+//                Log.i(TAG, "Attempting to start service discovery:" +
+//                        mBluetoothGatt.discoverServices());
+//
+//            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+//                intentAction = ACTION_GATT_DISCONNECTED;
+//                mConnectionState = STATE_DISCONNECTED;
+//                Log.i(TAG, "Disconnected from GATT server.");
+//                broadcastUpdate(intentAction);
+//            }
+            switch (newState) {
+                case BluetoothProfile.STATE_CONNECTED:
+//                    Log.i("gattCallback", "STATE_CONNECTED");
+                    intentAction = ACTION_GATT_CONNECTED;
+                    mConnectionState = STATE_CONNECTED;
+                    broadcastUpdate(intentAction);
+                    gatt.discoverServices();
+//                    statusText.setText("Connected");
+                    Toast.makeText(getApplicationContext(), "Connected...", Toast.LENGTH_SHORT).show();
+                    break;
+                case BluetoothProfile.STATE_DISCONNECTED:
+//                    Log.e("gattCallback", "STATE_DISCONNECTED");
+//                    statusText.setText("Disconnected");
+                    intentAction = ACTION_GATT_DISCONNECTED;
+                    Toast.makeText(getApplicationContext(), "Disconnected...", Toast.LENGTH_SHORT).show();
+                    mConnectionState = STATE_DISCONNECTED;
+                    broadcastUpdate(intentAction);
 
-            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                intentAction = ACTION_GATT_DISCONNECTED;
-                mConnectionState = STATE_DISCONNECTED;
-                Log.i(TAG, "Disconnected from GATT server.");
-                broadcastUpdate(intentAction);
+                    break;
+                default:
+//                    Log.e("gattCallback", "STATE_OTHER");
+                    Toast.makeText(getApplicationContext(), "Other state...", Toast.LENGTH_SHORT).show();
             }
         }
         @Override
@@ -370,5 +394,7 @@ public class BLEService extends Service {
             Log.w("TAG", "Failed to write characteristic");
         }
     }
+
+
 
 }
