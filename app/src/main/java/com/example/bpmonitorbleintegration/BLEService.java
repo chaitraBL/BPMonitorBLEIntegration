@@ -12,9 +12,11 @@ import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.camera2.params.OisSample;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.ParcelUuid;
+import android.renderscript.Sampler;
 import android.util.Log;
 
 import androidx.annotation.Nullable;

@@ -34,6 +34,8 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
+import android.os.ParcelUuid;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,15 +44,17 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+
 @TargetApi(21)
 public class MainActivity extends AppCompatActivity {
 
-//    private static final int ACCESS_COARSE_LOCATION_REQUEST = 0;
+    //    private static final int ACCESS_COARSE_LOCATION_REQUEST = 0;
 //    private BluetoothAdapter mBluetoothAdapter;
 //    private static final int RQ_ENABLE_BLUETOOTH = 1;
 //
@@ -63,14 +67,15 @@ public class MainActivity extends AppCompatActivity {
 //    private static final long SCAN_PERIOD = 10000;
 //    ListView listViewLE;
 //
-    List<BluetoothDevice> listBluetoothDevice;
-    ListAdapter adapterLeScanResult;
+
 //    private final int LOCATION_PERMISSION_REQUEST = 101;
 //    private Context context;
 //
 //
 //    private boolean mScanning;
-
+    List<BluetoothDevice> listBluetoothDevice;
+    ArrayAdapter<String> adapterBluetoothDevice;
+    ListAdapter adapterLeScanResult;
     private BluetoothAdapter mBluetoothAdapter;
     private int REQUEST_ENABLE_BT = 1;
     private Handler mHandler;
@@ -82,6 +87,18 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMISSIONS_REQUEST_LOCATION = 101;
     ListView listView;
     String BLE_PIN = "1234";
+
+    private static final String TAG = "BluetoothLEService";
+    private static final int STATE_DISCONNECT = 0;
+    private static final int STATE_CONNECTING = 1;
+    private static final int STATE_CONNECTED = 2;
+//    IBinder mBinder = new LocalBinder();
+    private int mConnectionState = STATE_DISCONNECT;
+    private BluetoothGatt mBluetoothGatt;
+    private String bluetoothAddress;
+    private boolean mConnected = false;
+    private Context context;
+    TextView statusText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,8 +129,11 @@ public class MainActivity extends AppCompatActivity {
 //        handler = new Handler();
 
         listView = findViewById(R.id.lelist);
+        statusText = findViewById(R.id.actual_status);
+        statusText.setText("Disconnected");
         listBluetoothDevice = new ArrayList<>();
-        adapterLeScanResult = new ArrayAdapter<BluetoothDevice>(this, android.R.layout.simple_list_item_1, listBluetoothDevice);
+        adapterBluetoothDevice = new ArrayAdapter<String>(context, R.layout.list_item);
+        adapterLeScanResult = new ArrayAdapter<BluetoothDevice>(this, android.R.layout.simple_list_item_1, (List<BluetoothDevice>) adapterBluetoothDevice);
         listView.setAdapter(adapterLeScanResult);
         listView.setOnItemClickListener(scanResultOnItemClickListener);
         checkPermissions(MainActivity.this, this);
@@ -149,7 +169,11 @@ public class MainActivity extends AppCompatActivity {
 //                            connectToDevice(device);
                             IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_PAIRING_REQUEST);
                             intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
-                            registerReceiver(broadCastReceiver,intentFilter);
+                            registerReceiver(broadCastReceiver, intentFilter);
+
+                             Boolean result = connect(device.getAddress());
+                            Toast.makeText(getApplicationContext(), "request result" + result, Toast.LENGTH_SHORT).show();
+                            statusText.setText("Connected");
                         }
                     })
                     .show();
@@ -191,13 +215,13 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.bluetooth_button:
-//                enableBluetooth();
+                disableBluetooth();
                 return true;
-            case R.id.bluetooth_searching:
-//                scanLeDevice();
-                scanLeDevice(true);
-//                checkPermissions();
-                return true;
+//            case R.id.bluetooth_searching:
+////                scanLeDevice();
+//                scanLeDevice(true);
+////                checkPermissions();
+//                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -221,6 +245,24 @@ public class MainActivity extends AppCompatActivity {
             scanLeDevice(true);
         }
     }
+
+    public void disableBluetooth() {
+//        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+//            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+//        }
+//        else {
+        if (mBluetoothAdapter.isEnabled()) {
+            mBluetoothAdapter.disable();
+        }
+        else {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
+
+//        }
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -238,6 +280,7 @@ public class MainActivity extends AppCompatActivity {
         mGatt = null;
         super.onDestroy();
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_ENABLE_BT) {
@@ -250,6 +293,7 @@ public class MainActivity extends AppCompatActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
     private void scanLeDevice(final boolean enable) {
         if (enable) {
             mHandler.postDelayed(new Runnable() {
@@ -276,6 +320,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
     private ScanCallback mScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
@@ -284,25 +329,28 @@ public class MainActivity extends AppCompatActivity {
 //            Toast.makeText(getApplicationContext(), "Scan Result" + result.toString(), Toast.LENGTH_SHORT).show();
             BluetoothDevice btDevice = result.getDevice();
             addBluetoothDevice(btDevice);
-            connectToDevice(btDevice);
+//            connectToDevice(btDevice);
         }
+
         @Override
         public void onBatchScanResults(List<ScanResult> results) {
             for (ScanResult sr : results) {
-                Log.i("ScanResult - Results", sr.toString());
-                Log.i("ScanDevice - Results", sr.getDevice().getAddress());
+//                Log.i("ScanResult - Results", sr.toString());
+//                Log.i("ScanDevice - Results", sr.getDevice().getAddress());
 //                Toast.makeText(getApplicationContext(), "Scan Result " + sr.getDevice().getAddress() , Toast.LENGTH_SHORT).show();
                 addBluetoothDevice(sr.getDevice());
             }
         }
+
         @Override
         public void onScanFailed(int errorCode) {
-            Log.e("Scan Failed", "Error Code: " + errorCode);
+//            Log.e("Scan Failed", "Error Code: " + errorCode);
             Toast.makeText(getApplicationContext(), "error code" + errorCode, Toast.LENGTH_SHORT).show();
         }
 
-        private void addBluetoothDevice(BluetoothDevice device){
-            if(!listBluetoothDevice.contains(device)){
+        private void addBluetoothDevice(BluetoothDevice device) {
+            if (!listBluetoothDevice.contains(device)) {
+                adapterBluetoothDevice.add(device.getAddress() + "\n" + device.getName());
                 listBluetoothDevice.add(device);
                 listView.invalidateViews();
             }
@@ -323,11 +371,35 @@ public class MainActivity extends AppCompatActivity {
                     });
                 }
             };
-    public void connectToDevice(BluetoothDevice device) {
-        if (mGatt == null) {
-            mGatt = device.connectGatt(this, false, gattCallback);
-            scanLeDevice(false);// will stop after first device detection
+
+    public boolean connect(String address) {
+        if (mBluetoothAdapter == null || address == null) {
+//            Log.w("TAG", "BluetoothAdapter not initialize or unspecified address");
+            Toast.makeText(getApplicationContext(), "BluetoothAdapter not initialize or unspecified address", Toast.LENGTH_SHORT).show();
+            return false;
         }
+        if (mBluetoothAdapter != null && address.equals(bluetoothAddress) && mBluetoothGatt != null) {
+//            Log.d(TAG, "Try to use existing connection");
+            Toast.makeText(getApplicationContext(), "Try to use existing connection", Toast.LENGTH_SHORT).show();
+            if (mBluetoothGatt.connect()) {
+                mConnectionState = STATE_CONNECTING;
+                Toast.makeText(getApplicationContext(), "Connecting...", Toast.LENGTH_SHORT).show();
+                return true;
+            } else {
+                Toast.makeText(getApplicationContext(), "Cannot connect...", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+        final BluetoothDevice bluetoothDevice = mBluetoothAdapter.getRemoteDevice(address);
+        if (bluetoothDevice == null) {
+//            Log.w(TAG, "Device not found");
+            Toast.makeText(getApplicationContext(), "Device not found ", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        mBluetoothGatt = bluetoothDevice.connectGatt(this, false, gattCallback);
+        bluetoothAddress = address;
+        mConnectionState = STATE_CONNECTING;
+        return true;
     }
 
     private final BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
@@ -336,24 +408,31 @@ public class MainActivity extends AppCompatActivity {
             Log.i("onConnectionStateChange", "Status: " + status);
             switch (newState) {
                 case BluetoothProfile.STATE_CONNECTED:
-                    Log.i("gattCallback", "STATE_CONNECTED");
+//                    Log.i("gattCallback", "STATE_CONNECTED");
+                    mConnectionState = STATE_CONNECTED;
                     gatt.discoverServices();
+                    Toast.makeText(getApplicationContext(), "Connected...", Toast.LENGTH_SHORT).show();
                     break;
                 case BluetoothProfile.STATE_DISCONNECTED:
-                    Log.e("gattCallback", "STATE_DISCONNECTED");
+//                    Log.e("gattCallback", "STATE_DISCONNECTED");
+                    Toast.makeText(getApplicationContext(), "Disconnected...", Toast.LENGTH_SHORT).show();
+                    mConnectionState = STATE_DISCONNECT;
+                    statusText.setText("Disconnected");
                     break;
                 default:
-                    Log.e("gattCallback", "STATE_OTHER");
+//                    Log.e("gattCallback", "STATE_OTHER");
+                    Toast.makeText(getApplicationContext(), "Other state...", Toast.LENGTH_SHORT).show();
             }
         }
 
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             List<BluetoothGattService> services = gatt.getServices();
-            Log.i("onServicesDiscovered", services.toString());
+//            Log.i("onServicesDiscovered", services.toString());
             gatt.readCharacteristic(services.get(1).getCharacteristics().get
                     (0));
         }
+
         @Override
         public void onCharacteristicRead(BluetoothGatt gatt,
                                          BluetoothGattCharacteristic
@@ -363,8 +442,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public void checkPermissions(Activity activity, Context context)
-    {
+    public void checkPermissions(Activity activity, Context context) {
         if (ContextCompat.checkSelfPermission(context,
                 android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
         } else {
@@ -378,245 +456,15 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if(BluetoothDevice.ACTION_PAIRING_REQUEST.equals(action))
-            {
+            if (BluetoothDevice.ACTION_PAIRING_REQUEST.equals(action)) {
                 BluetoothDevice bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 bluetoothDevice.setPin(BLE_PIN.getBytes());
 //                Log.e("Pin TAG","Auto-entering pin: " + BLE_PIN);
-                Toast.makeText(getApplicationContext(), "Auto-entering pin:" + BLE_PIN, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "Auto-entering pin:" + BLE_PIN, Toast.LENGTH_SHORT).show();
                 bluetoothDevice.createBond();
-                Log.e("Pin TAG","pin entered and request sent...");
+//                Log.e("Pin TAG", "pin entered and request sent...");
                 Toast.makeText(getApplicationContext(), "pin entered and request sent...", Toast.LENGTH_SHORT).show();
             }
         }
     };
-//    public static void checkPermissions(Activity activity, Context context){
-//        int PERMISSION_ALL = 1;
-//        String[] PERMISSIONS = {
-//                Manifest.permission.ACCESS_FINE_LOCATION,
-//                Manifest.permission.BLUETOOTH,
-//                Manifest.permission.BLUETOOTH_ADMIN,
-//                Manifest.permission.INTERNET,
-//        };
-//
-//        if(!hasPermissions(context, PERMISSIONS)){
-//            ActivityCompat.requestPermissions( activity, PERMISSIONS, PERMISSION_ALL);
-//        }
-//    }
-//
-//    public static boolean hasPermissions(Context context, String... permissions) {
-////        if (context != null && permissions != null) {
-////            for (String permission : permissions) {
-////                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
-////                    return false;
-////                }
-////            }
-////        }
-//        if (ContextCompat.checkSelfPermission(context,
-//                android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-//        } else {
-//            ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-//                    PERMISSIONS_REQUEST_LOCATION);
-//        }
-//        return true;
-//    }
-
-//    public void checkPermission()
-//    {
-//        if (ContextCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION)
-//                != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(
-//                    this,
-//                    new String[]{ACCESS_COARSE_LOCATION},
-//                    PERMISSIONS_REQUEST_LOCATION);
-//        }
-//    }
-
-//    public void enableBluetooth()
-//    {
-//        // Checks if Bluetooth is supported on the device.
-//        if (mBluetoothAdapter == null) {
-//            Toast.makeText(this,
-//                    "Bluetooth is not supported in this device",
-//                    Toast.LENGTH_LONG).show();
-////            finish();
-////            return;
-//        }
-//        else {
-//            if (!mBluetoothAdapter.isEnabled()) {
-//                Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-//                startActivityForResult(enableIntent, RQ_ENABLE_BLUETOOTH);
-//                Toast.makeText(getApplicationContext(), "Bluetooth Enabled", Toast.LENGTH_SHORT).show();
-//            } else {
-//                Toast.makeText(getApplicationContext(), "Bluetooth already enabled", Toast.LENGTH_SHORT).show();
-//            }
-//        }
-//    }
-
-//    private void scanLeDevice() {
-//        if (!scanning) {
-//            // Stops scanning after a predefined scan period.
-//            handler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    scanning = false;
-//                    bluetoothLeScanner.stopScan(leScanCallback);
-//                    Toast.makeText(getApplicationContext(), "Not Scanning...", Toast.LENGTH_SHORT).show();
-//                }
-//            }, SCAN_PERIOD);
-//
-//            bluetoothLeScanner.startScan(leScanCallback);
-//
-//            //scan specified devices only with ScanFilter
-//            ScanFilter scanFilter =
-//                    new ScanFilter.Builder()
-//                            .setServiceUuid(BLEService.ParcelUuid_GENUINO101_ledService)
-//                            .build();
-//            List<ScanFilter> scanFilters = new ArrayList<ScanFilter>();
-//            scanFilters.add(scanFilter);
-//
-//            ScanSettings scanSettings =
-//                    new ScanSettings.Builder().build();
-//
-//            scanning = true;
-//            bluetoothLeScanner.startScan(scanFilters,scanSettings,leScanCallback);
-//            Toast.makeText(getApplicationContext(), "Scanning...", Toast.LENGTH_SHORT).show();
-//        } else {
-//            scanning = false;
-//            bluetoothLeScanner.stopScan(leScanCallback);
-//            Toast.makeText(getApplicationContext(), "Stop Scanning...", Toast.LENGTH_SHORT).show();
-//        }
-//    }
-
-//    // Device scan callback.
-//    private ScanCallback leScanCallback = new ScanCallback() {
-//        @Override
-//        public void onScanResult(int callbackType, ScanResult result) {
-//            super.onScanResult(callbackType, result);
-//
-//            addBluetoothDevice(result.getDevice());
-//        }
-//
-//        @Override
-//        public void onBatchScanResults(List<ScanResult> results) {
-//            super.onBatchScanResults(results);
-//            for(ScanResult result : results){
-//                addBluetoothDevice(result.getDevice());
-//            }
-//        }
-//
-//        @Override
-//        public void onScanFailed(int errorCode) {
-//            super.onScanFailed(errorCode);
-//            Toast.makeText(MainActivity.this,
-//                    "onScanFailed: " + String.valueOf(errorCode),
-//                    Toast.LENGTH_LONG).show();
-//        }
-//
-//        private void addBluetoothDevice(BluetoothDevice device){
-//            if(!listBluetoothDevice.contains(device)){
-//                listBluetoothDevice.add(device);
-//                listViewLE.invalidateViews();
-//            }
-//        }
-//    };
-
-//    private void scanLeDevice() {
-//        if (!scanning){
-//            handler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    mScanning = false;
-//                    mBluetoothAdapter.getBluetoothLeScanner().stopScan(mLeScanCallback);
-//                    Toast.makeText(getApplicationContext(), "Cannot scan...", Toast.LENGTH_SHORT).show();
-//                }
-//            }, SCAN_PERIOD);
-//
-//            mScanning = true;
-//            mBluetoothAdapter.getBluetoothLeScanner().startScan(mLeScanCallback);
-//            Toast.makeText(getApplicationContext(), "Scanning...", Toast.LENGTH_SHORT).show();
-//        }
-//        else {
-//            mScanning = false;
-//            mBluetoothAdapter.getBluetoothLeScanner().stopScan(mLeScanCallback);
-//            Toast.makeText(getApplicationContext(), "Stop Scanning...", Toast.LENGTH_SHORT).show();
-//        }
-//
-//    }
-//
-//    private ScanCallback mLeScanCallback = new ScanCallback() {
-//        @Override
-//        public void onScanResult(int callbackType, ScanResult result) {
-//            super.onScanResult(callbackType, result);
-//        }
-//
-//        @Override
-//        public void onBatchScanResults(List<ScanResult> results) {
-//            super.onBatchScanResults(results);
-//            for(ScanResult result : results){
-//                Toast.makeText(getApplicationContext(), "Device" + result.getDevice().getName(), Toast.LENGTH_SHORT).show();
-//            }
-//        }
-//
-//        @Override
-//        public void onScanFailed(int errorCode) {
-//            super.onScanFailed(errorCode);
-//            Toast.makeText(MainActivity.this,
-//                    "onScanFailed: " + String.valueOf(errorCode),
-//                    Toast.LENGTH_LONG).show();
-//        }
-//    };
-//
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//
-//        if (requestCode == RQ_ENABLE_BLUETOOTH && resultCode == Activity.RESULT_CANCELED) {
-//            finish();
-//            return;
-//        }
-//
-//        getBluetoothAdapterAndLeScanner();
-//
-//        // Checks if Bluetooth is supported on the device.
-//        if (mBluetoothAdapter == null) {
-//            Toast.makeText(this,
-//                    "bluetoothManager.getAdapter()==null",
-//                    Toast.LENGTH_SHORT).show();
-////            finish();
-//            return;
-//        }
-//
-//        super.onActivityResult(requestCode, resultCode, data);
-//    }
-//
-//    private void getBluetoothAdapterAndLeScanner() {
-//        // Get BluetoothAdapter and BluetoothLeScanner.
-//        final BluetoothManager bluetoothManager =
-//                (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-//        mBluetoothAdapter = bluetoothManager.getAdapter();
-//        bluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
-//
-//        mScanning = false;
-//    }
-//
-//    private boolean hasPermissions() {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            if (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//                requestPermissions(new String[] { Manifest.permission.ACCESS_COARSE_LOCATION }, ACCESS_COARSE_LOCATION_REQUEST);
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
-//
-//    private void checkPermissions() {
-//        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
-//        } else {
-////            Intent intent = new Intent(context, MainActivity2.class);
-////            startActivityForResult(intent, SELECT_DEVICE);
-//            scanLeDevice();
-//        }
-//    }
-
 }

@@ -6,10 +6,26 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Status"
+        android:id="@+id/txt_status"
+        android:layout_margin="8dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/actual_status"
+        android:layout_toEndOf="@+id/txt_status"
+        android:layout_margin="8dp"/>
+
     <ListView
         android:id="@+id/lelist"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@+id/txt_status"
+        android:layout_margin="10dp"/>
 
 
 
