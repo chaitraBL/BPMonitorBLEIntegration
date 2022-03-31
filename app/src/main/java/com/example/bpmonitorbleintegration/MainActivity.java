@@ -132,8 +132,8 @@ public class MainActivity extends AppCompatActivity {
         statusText = findViewById(R.id.actual_status);
         statusText.setText("Disconnected");
         listBluetoothDevice = new ArrayList<>();
-        adapterBluetoothDevice = new ArrayAdapter<String>(context, R.layout.list_item);
-        adapterLeScanResult = new ArrayAdapter<BluetoothDevice>(this, android.R.layout.simple_list_item_1, (List<BluetoothDevice>) adapterBluetoothDevice);
+//        adapterBluetoothDevice = new ArrayAdapter<String>(context, R.layout.list_item);
+        adapterLeScanResult = new ArrayAdapter<BluetoothDevice>(this, android.R.layout.simple_list_item_1, listBluetoothDevice);
         listView.setAdapter(adapterLeScanResult);
         listView.setOnItemClickListener(scanResultOnItemClickListener);
         checkPermissions(MainActivity.this, this);
@@ -173,7 +173,6 @@ public class MainActivity extends AppCompatActivity {
 
                              Boolean result = connect(device.getAddress());
                             Toast.makeText(getApplicationContext(), "request result" + result, Toast.LENGTH_SHORT).show();
-                            statusText.setText("Connected");
                         }
                     })
                     .show();
@@ -215,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.bluetooth_button:
-                disableBluetooth();
+                enableBluetooth();
                 return true;
 //            case R.id.bluetooth_searching:
 ////                scanLeDevice();
@@ -231,10 +230,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-        } else {
+//        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+//            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+//        } else {
             if (Build.VERSION.SDK_INT >= 21) {
                 mLEScanner = mBluetoothAdapter.getBluetoothLeScanner();
                 settings = new ScanSettings.Builder()
@@ -243,24 +242,19 @@ public class MainActivity extends AppCompatActivity {
                 filters = new ArrayList<ScanFilter>();
             }
             scanLeDevice(true);
-        }
+//        }
     }
 
-    public void disableBluetooth() {
-//        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
-//            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-//            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-//        }
-//        else {
-        if (mBluetoothAdapter.isEnabled()) {
-            mBluetoothAdapter.disable();
-        }
-        else {
+    public void enableBluetooth() {
+        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            Toast.makeText(context, "Bluetooth Enabled", Toast.LENGTH_SHORT).show();
         }
-
-//        }
+        else {
+            mBluetoothAdapter.disable();
+            Toast.makeText(context, "Bluetooth Disabled", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -350,7 +344,7 @@ public class MainActivity extends AppCompatActivity {
 
         private void addBluetoothDevice(BluetoothDevice device) {
             if (!listBluetoothDevice.contains(device)) {
-                adapterBluetoothDevice.add(device.getAddress() + "\n" + device.getName());
+//                adapterBluetoothDevice.add(device.getAddress() + "\n" + device.getName());
                 listBluetoothDevice.add(device);
                 listView.invalidateViews();
             }
@@ -411,13 +405,15 @@ public class MainActivity extends AppCompatActivity {
 //                    Log.i("gattCallback", "STATE_CONNECTED");
                     mConnectionState = STATE_CONNECTED;
                     gatt.discoverServices();
+                    statusText.setText("Connected");
                     Toast.makeText(getApplicationContext(), "Connected...", Toast.LENGTH_SHORT).show();
                     break;
                 case BluetoothProfile.STATE_DISCONNECTED:
 //                    Log.e("gattCallback", "STATE_DISCONNECTED");
+                    statusText.setText("Disconnected");
                     Toast.makeText(getApplicationContext(), "Disconnected...", Toast.LENGTH_SHORT).show();
                     mConnectionState = STATE_DISCONNECT;
-                    statusText.setText("Disconnected");
+
                     break;
                 default:
 //                    Log.e("gattCallback", "STATE_OTHER");
