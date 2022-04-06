@@ -30,23 +30,23 @@ public class DataTransferActivity extends AppCompatActivity {
         readBtn = findViewById(R.id.btn_read);
         writeBtn = findViewById(R.id.btn_write);
 
-        readBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(mBluetoothLeService != null) {
-                    mBluetoothLeService.readCustomCharacteristic();
-                }
-            }
-        });
-
-        writeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(mBluetoothLeService != null) {
-                    mBluetoothLeService.writeCustomCharacteristic(0xAA);
-                }
-            }
-        });
+//        readBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if(mBluetoothLeService != null) {
+//                    mBluetoothLeService.readCustomCharacteristic();
+//                }
+//            }
+//        });
+//
+//        writeBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if(mBluetoothLeService != null) {
+//                    mBluetoothLeService.writeCustomCharacteristic(0xAA);
+//                }
+//            }
+//        });
     }
 
 
