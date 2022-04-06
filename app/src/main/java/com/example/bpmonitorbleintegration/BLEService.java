@@ -68,6 +68,7 @@ public class BLEService extends Service {
             UUID.fromString(String_GENUINO101_switchChar);
     private final IBinder mBinder = new LocalBinder();
     private String bluetoothAddress;
+    public final static UUID UUID_CHAR_LEVEL = UUID.fromString(BLEGattAttributes.CLIENT_CHARACTERISTIC_CONFIG);
 
     BluetoothGattCharacteristic mBluetoothGattChar;
 
@@ -222,12 +223,11 @@ public class BLEService extends Service {
         final Intent intent = new Intent(action);
         Log.e("action", action);
         Toast.makeText(getApplicationContext(), "action " + action, Toast.LENGTH_SHORT).show();
-
-//        if (UUID_BATTERY_LEVEL.equals(characteristic.getUuid())) {
-//            int format = BluetoothGattCharacteristic.FORMAT_UINT8;
-//            final int battery_level = characteristic.getIntValue(format, 0);
-//            intent.putExtra(EXTRA_DATA, battery_level+"%");
-//        }
+        if (UUID_CHAR_LEVEL.equals(characteristic.getUuid())) {
+            int format = BluetoothGattCharacteristic.FORMAT_UINT8;
+            final int battery_level = characteristic.getIntValue(format, 0);
+            intent.putExtra(EXTRA_DATA, battery_level+"%");
+        }
         sendBroadcast(intent);
     }
 
@@ -276,7 +276,7 @@ public class BLEService extends Service {
 
         mBluetoothGatt.setCharacteristicNotification(characteristic, enabled);
 
-        BluetoothGattDescriptor descriptor = characteristic.getDescriptor(UUID.fromString(BLEGattAttributes.CLIENT_SERVICE_CONFIG));
+        BluetoothGattDescriptor descriptor = characteristic.getDescriptor(UUID.fromString(BLEGattAttributes.CLIENT_CHARACTERISTIC_CONFIG));
         if (enabled) {
             descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
         }
@@ -293,7 +293,7 @@ public class BLEService extends Service {
         }
         mBluetoothGatt.setCharacteristicNotification(characteristic, enabled);
 
-        BluetoothGattDescriptor descriptor = characteristic.getDescriptor(UUID.fromString(BLEGattAttributes.CLIENT_SERVICE_CONFIG));
+        BluetoothGattDescriptor descriptor = characteristic.getDescriptor(UUID.fromString(BLEGattAttributes.CLIENT_CHARACTERISTIC_CONFIG));
         if (enabled) {
             descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
         }
