@@ -133,23 +133,23 @@ public class BLEService extends Service {
             super.onServicesDiscovered(gatt, status);
             if (status == BluetoothGatt.GATT_SUCCESS) {
 
-                List<BluetoothGattService> servicesList = gatt.getServices();
-
-                for (int i = 0; i < servicesList.size(); i++)
-                {
-                    BluetoothGattService bluetoothGattService = servicesList.get(i);
-                        List<BluetoothGattCharacteristic> bluetoothGattCharacteristicList = bluetoothGattService.getCharacteristics();
-
-                        for (BluetoothGattCharacteristic bluetoothGattCharacteristic : bluetoothGattCharacteristicList)
-                        {
-                            List<BluetoothGattDescriptor> bluetoothGattDescriptorsList = bluetoothGattCharacteristic.getDescriptors();
-
-                            for (BluetoothGattDescriptor bluetoothGattDescriptor : bluetoothGattDescriptorsList)
-                            {
+//                List<BluetoothGattService> servicesList = gatt.getServices();
+//
+//                for (int i = 0; i < servicesList.size(); i++)
+//                {
+//                    BluetoothGattService bluetoothGattService = servicesList.get(i);
+//                        List<BluetoothGattCharacteristic> bluetoothGattCharacteristicList = bluetoothGattService.getCharacteristics();
+//
+//                        for (BluetoothGattCharacteristic bluetoothGattCharacteristic : bluetoothGattCharacteristicList)
+//                        {
+//                            List<BluetoothGattDescriptor> bluetoothGattDescriptorsList = bluetoothGattCharacteristic.getDescriptors();
+//
+//                            for (BluetoothGattDescriptor bluetoothGattDescriptor : bluetoothGattDescriptorsList)
+//                            {
                                 broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED);
-                            }
-                        }
-                    }
+//                            }
+//                        }
+//                    }
                 }
         }
 
