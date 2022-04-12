@@ -222,7 +222,7 @@ public class BLEService extends Service {
         mBluetoothGatt.readCharacteristic(bluetoothGattCharacteristic);
     }
 
-    public void writeCharacteristics(BluetoothGattCharacteristic characteristics, byte[] value){
+    public void writeCharacteristics(BluetoothGattCharacteristic characteristics, String value){
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
             Toast.makeText(getApplicationContext(), "BluetoothAdapter not initialised", Toast.LENGTH_SHORT).show();
             return;

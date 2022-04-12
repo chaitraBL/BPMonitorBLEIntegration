@@ -10,7 +10,7 @@ public class StringUtils {
     private static final String TAG = "StringUtils";
 
     private static String byteToHex(byte b) {
-        char char1 = Character.forDigit((b & 0xF0) >> 4, 16);
+        char char1 = Character.forDigit((b & 0xF0) >> 2, 16);
         char char2 = Character.forDigit((b & 0x0F), 16);
 
         return String.format("0x%1$s%2$s", char1, char2);
@@ -22,15 +22,15 @@ public class StringUtils {
         }
 
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("{ ");
+//        stringBuilder.append("{ ");
         for (int i = 0; i < byteArray.length; i++) {
-            if (i > 0) {
-                stringBuilder.append(", ");
-            }
+//            if (i > 0) {
+//                stringBuilder.append(", ");
+//            }
             String hexString = byteToHex(byteArray[i]);
             stringBuilder.append(hexString);
         }
-        stringBuilder.append(" }");
+//        stringBuilder.append(" }");
 
         return stringBuilder.toString();
     }

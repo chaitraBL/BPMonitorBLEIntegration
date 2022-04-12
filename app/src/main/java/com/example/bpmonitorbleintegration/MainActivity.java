@@ -44,6 +44,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -122,7 +123,16 @@ public class MainActivity extends AppCompatActivity {
                 String message =  sentMsg.getText().toString();
                 mNotifyCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
                 if (mNotifyCharacteristic != null) {
-                    mBLEService.writeCharacteristics(mNotifyCharacteristic,message.getBytes());
+                    byte[] value = message.getBytes();
+                    StringBuffer sb = new StringBuffer();
+                    for (byte b : value) {
+                        sb.append(Integer.toHexString((int) (b & 0xff)));
+                    }
+
+//                    String res = StringUtils.byteArrayInHexFormat(value);
+                    Log.i("TAG", "res " + sb.toString());
+                    mBLEService.writeCharacteristics(mNotifyCharacteristic,sb.toString());
+
                 }
 
             }
@@ -363,7 +373,7 @@ public class MainActivity extends AppCompatActivity {
                 List<BluetoothGattService> gattService = mBLEService.getSupportedGattServices();
                 Log.i("TAG", "Size " + gattService.size());
                 for (int i = 0; i < gattService.size(); i++) {
-                    BluetoothGattService service = gattService.get(2);
+                    BluetoothGattService service = gattService.get(4);
                     Log.i("Tag", "Services found " + gattService.get(i).getUuid().toString());
                     if (BLEGattAttributes.lookup(service.getUuid().toString()).matches("Service")) {
                         for (BluetoothGattCharacteristic gattCharacteristic : mBLEService.getSupportedGattCharacteristics(service)) {
