@@ -13,6 +13,7 @@ import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
+import android.icu.text.UFormat;
 import android.os.Binder;
 import android.os.Build;
 
@@ -22,6 +23,7 @@ import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -190,12 +192,18 @@ public class BLEService extends Service {
         final Intent intent = new Intent(action);
 
         if (UUID_CHAR_LEVEL.equals(characteristic.getUuid())) {
+
             final byte[] data = characteristic.getValue();
-            Log.i("TAG", StringUtils.stringFromBytes(data) + "\n tt " +data.toString());
+            String value = null;
+            String result;
+//            Log.i("TAG", StringUtils.stringFromBytes(data) + "\n tt " + data.toString());
             if (data != null && data.length > 0) {
-                String message = StringUtils.stringFromBytes(data);
-                Log.i("TAG", "value in broadcastUpdate " + message);
-                intent.putExtra(EXTRA_DATA, message);
+                StringBuilder output = new StringBuilder(data.length);
+                for (byte byteChar: data) {
+                    output.append(String.format("%02X", byteChar));
+//                    Log.i("TAG", "New data " + String.format("%02X", byteChar));
+                }
+                intent.putExtra(EXTRA_DATA, output.toString());
             }
         }
         sendBroadcast(intent);

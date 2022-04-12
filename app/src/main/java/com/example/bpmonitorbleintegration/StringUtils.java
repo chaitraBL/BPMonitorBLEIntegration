@@ -56,4 +56,18 @@ public class StringUtils {
         }
         return byteString;
     }
+
+    public static String hexToString(String hex) {
+        StringBuilder sb = new StringBuilder();
+        char[] hexData = hex.toCharArray();
+        for (int count = 0; count < hexData.length - 1; count += 2) {
+            int firstDigit = Character.digit(hexData[count], 16);
+            int lastDigit = Character.digit(hexData[count + 1], 16);
+            int decimal = firstDigit * 16 + lastDigit;
+            sb.append((char) decimal);
+        }/* www  .j  av a  2 s .c  o m*/
+        return sb.toString();
+    }
+
+
 }

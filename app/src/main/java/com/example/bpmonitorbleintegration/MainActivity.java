@@ -45,6 +45,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -111,8 +112,6 @@ public class MainActivity extends AppCompatActivity {
                 (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
 
-
-
         intentFilter = new IntentFilter(BluetoothDevice.ACTION_PAIRING_REQUEST);
         intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
         registerReceiver(broadCastReceiver, intentFilter);
@@ -121,15 +120,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String message =  sentMsg.getText().toString();
-                mNotifyCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
+                mNotifyCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
                 if (mNotifyCharacteristic != null) {
                     mBLEService.writeCharacteristics(mNotifyCharacteristic,message.getBytes());
                 }
 
             }
         });
-
-
     }
 
     AdapterView.OnItemClickListener scanResultOnItemClickListener = new AdapterView.OnItemClickListener() {
@@ -152,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
                                 Boolean result = mBLEService.connect(device.getAddress());
                             }
 
-                            Toast.makeText(getApplicationContext(), "Connected...", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getApplicationContext(), "Connected...", Toast.LENGTH_SHORT).show();
 
                         }
                     })
@@ -195,7 +192,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.bluetooth_searching:
                 scanLeDevice(true);
                 return true;
-            default:
+
+                    default:
                 return super.onOptionsItemSelected(item);
         }
 
@@ -361,9 +359,11 @@ public class MainActivity extends AppCompatActivity {
                 updateConnectionState("Disconnected");
             }
             else if (BLEService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+//                displayGattServices(mBLEService.getSupportedGattServices());
                 List<BluetoothGattService> gattService = mBLEService.getSupportedGattServices();
+                Log.i("TAG", "Size " + gattService.size());
                 for (int i = 0; i < gattService.size(); i++) {
-                    BluetoothGattService service = gattService.get(4);
+                    BluetoothGattService service = gattService.get(2);
                     Log.i("Tag", "Services found " + gattService.get(i).getUuid().toString());
                     if (BLEGattAttributes.lookup(service.getUuid().toString()).matches("Service")) {
                         for (BluetoothGattCharacteristic gattCharacteristic : mBLEService.getSupportedGattCharacteristics(service)) {
@@ -391,9 +391,11 @@ public class MainActivity extends AppCompatActivity {
         };
 
     private  void displayData(String data) {
-        if (data != null) {
-            receivedMsg.setText(data);
+            if (data != null) {
+//                Log.i("TAG", "Received msg: " + data);
+                receivedMsg.setText(data);
         }
+
     }
 
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
