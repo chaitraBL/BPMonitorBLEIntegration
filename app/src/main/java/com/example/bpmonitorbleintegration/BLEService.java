@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
@@ -168,18 +169,30 @@ public class BLEService extends Service {
         @Override
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicWrite(gatt, characteristic, status);
-//            Log.i("TaG", "onCharacteristicWrite " + status);
-            if (status == BluetoothGatt.GATT_SUCCESS){
-
-            }
         }
+
+        //        @Override
+//        public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, byte[] status) {
+//            super.onCharacteristicWrite(gatt, characteristic, status);
+////            Log.i("TaG", "onCharacteristicWrite " + status);
+////            if (status == BluetoothGatt.GATT_SUCCESS){
+////
+////            }
+//        }
 
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
             super.onCharacteristicChanged(gatt, characteristic);
 //            Log.i("TaG", "onCharacteristicChange ");
+            byte[] messageBytes = characteristic.getValue();
+            String messageString = null;
+            try {
+                messageString = new String(messageBytes, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                Log.e(TAG, "Unable to convert message bytes to string");
+            }
+//            Log.i("TAG", "message in connection change " + messageString);
             broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
-            readCharacteristic(characteristic);
         }
     };
 
@@ -192,18 +205,12 @@ public class BLEService extends Service {
         final Intent intent = new Intent(action);
 
         if (UUID_CHAR_LEVEL.equals(characteristic.getUuid())) {
-
             final byte[] data = characteristic.getValue();
-            String value = null;
-            String result;
-//            Log.i("TAG", StringUtils.stringFromBytes(data) + "\n tt " + data.toString());
             if (data != null && data.length > 0) {
-                StringBuilder output = new StringBuilder(data.length);
-                for (byte byteChar: data) {
-                    output.append(String.format("%02X", byteChar));
-//                    Log.i("TAG", "New data " + String.format("%02X", byteChar));
-                }
-                intent.putExtra(EXTRA_DATA, output.toString());
+                final StringBuilder stringBuilder = new StringBuilder(data.length);
+                for (byte byteChar : data)
+                    stringBuilder.append(String.format("%02X ", byteChar));
+                intent.putExtra(EXTRA_DATA, new String(data) + "\n" +stringBuilder.toString());
             }
         }
         sendBroadcast(intent);
@@ -222,13 +229,12 @@ public class BLEService extends Service {
         mBluetoothGatt.readCharacteristic(bluetoothGattCharacteristic);
     }
 
-    public void writeCharacteristics(BluetoothGattCharacteristic characteristics, String value){
+    public void writeCharacteristics(BluetoothGattCharacteristic characteristics, byte[] value){
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
             Toast.makeText(getApplicationContext(), "BluetoothAdapter not initialised", Toast.LENGTH_SHORT).show();
             return;
         }
         characteristics.setValue(value);
-//        boolean status =
         mBluetoothGatt.writeCharacteristic(characteristics);
     }
 

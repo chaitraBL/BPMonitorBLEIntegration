@@ -5,6 +5,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+//import org.apache.commons.codec.binary.Hex;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -31,6 +32,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.InputType;
+import android.text.Spanned;
+import android.text.TextWatcher;
+import android.text.method.DigitsKeyListener;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,14 +48,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 @TargetApi(21)
@@ -79,7 +95,14 @@ public class MainActivity extends AppCompatActivity {
     BluetoothDevice bluetoothDevice;
     IntentFilter intentFilter;
     BluetoothManager bluetoothManager;
+    Spinner spin;
+    String item;
+    String[] formatName = {"Text", "ByteArray"};
 
+    private static final char[] HEX_ARRAY = {'0', '1', '2', '3', '4', '5', '6',
+            '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+
+    private static final String HEXES = "0123456789ABCDEF";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,13 +120,27 @@ public class MainActivity extends AppCompatActivity {
         statusText = findViewById(R.id.actual_status);
         statusText.setText("Disconnected");
 
+        spin = findViewById(R.id.spinner);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, formatName);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spin.setAdapter(dataAdapter);
+
         sendBtn = findViewById(R.id.btn_send);
         receivedMsg = findViewById(R.id.txt_receivedMsg);
         sentMsg = findViewById(R.id.ed_message);
+//        // Set the length to 8 characters
+//        sentMsg.setFilters(new InputFilter[] { new InputFilter.LengthFilter(8) });
+//
+//        // Set the keypad to numeric
+//        sentMsg.setInputType(InputType.TYPE_CLASS_NUMBER);
+//
+//        // Only allow the user to enter 0 and 1 numbers
+//        sentMsg.setKeyListener(DigitsKeyListener.getInstance("01"));
         listBluetoothDevice = new ArrayList<>();
 //        adapterBluetoothDevice = new ArrayAdapter<String>(context, R.layout.list_item);
         adapterLeScanResult = new ArrayAdapter<BluetoothDevice>(this, android.R.layout.simple_list_item_1, listBluetoothDevice);
         listView.setAdapter(adapterLeScanResult);
+
 
         listView.setOnItemClickListener(scanResultOnItemClickListener);
         checkPermissions(MainActivity.this, this);
@@ -117,22 +154,121 @@ public class MainActivity extends AppCompatActivity {
         intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
         registerReceiver(broadCastReceiver, intentFilter);
 
+        InputFilter inputFilterText = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence charSequence, int start, int end, Spanned spanned, int i2, int i3) {
+                Pattern patern = Pattern.compile("^\\p{XDigit}+$");
+
+                StringBuilder sb = new StringBuilder();
+
+                for (int i = start; i < end; i++) {
+
+                    if (!Character.isLetterOrDigit(charSequence.charAt(i)) && !Character.isSpaceChar(charSequence.charAt(i))                            ) {
+                        //is not(Letter or Digit or space);
+                        return "";
+                    }
+
+                    //Only allow characters "0123456789ABCDEF";
+                    Matcher matcher = patern.matcher(String.valueOf(charSequence.charAt(i)));
+                    if (!matcher.matches()) {
+                        return "";
+                    }
+
+                    //Add character to Strinbuilder
+                    sb.append(charSequence.charAt(i));
+
+            /*counterForSpace++;
+            if(counterForSpace>1){
+                //Restar counter contador
+                counterForSpace = 0;
+                //Add space!
+                sb.append(" ");
+            }*/
+
+                }
+                //Return text in UpperCase.
+                return  sb.toString().toUpperCase();
+            }
+        };
+
+        sentMsg.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+                if ("Text".equals(formatName)) {
+                    Log.i("TAG", "While choosing text in textfield ");
+                    sentMsg.setInputType(InputType.TYPE_CLASS_TEXT);
+                }
+
+                if ("ByteArray".equals(formatName)) {
+                    Log.i("TAG", "While choosing byte in textfield ");
+                        sentMsg.setFilters(new InputFilter[] {inputFilterText});
+                        sentMsg.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+                }
+                else {
+
+                }
+
+            }
+        });
+
+        spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                item = adapterView.getItemAtPosition(i).toString();
+//                Log.i("TAG", "item " + item);
+//                switch (item){
+//                    case "Text":
+//                        Log.i("TAG", "While choosing text in spinner ");
+//                        sentMsg.setInputType(InputType.TYPE_CLASS_TEXT);
+//                    case "ByteArray":
+//                        Log.i("TAG", "While choosing byte in spinner ");
+//                        sentMsg.setFilters(new InputFilter[] {inputFilterText});
+//                        sentMsg.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS|InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
+//                    default: return;
+//                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+
+
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String message =  sentMsg.getText().toString();
-                mNotifyCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
-                if (mNotifyCharacteristic != null) {
-                    byte[] value = message.getBytes();
-                    StringBuffer sb = new StringBuffer();
-                    for (byte b : value) {
-                        sb.append(Integer.toHexString((int) (b & 0xff)));
-                    }
-
-//                    String res = StringUtils.byteArrayInHexFormat(value);
-                    Log.i("TAG", "res " + sb.toString());
-                    mBLEService.writeCharacteristics(mNotifyCharacteristic,sb.toString());
-
+                String message = sentMsg.getText().toString();
+//                if (item.equals("Text")) {
+//                    mNotifyCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
+//                    if (mNotifyCharacteristic != null) {
+//                        Log.i("TAG", "While choosing text ");
+//                        mBLEService.writeCharacteristics(mNotifyCharacteristic, message);
+//                    }
+//                }
+//                else if (item.equals("ByteArray")) {
+                    mNotifyCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
+                    if (mNotifyCharacteristic != null) {
+                    byte[] value1 = {0x7B,0x00,0x00,0x01};
+//                        byte[] value = StringUtils.toBytes(sentMsg.getText());
+//                        Log.i("TAG", "raw data " + new BigInteger(1, value1).toString(16));
+//                        String convertedResult = new BigInteger(1, value1).toString(16);
+//                        Log.i("TAG", "While choosing byte ");
+//                        Log.i("TAG", "res " + convertedResult);
+                        mBLEService.writeCharacteristics(mNotifyCharacteristic, value1);
+//                    }
                 }
 
             }
@@ -203,6 +339,16 @@ public class MainActivity extends AppCompatActivity {
                 scanLeDevice(true);
                 return true;
 
+            case R.id.start_icon:
+                byte[] value = {0x7B,0x00,0x00,0x00,0x01,0x10,0x0A,0x00,0x01,0x00,0x1C,0x7D};
+                Log.i("TAG", "Sending " +mNotifyCharacteristic);
+                if (mNotifyCharacteristic != null) {
+                    mBLEService.writeCharacteristics(mNotifyCharacteristic, value);
+                    Log.i("TAG", "Sent ");
+
+
+                }
+                return true;
                     default:
                 return super.onOptionsItemSelected(item);
         }
@@ -369,11 +515,10 @@ public class MainActivity extends AppCompatActivity {
                 updateConnectionState("Disconnected");
             }
             else if (BLEService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
-//                displayGattServices(mBLEService.getSupportedGattServices());
                 List<BluetoothGattService> gattService = mBLEService.getSupportedGattServices();
                 Log.i("TAG", "Size " + gattService.size());
                 for (int i = 0; i < gattService.size(); i++) {
-                    BluetoothGattService service = gattService.get(4);
+                    BluetoothGattService service = gattService.get(2);
                     Log.i("Tag", "Services found " + gattService.get(i).getUuid().toString());
                     if (BLEGattAttributes.lookup(service.getUuid().toString()).matches("Service")) {
                         for (BluetoothGattCharacteristic gattCharacteristic : mBLEService.getSupportedGattCharacteristics(service)) {
@@ -393,6 +538,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 }
+
             }
             else if (BLEService.ACTION_DATA_AVAILABLE.equals(action)) {
                 displayData(intent.getStringExtra(BLEService.EXTRA_DATA));
@@ -402,7 +548,6 @@ public class MainActivity extends AppCompatActivity {
 
     private  void displayData(String data) {
             if (data != null) {
-//                Log.i("TAG", "Received msg: " + data);
                 receivedMsg.setText(data);
         }
 
