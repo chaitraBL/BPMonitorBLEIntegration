@@ -32,13 +32,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.text.Editable;
-import android.text.InputFilter;
-import android.text.InputType;
-import android.text.Spanned;
-import android.text.TextWatcher;
-import android.text.method.DigitsKeyListener;
 import android.util.Log;
+import android.util.SparseArray;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -52,26 +48,17 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
-import java.math.BigInteger;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 @TargetApi(21)
 public class MainActivity extends AppCompatActivity {
 
     List<BluetoothDevice> listBluetoothDevice;
-    ArrayAdapter<String> adapterBluetoothDevice;
+    ArrayAdapter<BluetoothDevice> adapterBluetoothDevice;
+    ArrayList<BluetoothDevice> foundDevices;
     ListAdapter adapterLeScanResult;
     private BluetoothAdapter mBluetoothAdapter;
     private int REQUEST_ENABLE_BT = 1;
@@ -84,9 +71,13 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMISSIONS_REQUEST_LOCATION = 101;
     ListView listView;
     TextView receivedMsg;
-    EditText sentMsg;
-    Button sendBtn;
+//    EditText sentMsg;
+//    Button sendBtn;
 
+    int[] pressure;
+    int[] pulse;
+
+    String receivedData;
     private boolean mConnected;
     private static final String TAG = "BluetoothLEService";
     TextView statusText;
@@ -98,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
     Spinner spin;
     String item;
     String[] formatName = {"Text", "ByteArray"};
+
+    AlertDialog.Builder builder;
 
     private static final char[] HEX_ARRAY = {'0', '1', '2', '3', '4', '5', '6',
             '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
@@ -120,14 +113,14 @@ public class MainActivity extends AppCompatActivity {
         statusText = findViewById(R.id.actual_status);
         statusText.setText("Disconnected");
 
-        spin = findViewById(R.id.spinner);
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, formatName);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spin.setAdapter(dataAdapter);
+//        spin = findViewById(R.id.spinner);
+//        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, formatName);
+//        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        spin.setAdapter(dataAdapter);
 
-        sendBtn = findViewById(R.id.btn_send);
+//        sendBtn = findViewById(R.id.btn_send);
         receivedMsg = findViewById(R.id.txt_receivedMsg);
-        sentMsg = findViewById(R.id.ed_message);
+//        sentMsg = findViewById(R.id.ed_message);
 //        // Set the length to 8 characters
 //        sentMsg.setFilters(new InputFilter[] { new InputFilter.LengthFilter(8) });
 //
@@ -136,11 +129,12 @@ public class MainActivity extends AppCompatActivity {
 //
 //        // Only allow the user to enter 0 and 1 numbers
 //        sentMsg.setKeyListener(DigitsKeyListener.getInstance("01"));
-        listBluetoothDevice = new ArrayList<>();
-//        adapterBluetoothDevice = new ArrayAdapter<String>(context, R.layout.list_item);
+        listBluetoothDevice = new ArrayList<BluetoothDevice>();
         adapterLeScanResult = new ArrayAdapter<BluetoothDevice>(this, android.R.layout.simple_list_item_1, listBluetoothDevice);
         listView.setAdapter(adapterLeScanResult);
 
+//        adapterBluetoothDevice = new ArrayAdapter<BluetoothDevice>(this, android.R.layout.activity_list_item, R.id.textView, foundDevices);
+//        listView.setAdapter(adapterBluetoothDevice);
 
         listView.setOnItemClickListener(scanResultOnItemClickListener);
         checkPermissions(MainActivity.this, this);
@@ -154,125 +148,32 @@ public class MainActivity extends AppCompatActivity {
         intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
         registerReceiver(broadCastReceiver, intentFilter);
 
-        InputFilter inputFilterText = new InputFilter() {
-            @Override
-            public CharSequence filter(CharSequence charSequence, int start, int end, Spanned spanned, int i2, int i3) {
-                Pattern patern = Pattern.compile("^\\p{XDigit}+$");
-
-                StringBuilder sb = new StringBuilder();
-
-                for (int i = start; i < end; i++) {
-
-                    if (!Character.isLetterOrDigit(charSequence.charAt(i)) && !Character.isSpaceChar(charSequence.charAt(i))                            ) {
-                        //is not(Letter or Digit or space);
-                        return "";
-                    }
-
-                    //Only allow characters "0123456789ABCDEF";
-                    Matcher matcher = patern.matcher(String.valueOf(charSequence.charAt(i)));
-                    if (!matcher.matches()) {
-                        return "";
-                    }
-
-                    //Add character to Strinbuilder
-                    sb.append(charSequence.charAt(i));
-
-            /*counterForSpace++;
-            if(counterForSpace>1){
-                //Restar counter contador
-                counterForSpace = 0;
-                //Add space!
-                sb.append(" ");
-            }*/
-
-                }
-                //Return text in UpperCase.
-                return  sb.toString().toUpperCase();
-            }
-        };
-
-        sentMsg.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-                if ("Text".equals(formatName)) {
-                    Log.i("TAG", "While choosing text in textfield ");
-                    sentMsg.setInputType(InputType.TYPE_CLASS_TEXT);
-                }
-
-                if ("ByteArray".equals(formatName)) {
-                    Log.i("TAG", "While choosing byte in textfield ");
-                        sentMsg.setFilters(new InputFilter[] {inputFilterText});
-                        sentMsg.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-                }
-                else {
-
-                }
-
-            }
-        });
-
-        spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                item = adapterView.getItemAtPosition(i).toString();
-//                Log.i("TAG", "item " + item);
-//                switch (item){
-//                    case "Text":
-//                        Log.i("TAG", "While choosing text in spinner ");
-//                        sentMsg.setInputType(InputType.TYPE_CLASS_TEXT);
-//                    case "ByteArray":
-//                        Log.i("TAG", "While choosing byte in spinner ");
-//                        sentMsg.setFilters(new InputFilter[] {inputFilterText});
-//                        sentMsg.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS|InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
-//                    default: return;
-//                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-
-
-        sendBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String message = sentMsg.getText().toString();
-//                if (item.equals("Text")) {
+//        sendBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                String message = sentMsg.getText().toString();
+////                if (item.equals("Text")) {
+////                    mNotifyCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
+////                    if (mNotifyCharacteristic != null) {
+////                        Log.i("TAG", "While choosing text ");
+////                        mBLEService.writeCharacteristics(mNotifyCharacteristic, message);
+////                    }
+////                }
+////                else if (item.equals("ByteArray")) {
 //                    mNotifyCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
 //                    if (mNotifyCharacteristic != null) {
-//                        Log.i("TAG", "While choosing text ");
-//                        mBLEService.writeCharacteristics(mNotifyCharacteristic, message);
-//                    }
+//                    byte[] value1 = {0x7B,0x00,0x00,0x01};
+////                        byte[] value = StringUtils.toBytes(sentMsg.getText());
+////                        Log.i("TAG", "raw data " + new BigInteger(1, value1).toString(16));
+////                        String convertedResult = new BigInteger(1, value1).toString(16);
+////                        Log.i("TAG", "While choosing byte ");
+////                        Log.i("TAG", "res " + convertedResult);
+//                        mBLEService.writeCharacteristics(mNotifyCharacteristic, value1);
+////                    }
 //                }
-//                else if (item.equals("ByteArray")) {
-                    mNotifyCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
-                    if (mNotifyCharacteristic != null) {
-                    byte[] value1 = {0x7B,0x00,0x00,0x01};
-//                        byte[] value = StringUtils.toBytes(sentMsg.getText());
-//                        Log.i("TAG", "raw data " + new BigInteger(1, value1).toString(16));
-//                        String convertedResult = new BigInteger(1, value1).toString(16);
-//                        Log.i("TAG", "While choosing byte ");
-//                        Log.i("TAG", "res " + convertedResult);
-                        mBLEService.writeCharacteristics(mNotifyCharacteristic, value1);
-//                    }
-                }
-
-            }
-        });
+//
+//            }
+//        });
     }
 
     AdapterView.OnItemClickListener scanResultOnItemClickListener = new AdapterView.OnItemClickListener() {
@@ -293,10 +194,11 @@ public class MainActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                                 Boolean result = mBLEService.connect(device.getAddress());
+
+//                                Intent intent = new Intent(MainActivity.this, DataTransferActivity.class);
+//                                intent.putExtra("Characteristics", mNotifyCharacteristic);
+//                                startActivity(intent);
                             }
-
-//                            Toast.makeText(getApplicationContext(), "Connected...", Toast.LENGTH_SHORT).show();
-
                         }
                     })
                     .show();
@@ -341,15 +243,52 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.start_icon:
                 byte[] value = {0x7B,0x00,0x00,0x00,0x01,0x10,0x0A,0x00,0x01,0x00,0x1C,0x7D};
-                Log.i("TAG", "Sending " +mNotifyCharacteristic);
                 if (mNotifyCharacteristic != null) {
                     mBLEService.writeCharacteristics(mNotifyCharacteristic, value);
-                    Log.i("TAG", "Sent ");
-
-
                 }
+                Log.i("TAG", "received in alert " + receivedData);
+                builder = new AlertDialog.Builder(this);
+                LayoutInflater layoutInflater = getLayoutInflater();
+
+                //this is custom dialog
+                //custom_popup_dialog contains textview only
+                View customView = layoutInflater.inflate(R.layout.custom_popup_dialog, null);
+                // reference the textview of custom_popup_dialog
+                TextView tv = customView.findViewById(R.id.tvpopup);
+
+                tv.setText(receivedData);
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (mNotifyCharacteristic != null) {
+                            mBLEService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
+                        }
+                    }
+                });
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (mNotifyCharacteristic != null) {
+                            mBLEService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
+                        }
+                    }
+                });
+
+                builder.setView(customView);
+                AlertDialog dialog = builder.create();
+                dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialogInterface) {
+//                        if (mNotifyCharacteristic.getValue() == ) {
+//
+//                        }
+                        ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                    }
+                });
+                dialog.show();
                 return true;
-                    default:
+
+                default:
                 return super.onOptionsItemSelected(item);
         }
 
@@ -450,7 +389,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onBatchScanResults(List<ScanResult> results) {
             for (ScanResult sr : results) {
-                Log.i("TAG", "scan data" + sr.getDevice());
+//                Log.i("TAG", "scan data" + sr.getDevice());
                 addBluetoothDevice(sr.getDevice());
             }
         }
@@ -475,7 +414,7 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Log.i("onLeScan", device.toString());
+//                            Log.i("onLeScan", device.toString());
                         }
                     });
                 }
@@ -483,10 +422,10 @@ public class MainActivity extends AppCompatActivity {
 
     private static IntentFilter GattUpdateIntentFilter() {
         final IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(BLEService.ACTION_GATT_CONNECTED);
-        intentFilter.addAction(BLEService.ACTION_GATT_DISCONNECTED);
-        intentFilter.addAction(BLEService.ACTION_GATT_SERVICES_DISCOVERED);
-        intentFilter.addAction(BLEService.ACTION_DATA_AVAILABLE);
+        intentFilter.addAction(Constants.ACTION_GATT_CONNECTED);
+        intentFilter.addAction(Constants.ACTION_GATT_DISCONNECTED);
+        intentFilter.addAction(Constants.ACTION_GATT_SERVICES_DISCOVERED);
+        intentFilter.addAction(Constants.ACTION_DATA_AVAILABLE);
         return intentFilter;
     }
 
@@ -504,21 +443,22 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
-            if (BLEService.ACTION_GATT_CONNECTED.equals(action)) {
+            if (Constants.ACTION_GATT_CONNECTED.equals(action)) {
 
                 mConnected = true;
                 updateConnectionState("Connected");
                 Toast.makeText(getApplicationContext(), "Connected in broadcast receiver", Toast.LENGTH_SHORT).show();
             }
-            else if (BLEService.ACTION_GATT_DISCONNECTED.equals(action)) {
+            else if (Constants.ACTION_GATT_DISCONNECTED.equals(action)) {
                 mConnected = false;
                 updateConnectionState("Disconnected");
             }
-            else if (BLEService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+            else if (Constants.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 List<BluetoothGattService> gattService = mBLEService.getSupportedGattServices();
                 Log.i("TAG", "Size " + gattService.size());
                 for (int i = 0; i < gattService.size(); i++) {
-                    BluetoothGattService service = gattService.get(2);
+                    Log.i("TAG", "looped values " + gattService.get(i));
+                    BluetoothGattService service = gattService.get(4);
                     Log.i("Tag", "Services found " + gattService.get(i).getUuid().toString());
                     if (BLEGattAttributes.lookup(service.getUuid().toString()).matches("Service")) {
                         for (BluetoothGattCharacteristic gattCharacteristic : mBLEService.getSupportedGattCharacteristics(service)) {
@@ -540,8 +480,10 @@ public class MainActivity extends AppCompatActivity {
                 }
 
             }
-            else if (BLEService.ACTION_DATA_AVAILABLE.equals(action)) {
-                displayData(intent.getStringExtra(BLEService.EXTRA_DATA));
+            else if (Constants.ACTION_DATA_AVAILABLE.equals(action)) {
+                receivedData = intent.getStringExtra(Constants.EXTRA_DATA);
+                displayData(intent.getStringExtra(Constants.EXTRA_DATA));
+//                final String rawData = intent.getStringExtra(Constants.EXTRA_DATA);
                     }
                 }
         };

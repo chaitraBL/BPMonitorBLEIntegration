@@ -30,38 +30,38 @@
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp" />
 
-    <EditText
-        android:layout_width="400dp"
-        android:layout_height="50dp"
-        android:layout_below="@+id/lelist"
-        android:id="@+id/ed_message"
-        android:layout_margin="8dp"/>
+<!--    <EditText-->
+<!--        android:layout_width="400dp"-->
+<!--        android:layout_height="50dp"-->
+<!--        android:layout_below="@+id/lelist"-->
+<!--        android:id="@+id/ed_message"-->
+<!--        android:layout_margin="8dp"/>-->
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/btn_send"
-        android:layout_below="@+id/ed_message"
-        android:text="Send"
-        android:layout_margin="8dp"/>
+<!--    <Button-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:id="@+id/btn_send"-->
+<!--        android:layout_below="@+id/ed_message"-->
+<!--        android:text="Send"-->
+<!--        android:layout_margin="8dp"/>-->
 
-    <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="149dp"
-        android:layout_height="40dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_toEndOf="@+id/btn_send"
-        app:layout_constraintHorizontal_bias="0.502"
-        android:layout_below="@+id/ed_message"
-        app:layout_constraintVertical_bias="0.498" />
+<!--    <Spinner-->
+<!--        android:id="@+id/spinner"-->
+<!--        android:layout_width="149dp"-->
+<!--        android:layout_height="40dp"-->
+<!--        android:layout_marginBottom="8dp"-->
+<!--        android:layout_marginEnd="8dp"-->
+<!--        android:layout_marginStart="8dp"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:layout_toEndOf="@+id/btn_send"-->
+<!--        app:layout_constraintHorizontal_bias="0.502"-->
+<!--        android:layout_below="@+id/ed_message"-->
+<!--        app:layout_constraintVertical_bias="0.498" />-->
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_send"
+        android:layout_below="@+id/lelist"
         android:id="@+id/txt_receivedMsg"
         android:layout_margin="8dp"/>
 

@@ -19,12 +19,14 @@ import android.os.Build;
 
 import android.os.IBinder;
 import android.util.Log;
+import android.util.SparseArray;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -35,21 +37,7 @@ public class BLEService extends Service {
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothGatt mBluetoothGatt;
 
-    private static final int STATE_DISCONNECTED = 0;
-    private static final int STATE_CONNECTING = 1;
-    private static final int STATE_CONNECTED = 2;
-
-    private static int mConnectionState = STATE_DISCONNECTED;
-    public final static String ACTION_GATT_CONNECTED =
-            "android-er.ACTION_GATT_CONNECTED";
-    public final static String ACTION_GATT_DISCONNECTED =
-            "android-er.ACTION_GATT_DISCONNECTED";
-    public final static String ACTION_GATT_SERVICES_DISCOVERED =
-            "android-er.ACTION_GATT_SERVICES_DISCOVERED";
-    public final static String ACTION_DATA_AVAILABLE =
-            "android-er.ACTION_DATA_AVAILABLE";
-    public final static String EXTRA_DATA =
-            "android-er.EXTRA_DATA";
+    private static int mConnectionState = Constants.STATE_DISCONNECTED;
 
     private final IBinder mBinder = new LocalBinder();
     private String bluetoothAddress;
@@ -68,7 +56,7 @@ public class BLEService extends Service {
 //            Log.d(TAG, "Try to use existing connection");
             Toast.makeText(getApplicationContext(), "Try to use existing connection", Toast.LENGTH_SHORT).show();
             if (mBluetoothGatt.connect()) {
-                mConnectionState = STATE_CONNECTING;
+                mConnectionState = Constants.STATE_CONNECTING;
                 Toast.makeText(getApplicationContext(), "Connecting...", Toast.LENGTH_SHORT).show();
                 return true;
             } else {
@@ -90,7 +78,7 @@ public class BLEService extends Service {
         bluetoothGattCallback.onConnectionStateChange(mBluetoothGatt, BluetoothGatt.GATT_SUCCESS, BluetoothProfile.STATE_CONNECTED);
 
         bluetoothAddress = address;
-        mConnectionState = STATE_CONNECTING;
+        mConnectionState = Constants.STATE_CONNECTING;
         return true;
     }
 
@@ -102,8 +90,8 @@ public class BLEService extends Service {
             switch (newState) {
                 case BluetoothProfile.STATE_CONNECTED:
                     if (status == BluetoothGatt.GATT_SUCCESS) {
-                        mConnectionState = STATE_CONNECTED;
-                        intentAction = ACTION_GATT_CONNECTED;
+                        mConnectionState = Constants.STATE_CONNECTED;
+                        intentAction = Constants.ACTION_GATT_CONNECTED;
                         broadcastUpdate(intentAction);
                         gatt.requestConnectionPriority(BluetoothGatt.CONNECTION_PRIORITY_HIGH);
                         gatt.requestMtu(247);
@@ -111,9 +99,9 @@ public class BLEService extends Service {
                     break;
 
                 case BluetoothProfile.STATE_DISCONNECTED:
-                    intentAction = ACTION_GATT_DISCONNECTED;
+                    intentAction = Constants.ACTION_GATT_DISCONNECTED;
                     broadcastUpdate(intentAction);
-                    mConnectionState = STATE_DISCONNECTED;
+                    mConnectionState = Constants.STATE_DISCONNECTED;
                     gatt.close();
                     break;
 
@@ -135,34 +123,16 @@ public class BLEService extends Service {
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             super.onServicesDiscovered(gatt, status);
             if (status == BluetoothGatt.GATT_SUCCESS) {
-
-//                List<BluetoothGattService> servicesList = gatt.getServices();
-//
-//                for (int i = 0; i < servicesList.size(); i++)
-//                {
-//                    BluetoothGattService bluetoothGattService = servicesList.get(i);
-//                        List<BluetoothGattCharacteristic> bluetoothGattCharacteristicList = bluetoothGattService.getCharacteristics();
-//
-//                        for (BluetoothGattCharacteristic bluetoothGattCharacteristic : bluetoothGattCharacteristicList)
-//                        {
-//                            List<BluetoothGattDescriptor> bluetoothGattDescriptorsList = bluetoothGattCharacteristic.getDescriptors();
-//
-//                            for (BluetoothGattDescriptor bluetoothGattDescriptor : bluetoothGattDescriptorsList)
-//                            {
-                                broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED);
-//                            }
-//                        }
-//                    }
-                }
+                broadcastUpdate(Constants.ACTION_GATT_SERVICES_DISCOVERED);
+            }
         }
 
         @Override
         public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicRead(gatt, characteristic, status);
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
+                broadcastUpdate(Constants.ACTION_DATA_AVAILABLE, characteristic);
                 readCharacteristic(characteristic);
-//                Toast.makeText(getApplicationContext() , "character " + characteristic, Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -170,15 +140,6 @@ public class BLEService extends Service {
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicWrite(gatt, characteristic, status);
         }
-
-        //        @Override
-//        public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, byte[] status) {
-//            super.onCharacteristicWrite(gatt, characteristic, status);
-////            Log.i("TaG", "onCharacteristicWrite " + status);
-////            if (status == BluetoothGatt.GATT_SUCCESS){
-////
-////            }
-//        }
 
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
@@ -192,7 +153,7 @@ public class BLEService extends Service {
                 Log.e(TAG, "Unable to convert message bytes to string");
             }
 //            Log.i("TAG", "message in connection change " + messageString);
-            broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
+            broadcastUpdate(Constants.ACTION_DATA_AVAILABLE, characteristic);
         }
     };
 
@@ -204,16 +165,54 @@ public class BLEService extends Service {
     public void broadcastUpdate(final String action, final BluetoothGattCharacteristic characteristic) {
         final Intent intent = new Intent(action);
 
+//        if (UUID_CHAR_LEVEL.equals(characteristic.getUuid())) {
+//            final byte[] data = characteristic.getValue();
+//            if (data != null && data.length > 0) {
+//                final StringBuilder stringBuilder = new StringBuilder(data.length);
+//                for (byte byteChar : data)
+//                    stringBuilder.append(String.format("%02X ", byteChar));
+//                intent.putExtra(Constants.EXTRA_DATA, new String(data) + "\n" +stringBuilder.toString());
+//            }
+//        }
+
         if (UUID_CHAR_LEVEL.equals(characteristic.getUuid())) {
             final byte[] data = characteristic.getValue();
             if (data != null && data.length > 0) {
-                final StringBuilder stringBuilder = new StringBuilder(data.length);
-                for (byte byteChar : data)
-                    stringBuilder.append(String.format("%02X ", byteChar));
-                intent.putExtra(EXTRA_DATA, new String(data) + "\n" +stringBuilder.toString());
+                final SparseArray<byte[]> parsed = parseAdvertisingData(data);
+                for (int i = 0; i < parsed.size(); i++) {
+//                    final int type = parsed.keyAt(i);
+                    Log.i("TAG", "i value " + i);
+                    final byte[] data1 = parsed.valueAt(i);
+                    Log.i("TAG", "data1 " + data1);
+                    final StringBuilder stringBuilder = new StringBuilder(data1.length);
+                    for (byte byteChar : data1)
+                        stringBuilder.append(String.format("%02X ", byteChar));
+                    intent.putExtra(Constants.EXTRA_DATA, new String(data) + "\n" + stringBuilder.toString());
+                }
             }
         }
         sendBroadcast(intent);
+    }
+
+    public SparseArray<byte[]> parseAdvertisingData(byte[] rawData) {
+        final SparseArray<byte[]> parsedData = new SparseArray<>();
+        for (int index = 0; index < rawData.length; ) {
+            final byte dataLength = rawData[index++];
+            if (dataLength == 0) {
+                break;
+            }
+
+            final int dataType = rawData[index];
+            if (dataType == 0) {
+                break;
+            }
+
+            byte[] data = Arrays.copyOfRange(rawData, index + 1, index + dataLength);
+            parsedData.put(dataType, data);
+
+            index += dataLength;
+        }
+        return parsedData;
     }
 
     public BLEService()
