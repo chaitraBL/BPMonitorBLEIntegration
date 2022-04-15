@@ -167,7 +167,9 @@ public class BLEService extends Service {
             if (data != null && data.length > 0) {
                 final StringBuilder stringBuilder = new StringBuilder(data.length);
                 for (byte byteChar : data) {
-                    Log.i(TAG, "byte Array " + byteChar);
+                    Log.i(TAG, "byte Array " + String.format("%02X ", byteChar));
+//                    int pressure = byteChar[7]*256+byteChar[8];
+//                    int pulse = byteChar[9]*256+byteChar[10];
                     stringBuilder.append(String.format("%02X ", byteChar));
                 }
                 intent.putExtra(Constants.EXTRA_DATA, new String(data) + "\n" +stringBuilder.toString());
