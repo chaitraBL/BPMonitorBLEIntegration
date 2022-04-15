@@ -128,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                                 Intent intent = new Intent(MainActivity.this, DataTransferActivity.class);
                                 intent.putExtra("Device", deviceAddress);
+                                intent.putExtra("DeviceName", bluetoothDevice.getName());
                                 startActivity(intent);
                             }
                         }

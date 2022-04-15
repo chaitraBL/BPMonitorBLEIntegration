@@ -174,14 +174,12 @@ public class DataTransferActivity extends AppCompatActivity {
                 List<BluetoothGattService> gattService = mBluetoothLeService.getSupportedGattServices();
                 Log.i("TAG", "Size " + gattService.size());
                 for (int i = 0; i < gattService.size(); i++) {
-                    Log.i("TAG", "looped values " + gattService.get(i));
                     BluetoothGattService service = gattService.get(4);
                     Log.i("Tag", "Services found " + gattService.get(i).getUuid().toString());
                     if (BLEGattAttributes.lookup(service.getUuid().toString()).matches("Service")) {
                         for (BluetoothGattCharacteristic gattCharacteristic : mBluetoothLeService.getSupportedGattCharacteristics(service)) {
                             Log.i("Tag", "Character found " + gattCharacteristic.getUuid().toString());
                             if (((gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) || ((gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_INDICATE) > 0)) {
-                                Log.i("TAG", "Characteristics in broadcast " + gattCharacteristic);
                                 mBluetoothLeService.setCharacteristicNotification(gattCharacteristic, true);
                                 try {
                                     Thread.sleep(350);

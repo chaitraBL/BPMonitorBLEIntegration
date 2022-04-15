@@ -113,7 +113,6 @@ public class BLEService extends Service {
         @Override
         public void onMtuChanged(BluetoothGatt gatt, int mtu, int status) {
             super.onMtuChanged(gatt, mtu, status);
-//            Log.e("MTU TAG", "MTU Change: ");
             if (status == BluetoothGatt.GATT_SUCCESS){
                         gatt.discoverServices();
             }
@@ -144,7 +143,6 @@ public class BLEService extends Service {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
             super.onCharacteristicChanged(gatt, characteristic);
-//            Log.i("TaG", "onCharacteristicChange ");
             byte[] messageBytes = characteristic.getValue();
             String messageString = null;
             try {
@@ -152,7 +150,6 @@ public class BLEService extends Service {
             } catch (UnsupportedEncodingException e) {
                 Log.e(TAG, "Unable to convert message bytes to string");
             }
-//            Log.i("TAG", "message in connection change " + messageString);
             broadcastUpdate(Constants.ACTION_DATA_AVAILABLE, characteristic);
         }
     };
@@ -165,17 +162,17 @@ public class BLEService extends Service {
     public void broadcastUpdate(final String action, final BluetoothGattCharacteristic characteristic) {
         final Intent intent = new Intent(action);
 
-        if (UUID_CHAR_LEVEL.equals(characteristic.getUuid())) {
-            final byte[] data = characteristic.getValue();
-            if (data != null && data.length > 0) {
-                final StringBuilder stringBuilder = new StringBuilder(data.length);
-                for (byte byteChar : data) {
-                    Log.i(TAG, "byte Array " + byteChar);
-                    stringBuilder.append(String.format("%02X ", byteChar));
-                }
-                intent.putExtra(Constants.EXTRA_DATA, new String(data) + "\n" +stringBuilder.toString());
-            }
-        }
+//        if (UUID_CHAR_LEVEL.equals(characteristic.getUuid())) {
+//            final byte[] data = characteristic.getValue();
+//            if (data != null && data.length > 0) {
+//                final StringBuilder stringBuilder = new StringBuilder(data.length);
+//                for (byte byteChar : data) {
+//                    Log.i(TAG, "byte Array " + byteChar);
+//                    stringBuilder.append(String.format("%02X ", byteChar));
+//                }
+//                intent.putExtra(Constants.EXTRA_DATA, new String(data) + "\n" +stringBuilder.toString());
+//            }
+//        }
 
         if (UUID_CHAR_LEVEL.equals(characteristic.getUuid())) {
             final byte[] data = characteristic.getValue();
@@ -210,7 +207,9 @@ public class BLEService extends Service {
                 break;
             }
 
+//            byte[] data1 = Arrays.copyOf(rawData, dataLength);
             byte[] data = Arrays.copyOfRange(rawData, index + 1, index + dataLength);
+
             parsedData.put(dataType, data);
 
             index += dataLength;
