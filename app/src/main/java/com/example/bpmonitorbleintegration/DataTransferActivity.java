@@ -142,6 +142,12 @@ public class DataTransferActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(broadCastReceiver);
+    }
+
     private static IntentFilter GattUpdateIntentFilter() {
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Constants.ACTION_GATT_CONNECTED);
@@ -159,7 +165,6 @@ public class DataTransferActivity extends AppCompatActivity {
 
                 mConnected = true;
                 updateConnectionState("Connected");
-                Toast.makeText(getApplicationContext(), "Connected in broadcast receiver", Toast.LENGTH_SHORT).show();
             }
             else if (Constants.ACTION_GATT_DISCONNECTED.equals(action)) {
                 mConnected = false;
@@ -193,11 +198,8 @@ public class DataTransferActivity extends AppCompatActivity {
 
             }
             else if (Constants.ACTION_DATA_AVAILABLE.equals(action)) {
-
-                Log.i(TAG, "value " + intent.getStringExtra(Constants.EXTRA_DATA));
                 receivedData = intent.getStringExtra(Constants.EXTRA_DATA);
                 displayData(intent.getStringExtra(Constants.EXTRA_DATA));
-//                final String rawData = intent.getStringExtra(Constants.EXTRA_DATA);
             }
         }
     };

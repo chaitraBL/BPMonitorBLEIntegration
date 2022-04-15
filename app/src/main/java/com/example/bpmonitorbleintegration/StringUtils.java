@@ -10,10 +10,11 @@ public class StringUtils {
     private static final String TAG = "StringUtils";
 
     private static String byteToHex(byte b) {
-        char char1 = Character.forDigit((b & 0xF0) >> 2, 16);
+        char char1 = Character.forDigit((b & 0xF0) >> 4, 16);
         char char2 = Character.forDigit((b & 0x0F), 16);
 
-        return String.format("0x%1$s%2$s", char1, char2);
+        return String.format("%1$s%2$s", char1, char2);
+//                ("0x%1$s%2$s", char1, char2);
     }
 
     public static String byteArrayInHexFormat(byte[] byteArray) {
@@ -21,7 +22,7 @@ public class StringUtils {
             return null;
         }
 
-        StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder(byteArray.length * 2);
 //        stringBuilder.append("{ ");
         for (int i = 0; i < byteArray.length; i++) {
 //            if (i > 0) {
@@ -36,7 +37,7 @@ public class StringUtils {
     }
 
     public static byte[] bytesFromString(String string) {
-        byte[] stringBytes = new byte[0];
+        byte[] stringBytes = new byte[2];
         try {
             stringBytes = string.getBytes("UTF-8");
         } catch (UnsupportedEncodingException e) {
@@ -67,6 +68,31 @@ public class StringUtils {
             sb.append((char) decimal);
         }/* www  .j  av a  2 s .c  o m*/
         return sb.toString();
+    }
+
+    public static byte[] toBytes(String str) {
+        StringBuffer convString;
+
+        // Remove hex prefix of "0x" if exists
+        if (str.length() > 1 && str.toLowerCase().startsWith("0x")) {
+            convString = new StringBuffer(str.substring(2));
+        }
+        else {
+            convString = new StringBuffer(str);
+        }
+
+        // For odd sized strings, pad on the left with a 0
+        if (convString.length() % 2 == 1) {
+            convString.insert(0, '0');
+        }
+
+        byte[] result = new byte[convString.length() / 2];
+
+        for (int i = 0; i < convString.length(); i += 2) {
+            result[i/2] = (byte) (Integer.parseInt(convString.substring(i, i + 2), 16) & 0xFF);
+        }
+
+        return result;
     }
 
 
