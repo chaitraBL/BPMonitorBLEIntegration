@@ -70,32 +70,14 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothGatt mGatt;
     private static final int PERMISSIONS_REQUEST_LOCATION = 101;
     ListView listView;
-    TextView receivedMsg;
-//    EditText sentMsg;
-//    Button sendBtn;
-
-    int[] pressure;
-    int[] pulse;
-
-    String receivedData;
-    private boolean mConnected;
+    String deviceAddress;
     private static final String TAG = "BluetoothLEService";
-    TextView statusText;
-    private BLEService mBLEService;
-    private BluetoothGattCharacteristic mNotifyCharacteristic;
     BluetoothDevice bluetoothDevice;
-    IntentFilter intentFilter;
     BluetoothManager bluetoothManager;
-    Spinner spin;
-    String item;
-    String[] formatName = {"Text", "ByteArray"};
-
-    AlertDialog.Builder builder;
 
     private static final char[] HEX_ARRAY = {'0', '1', '2', '3', '4', '5', '6',
             '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
-    private static final String HEXES = "0123456789ABCDEF";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,31 +92,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         listView = findViewById(R.id.lelist);
-        statusText = findViewById(R.id.actual_status);
-        statusText.setText("Disconnected");
-
-//        spin = findViewById(R.id.spinner);
-//        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, formatName);
-//        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        spin.setAdapter(dataAdapter);
-
-//        sendBtn = findViewById(R.id.btn_send);
-        receivedMsg = findViewById(R.id.txt_receivedMsg);
-//        sentMsg = findViewById(R.id.ed_message);
-//        // Set the length to 8 characters
-//        sentMsg.setFilters(new InputFilter[] { new InputFilter.LengthFilter(8) });
-//
-//        // Set the keypad to numeric
-//        sentMsg.setInputType(InputType.TYPE_CLASS_NUMBER);
-//
-//        // Only allow the user to enter 0 and 1 numbers
-//        sentMsg.setKeyListener(DigitsKeyListener.getInstance("01"));
         listBluetoothDevice = new ArrayList<BluetoothDevice>();
         adapterLeScanResult = new ArrayAdapter<BluetoothDevice>(this, android.R.layout.simple_list_item_1, listBluetoothDevice);
         listView.setAdapter(adapterLeScanResult);
-
-//        adapterBluetoothDevice = new ArrayAdapter<BluetoothDevice>(this, android.R.layout.activity_list_item, R.id.textView, foundDevices);
-//        listView.setAdapter(adapterBluetoothDevice);
 
         listView.setOnItemClickListener(scanResultOnItemClickListener);
         checkPermissions(MainActivity.this, this);
@@ -143,61 +103,32 @@ public class MainActivity extends AppCompatActivity {
         bluetoothManager =
                 (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
-
-        intentFilter = new IntentFilter(BluetoothDevice.ACTION_PAIRING_REQUEST);
-        intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
-        registerReceiver(broadCastReceiver, intentFilter);
-
-//        sendBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                String message = sentMsg.getText().toString();
-////                if (item.equals("Text")) {
-////                    mNotifyCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
-////                    if (mNotifyCharacteristic != null) {
-////                        Log.i("TAG", "While choosing text ");
-////                        mBLEService.writeCharacteristics(mNotifyCharacteristic, message);
-////                    }
-////                }
-////                else if (item.equals("ByteArray")) {
-//                    mNotifyCharacteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
-//                    if (mNotifyCharacteristic != null) {
-//                    byte[] value1 = {0x7B,0x00,0x00,0x01};
-////                        byte[] value = StringUtils.toBytes(sentMsg.getText());
-////                        Log.i("TAG", "raw data " + new BigInteger(1, value1).toString(16));
-////                        String convertedResult = new BigInteger(1, value1).toString(16);
-////                        Log.i("TAG", "While choosing byte ");
-////                        Log.i("TAG", "res " + convertedResult);
-//                        mBLEService.writeCharacteristics(mNotifyCharacteristic, value1);
-////                    }
-//                }
-//
-//            }
-//        });
     }
 
     AdapterView.OnItemClickListener scanResultOnItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            final BluetoothDevice device = (BluetoothDevice) adapterView.getItemAtPosition(i);
+            bluetoothDevice = (BluetoothDevice) adapterView.getItemAtPosition(i);
 
 
-            String msg = device.getAddress() + "\n"
-                    + device.getBluetoothClass().toString() + "\n"
-                    + getBTDevieType(device);
+            String msg = bluetoothDevice.getAddress() + "\n"
+                    + bluetoothDevice.getBluetoothClass().toString() + "\n"
+                    + getBTDevieType(bluetoothDevice);
+
+            deviceAddress = bluetoothDevice.getAddress();
 
             new AlertDialog.Builder(MainActivity.this)
-                    .setTitle(device.getName())
+                    .setTitle(bluetoothDevice.getName())
                     .setMessage(msg)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                                Boolean result = mBLEService.connect(device.getAddress());
 
-//                                Intent intent = new Intent(MainActivity.this, DataTransferActivity.class);
-//                                intent.putExtra("Characteristics", mNotifyCharacteristic);
-//                                startActivity(intent);
+
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                Intent intent = new Intent(MainActivity.this, DataTransferActivity.class);
+                                intent.putExtra("Device", deviceAddress);
+                                startActivity(intent);
                             }
                         }
                     })
@@ -241,53 +172,6 @@ public class MainActivity extends AppCompatActivity {
                 scanLeDevice(true);
                 return true;
 
-            case R.id.start_icon:
-                byte[] value = {0x7B,0x00,0x00,0x00,0x01,0x10,0x0A,0x00,0x01,0x00,0x1C,0x7D};
-                if (mNotifyCharacteristic != null) {
-                    mBLEService.writeCharacteristics(mNotifyCharacteristic, value);
-                }
-                Log.i("TAG", "received in alert " + receivedData);
-                builder = new AlertDialog.Builder(this);
-                LayoutInflater layoutInflater = getLayoutInflater();
-
-                //this is custom dialog
-                //custom_popup_dialog contains textview only
-                View customView = layoutInflater.inflate(R.layout.custom_popup_dialog, null);
-                // reference the textview of custom_popup_dialog
-                TextView tv = customView.findViewById(R.id.tvpopup);
-
-                tv.setText(receivedData);
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        if (mNotifyCharacteristic != null) {
-                            mBLEService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
-                        }
-                    }
-                });
-                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        if (mNotifyCharacteristic != null) {
-                            mBLEService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
-                        }
-                    }
-                });
-
-                builder.setView(customView);
-                AlertDialog dialog = builder.create();
-                dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                    @Override
-                    public void onShow(DialogInterface dialogInterface) {
-//                        if (mNotifyCharacteristic.getValue() == ) {
-//
-//                        }
-                        ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                    }
-                });
-                dialog.show();
-                return true;
-
                 default:
                 return super.onOptionsItemSelected(item);
         }
@@ -308,7 +192,6 @@ public class MainActivity extends AppCompatActivity {
                         .build();
                 filters = new ArrayList<ScanFilter>();
             }
-            registerReceiver(broadCastReceiver, GattUpdateIntentFilter());
         }
     }
 
@@ -317,7 +200,6 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
             scanLeDevice(false);
-            unregisterReceiver(broadCastReceiver);
         }
     }
 
@@ -381,8 +263,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             bluetoothDevice = result.getDevice();
-            Intent getServiceIntent = new Intent(MainActivity.this, BLEService.class);
-            bindService(getServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
             addBluetoothDevice(bluetoothDevice);
         }
 
@@ -420,15 +300,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             };
 
-    private static IntentFilter GattUpdateIntentFilter() {
-        final IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Constants.ACTION_GATT_CONNECTED);
-        intentFilter.addAction(Constants.ACTION_GATT_DISCONNECTED);
-        intentFilter.addAction(Constants.ACTION_GATT_SERVICES_DISCOVERED);
-        intentFilter.addAction(Constants.ACTION_DATA_AVAILABLE);
-        return intentFilter;
-    }
-
     public void checkPermissions(Activity activity, Context context) {
         if (ContextCompat.checkSelfPermission(context,
                 android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -436,90 +307,5 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     PERMISSIONS_REQUEST_LOCATION);
         }
-
-    }
-
-    private final BroadcastReceiver broadCastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
-            if (Constants.ACTION_GATT_CONNECTED.equals(action)) {
-
-                mConnected = true;
-                updateConnectionState("Connected");
-                Toast.makeText(getApplicationContext(), "Connected in broadcast receiver", Toast.LENGTH_SHORT).show();
-            }
-            else if (Constants.ACTION_GATT_DISCONNECTED.equals(action)) {
-                mConnected = false;
-                updateConnectionState("Disconnected");
-            }
-            else if (Constants.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
-                List<BluetoothGattService> gattService = mBLEService.getSupportedGattServices();
-                Log.i("TAG", "Size " + gattService.size());
-                for (int i = 0; i < gattService.size(); i++) {
-                    Log.i("TAG", "looped values " + gattService.get(i));
-                    BluetoothGattService service = gattService.get(4);
-                    Log.i("Tag", "Services found " + gattService.get(i).getUuid().toString());
-                    if (BLEGattAttributes.lookup(service.getUuid().toString()).matches("Service")) {
-                        for (BluetoothGattCharacteristic gattCharacteristic : mBLEService.getSupportedGattCharacteristics(service)) {
-                            Log.i("Tag", "Character found " + gattCharacteristic.getUuid().toString());
-                            if (((gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) || ((gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_INDICATE) > 0)) {
-                                Log.i("TAG", "Characteristics in broadcast " + gattCharacteristic);
-                                mBLEService.setCharacteristicNotification(gattCharacteristic, true);
-                                try {
-                                    Thread.sleep(350);
-                                } catch (InterruptedException e) {
-                                }
-                            }
-                            if (BLEGattAttributes.lookup(gattCharacteristic.getUuid().toString()).matches("Character Level")) {
-                                mNotifyCharacteristic = gattCharacteristic;
-                            }
-                        }
-                    }
-
-                }
-
-            }
-            else if (Constants.ACTION_DATA_AVAILABLE.equals(action)) {
-                receivedData = intent.getStringExtra(Constants.EXTRA_DATA);
-                displayData(intent.getStringExtra(Constants.EXTRA_DATA));
-//                final String rawData = intent.getStringExtra(Constants.EXTRA_DATA);
-                    }
-                }
-        };
-
-    private  void displayData(String data) {
-            if (data != null) {
-                receivedMsg.setText(data);
-        }
-
-    }
-
-    private final ServiceConnection mServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder service) {
-            mBLEService = ((BLEService.LocalBinder) service).getService();
-
-            if (!mBLEService.initialize()) {
-                Log.e(TAG, "Unable to initialize Bluetooth");
-//                finish();
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                mBLEService.connect(bluetoothDevice.getAddress());
-            }
-        }
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            mBLEService = null;
-        }
-    };
-
-    private void updateConnectionState(final String status) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                statusText.setText(status);
-            }
-        });
     }
 }

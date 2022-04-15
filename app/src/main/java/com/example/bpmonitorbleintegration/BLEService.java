@@ -180,7 +180,7 @@ public class BLEService extends Service {
             if (data != null && data.length > 0) {
                 final SparseArray<byte[]> parsed = parseAdvertisingData(data);
                 for (int i = 0; i < parsed.size(); i++) {
-//                    final int type = parsed.keyAt(i);
+                    final int type = parsed.keyAt(i);
                     Log.i("TAG", "i value " + i);
                     final byte[] data1 = parsed.valueAt(i);
                     Log.i("TAG", "data1 " + data1);
