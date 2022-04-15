@@ -162,35 +162,33 @@ public class BLEService extends Service {
     public void broadcastUpdate(final String action, final BluetoothGattCharacteristic characteristic) {
         final Intent intent = new Intent(action);
 
-//        if (UUID_CHAR_LEVEL.equals(characteristic.getUuid())) {
-//            final byte[] data = characteristic.getValue();
-//            if (data != null && data.length > 0) {
-//                final StringBuilder stringBuilder = new StringBuilder(data.length);
-//                for (byte byteChar : data) {
-//                    Log.i(TAG, "byte Array " + byteChar);
-//                    stringBuilder.append(String.format("%02X ", byteChar));
-//                }
-//                intent.putExtra(Constants.EXTRA_DATA, new String(data) + "\n" +stringBuilder.toString());
-//            }
-//        }
-
         if (UUID_CHAR_LEVEL.equals(characteristic.getUuid())) {
             final byte[] data = characteristic.getValue();
             if (data != null && data.length > 0) {
-                final SparseArray<byte[]> parsed = parseAdvertisingData(data);
-                Log.i(TAG, "parsed data " + parsed);
-                for (int i = 0; i < parsed.size(); i++) {
-                    final int type = parsed.keyAt(i);
-                    Log.i("TAG", "i value " + i);
-                    final byte[] data1 = parsed.valueAt(i);
-                    Log.i("TAG", "data1 " + data1);
-                    final StringBuilder stringBuilder = new StringBuilder(data1.length);
-                    for (byte byteChar : data1)
-                        stringBuilder.append(String.format("%02X ", byteChar));
-                    intent.putExtra(Constants.EXTRA_DATA, new String(data) + "\n" + stringBuilder.toString());
+                final StringBuilder stringBuilder = new StringBuilder(data.length);
+                for (byte byteChar : data) {
+                    Log.i(TAG, "byte Array " + byteChar);
+                    stringBuilder.append(String.format("%02X ", byteChar));
                 }
+                intent.putExtra(Constants.EXTRA_DATA, new String(data) + "\n" +stringBuilder.toString());
             }
         }
+
+//        if (UUID_CHAR_LEVEL.equals(characteristic.getUuid())) {
+//            final byte[] data = characteristic.getValue();
+//            if (data != null && data.length > 0) {
+//                final SparseArray<byte[]> parsed = parseAdvertisingData(data);
+//                for (int i = 0; i < parsed.size(); i++) {
+//                    final int type = parsed.keyAt(i);
+//                    final byte[] data1 = parsed.valueAt(i);
+//                    final StringBuilder stringBuilder = new StringBuilder(data1.length);
+//                    for (byte byteChar : data1) {
+//                        stringBuilder.append(String.format("%02X ", byteChar));
+//                    }
+//                    intent.putExtra(Constants.EXTRA_DATA, new String(data) + "\n" + stringBuilder.toString());
+//                }
+//            }
+//        }
         sendBroadcast(intent);
     }
 
