@@ -17,6 +17,7 @@ import android.icu.text.UFormat;
 import android.os.Binder;
 import android.os.Build;
 
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.util.SparseArray;
@@ -30,8 +31,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.WeakHashMap;
 
-public class BLEService extends Service {
+public class BLEService extends Service implements DecodeListener {
 
     private final static String TAG = BLEService.class.getSimpleName();
     private BluetoothAdapter mBluetoothAdapter;
@@ -43,6 +45,9 @@ public class BLEService extends Service {
     private String bluetoothAddress;
     public final static UUID UUID_CHAR_LEVEL = UUID.fromString(BLEGattAttributes.CLIENT_CHARACTERISTIC_CONFIG);
     public final static UUID UUI_SERVICE_LEVEL = UUID.fromString(BLEGattAttributes.CLIENT_SERVICE_CONFIG);
+    private Decoder decoder;
+
+    Handler mHandler;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public boolean connect(String address) {
@@ -123,6 +128,7 @@ public class BLEService extends Service {
             super.onServicesDiscovered(gatt, status);
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 broadcastUpdate(Constants.ACTION_GATT_SERVICES_DISCOVERED);
+                new ConnectionThread().start();
             }
         }
 
@@ -144,6 +150,7 @@ public class BLEService extends Service {
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
             super.onCharacteristicChanged(gatt, characteristic);
             byte[] messageBytes = characteristic.getValue();
+
             String messageString = null;
             try {
                 messageString = new String(messageBytes, "UTF-8");
@@ -154,6 +161,9 @@ public class BLEService extends Service {
         }
     };
 
+    public void setHandler(Handler mHandler){
+        this.mHandler = mHandler;
+    }
 
     public void broadcastUpdate(final String action) {
         final Intent intent = new Intent(action);
@@ -164,6 +174,9 @@ public class BLEService extends Service {
 
         if (UUID_CHAR_LEVEL.equals(characteristic.getUuid())) {
             final byte[] data = characteristic.getValue();
+            decoder.add(characteristic.getValue());
+            Log.i(TAG, "arrar data " + data.toString());
+
             if (data != null && data.length > 0) {
                 final StringBuilder stringBuilder = new StringBuilder(data.length);
                 for (byte byteChar : data) {
@@ -174,47 +187,10 @@ public class BLEService extends Service {
                 }
                 intent.putExtra(Constants.EXTRA_DATA, new String(data) + "\n" +stringBuilder.toString());
             }
-        }
 
-//        if (UUID_CHAR_LEVEL.equals(characteristic.getUuid())) {
-//            final byte[] data = characteristic.getValue();
-//            if (data != null && data.length > 0) {
-//                final SparseArray<byte[]> parsed = parseAdvertisingData(data);
-//                for (int i = 0; i < parsed.size(); i++) {
-//                    final int type = parsed.keyAt(i);
-//                    final byte[] data1 = parsed.valueAt(i);
-//                    final StringBuilder stringBuilder = new StringBuilder(data1.length);
-//                    for (byte byteChar : data1) {
-//                        stringBuilder.append(String.format("%02X ", byteChar));
-//                    }
-//                    intent.putExtra(Constants.EXTRA_DATA, new String(data) + "\n" + stringBuilder.toString());
-//                }
-//            }
-//        }
+
+        }
         sendBroadcast(intent);
-    }
-
-    public SparseArray<byte[]> parseAdvertisingData(byte[] rawData) {
-        final SparseArray<byte[]> parsedData = new SparseArray<>();
-        for (int index = 0; index < rawData.length; ) {
-            final byte dataLength = rawData[index++];
-            if (dataLength == 0) {
-                break;
-            }
-
-            final int dataType = rawData[index];
-            if (dataType == 0) {
-                break;
-            }
-
-//            byte[] data1 = Arrays.copyOf(rawData, dataLength);
-            byte[] data = Arrays.copyOfRange(rawData, index + 1, index + dataLength);
-
-            parsedData.put(dataType, data);
-
-            index += dataLength;
-        }
-        return parsedData;
     }
 
     public BLEService()
@@ -316,9 +292,77 @@ public class BLEService extends Service {
         return true;
     }
 
+    @Override
+    public void pressureValue(int value) {
+        Log.i(TAG, "pressure data " + value);
+        if (mHandler != null) {
+            Log.i(TAG, "pressure data " + value);
+            mHandler.obtainMessage(value).sendToTarget();
+        }
+    }
+
+    @Override
+    public void pulseValue(int value) {
+        Log.i(TAG, "pulse data " + value);
+        if (mHandler != null) {
+            Log.i(TAG, "pulse data " + value);
+            mHandler.obtainMessage(value).sendToTarget();
+        }
+    }
+
+    @Override
+    public void deviceId(int deviceId) {
+        Log.i(TAG, "device id data " + deviceId);
+        if (mHandler != null) {
+            mHandler.obtainMessage(deviceId).sendToTarget();
+        }
+    }
+
+    @Override
+    public void data1(int value) {
+        if (mHandler != null) {
+//            Log.i(TAG, "data1 " + value);
+            mHandler.obtainMessage(value).sendToTarget();
+        }
+    }
+
+    @Override
+    public void data2(int value) {
+        if (mHandler != null) {
+//            Log.i(TAG, "data2 " + value);
+            mHandler.obtainMessage(value).sendToTarget();
+        }
+    }
+
+    @Override
+    public void data3(int value) {
+        if (mHandler != null) {
+//            Log.i(TAG, "data3 " + value);
+            mHandler.obtainMessage(value).sendToTarget();
+        }
+    }
+
+    @Override
+    public void data4(int value) {
+        if (mHandler != null) {
+//            Log.i(TAG, "data4 " + value);
+            mHandler.obtainMessage(value).sendToTarget();
+        }
+    }
+
     public class LocalBinder extends Binder {
         BLEService getService() {
             return BLEService.this;
+        }
+    }
+
+    private class ConnectionThread extends Thread {
+        @Override
+        public void run() {
+            super.run();
+            decoder = new Decoder(BLEService.this);
+            decoder.start();
+
         }
     }
 }

@@ -22,6 +22,7 @@ import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.ParcelUuid;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -174,7 +176,7 @@ public class DataTransferActivity extends AppCompatActivity {
                 List<BluetoothGattService> gattService = mBluetoothLeService.getSupportedGattServices();
                 Log.i("TAG", "Size " + gattService.size());
                 for (int i = 0; i < gattService.size(); i++) {
-                    BluetoothGattService service = gattService.get(4);
+                    BluetoothGattService service = gattService.get(2);
                     Log.i("Tag", "Services found " + gattService.get(i).getUuid().toString());
                     if (BLEGattAttributes.lookup(service.getUuid().toString()).matches("Service")) {
                         for (BluetoothGattCharacteristic gattCharacteristic : mBluetoothLeService.getSupportedGattCharacteristics(service)) {
@@ -194,7 +196,37 @@ public class DataTransferActivity extends AppCompatActivity {
 
                 }
 
+//                int i = 0;
+//
+//                while (i < gattService.size()) {
+//                    Log.i(TAG, "i value " + gattService.get(i));
+//                    if ()
+//                    i++;
+//                }
             }
+
+//                Iterator<BluetoothGattService> i = gattService.iterator();
+//                while (i.hasNext()) {
+//                    BluetoothGattService service = (BluetoothGattService) i.next();
+//                    String serviceUuid = String.valueOf(service.getUuid());
+//                    Log.i(TAG, "services " + serviceUuid);
+//                    if (BLEGattAttributes.lookup(serviceUuid).matches("Service")) {
+//                        for (BluetoothGattCharacteristic gattCharacteristic : mBluetoothLeService.getSupportedGattCharacteristics(service)) {
+//                            Log.i("Tag", "Character found " + gattCharacteristic.getUuid().toString());
+//                            if (((gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) || ((gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_INDICATE) > 0)) {
+//                                mBluetoothLeService.setCharacteristicNotification(gattCharacteristic, true);
+//                                try {
+//                                    Thread.sleep(350);
+//                                } catch (InterruptedException e) {
+//                                }
+//                            }
+//                            if (BLEGattAttributes.lookup(gattCharacteristic.getUuid().toString()).matches("Character Level")) {
+//                                mNotifyCharacteristic = gattCharacteristic;
+//                            }
+//                        }
+//                    }
+//                }
+//            }
             else if (Constants.ACTION_DATA_AVAILABLE.equals(action)) {
                 receivedData = intent.getStringExtra(Constants.EXTRA_DATA);
                 displayData(intent.getStringExtra(Constants.EXTRA_DATA));
