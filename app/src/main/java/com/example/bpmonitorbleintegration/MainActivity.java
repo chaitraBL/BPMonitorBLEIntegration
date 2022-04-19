@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -105,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
         mBluetoothAdapter = bluetoothManager.getAdapter();
     }
 
+    // List of bluetooth scan devices.
     AdapterView.OnItemClickListener scanResultOnItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -124,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
+                            //Navigating to next activity on tap of bluetooth device address.
 
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                                 Intent intent = new Intent(MainActivity.this, DataTransferActivity.class);
@@ -137,6 +140,18 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private void deleteAppData() {
+        try {
+            // clearing app data.
+            String packageName = getApplicationContext().getPackageName();
+            Runtime runtime = Runtime.getRuntime();
+            runtime.exec("pm clear "+packageName);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } }
+
+        //Describes bluetooth device type.
     private String getBTDevieType(BluetoothDevice d) {
         String type = "";
 
@@ -159,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
         return type;
     }
 
+    //Menu item.
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu_file, menu);
@@ -182,6 +198,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        //Check for bluetooth enable and disable.
         if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
@@ -199,6 +216,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        //Stop scanning bluetooth devices.
         if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
             scanLeDevice(false);
         }
@@ -233,6 +251,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    //Scan for bluetooth devices.
     private void scanLeDevice(final boolean enable) {
         if (enable) {
             mHandler.postDelayed(new Runnable() {
@@ -280,6 +299,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "error code" + errorCode, Toast.LENGTH_SHORT).show();
         }
 
+        //Adding the scanned devices to listview.
         private void addBluetoothDevice(BluetoothDevice device) {
             if (!listBluetoothDevice.contains(device)) {
                 listBluetoothDevice.add(device);
@@ -301,6 +321,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             };
 
+    //Check permissions for location.
     public void checkPermissions(Activity activity, Context context) {
         if (ContextCompat.checkSelfPermission(context,
                 android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -309,4 +330,21 @@ public class MainActivity extends AppCompatActivity {
                     PERMISSIONS_REQUEST_LOCATION);
         }
     }
+
+    private void clearAppData() {
+        try {
+            // clearing app data
+            if (Build.VERSION_CODES.KITKAT <= Build.VERSION.SDK_INT) {
+                ((ActivityManager)getSystemService(ACTIVITY_SERVICE)).clearApplicationUserData(); // note: it has a return value!
+            } else {
+                String packageName = getApplicationContext().getPackageName();
+                Runtime runtime = Runtime.getRuntime();
+                runtime.exec("pm clear "+packageName);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

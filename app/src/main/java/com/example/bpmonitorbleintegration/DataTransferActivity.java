@@ -72,13 +72,7 @@ public class DataTransferActivity extends AppCompatActivity {
         registerReceiver(broadCastReceiver, intentFilter);
 
         Intent getServiceIntent = new Intent(DataTransferActivity.this, BLEService.class);
-            bindService(getServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
-
-//        if (mBluetoothLeService != null) {
-//            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-//                boolean result = mBluetoothLeService.connect(intent.getStringExtra(mainActivity.deviceAddress));
-//            }
-//        }
+        bindService(getServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
 
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
