@@ -17,6 +17,7 @@ import android.icu.text.UFormat;
 import android.os.Binder;
 import android.os.Build;
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -25,8 +26,11 @@ import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -119,7 +123,7 @@ public class BLEService extends Service implements DecodeListener {
         public void onMtuChanged(BluetoothGatt gatt, int mtu, int status) {
             super.onMtuChanged(gatt, mtu, status);
             if (status == BluetoothGatt.GATT_SUCCESS){
-                        gatt.discoverServices();
+                gatt.discoverServices();
             }
         }
 
@@ -129,6 +133,16 @@ public class BLEService extends Service implements DecodeListener {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 broadcastUpdate(Constants.ACTION_GATT_SERVICES_DISCOVERED);
                 new ConnectionThread().start();
+
+                try {
+                    // BluetoothGatt gatt
+                    final Method refresh = gatt.getClass().getMethod("refresh");
+                    if (refresh != null) {
+                        refresh.invoke(gatt);
+                    }
+                } catch (Exception e) {
+                    // Log it
+                }
             }
         }
 
@@ -150,6 +164,7 @@ public class BLEService extends Service implements DecodeListener {
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
             super.onCharacteristicChanged(gatt, characteristic);
             byte[] messageBytes = characteristic.getValue();
+//            Log.i(TAG, "onCharacteristicChange " + messageBytes);
 
             String messageString = null;
             try {
@@ -171,24 +186,26 @@ public class BLEService extends Service implements DecodeListener {
     }
     public void broadcastUpdate(final String action, final BluetoothGattCharacteristic characteristic) {
         final Intent intent = new Intent(action);
-
         if (UUID_CHAR_LEVEL.equals(characteristic.getUuid())) {
+//            Log.i(TAG, "before array data " + characteristic.getValue());
             final byte[] data = characteristic.getValue();
-            decoder.add(characteristic.getValue());
-            Log.i(TAG, "arrar data " + data.toString());
 
+//            try {
+//                wait(200);
+//                Log.i(TAG, "byte data " + data);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+            decoder.add1(data);
             if (data != null && data.length > 0) {
                 final StringBuilder stringBuilder = new StringBuilder(data.length);
                 for (byte byteChar : data) {
-                    Log.i(TAG, "byte Array " + String.format("%02X ", byteChar));
-//                    int pressure = byteChar[7]*256+byteChar[8];
-//                    int pulse = byteChar[9]*256+byteChar[10];
+//                    Log.i(TAG, "final hex " + String.format("%02X ", byteChar));
                     stringBuilder.append(String.format("%02X ", byteChar));
                 }
                 intent.putExtra(Constants.EXTRA_DATA, new String(data) + "\n" +stringBuilder.toString());
+                Arrays.fill(data,(byte) 0);
             }
-
-
         }
         sendBroadcast(intent);
     }
@@ -220,7 +237,6 @@ public class BLEService extends Service implements DecodeListener {
             Toast.makeText(getApplicationContext(), "BluetoothAdapter not initialised", Toast.LENGTH_SHORT).show();
             return;
         }
-
         mBluetoothGatt.setCharacteristicNotification(characteristic, enabled);
     }
 
