@@ -46,10 +46,10 @@ public class Decoder
                         int final_devid = Integer.valueOf(String.valueOf(dev_id1)+String.valueOf(dev_id2));
                         buffer += String.valueOf(final_devid);
                         decodeListener.deviceId(final_devid);
-//                        Arrays.fill(byteStream,(byte) 0);
-//                        Log.i("Decoder", "bytestream " + byteStream);
                         break;
                 }
+//                Arrays.fill(byteStream,(byte) 0);
+//                Log.i("Decoder", "bytestream " + byteStream);
             }
         }
     }

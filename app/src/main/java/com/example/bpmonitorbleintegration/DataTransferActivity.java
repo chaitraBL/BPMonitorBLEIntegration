@@ -196,13 +196,25 @@ public class DataTransferActivity extends AppCompatActivity {
 
                 }
 
-//                int i = 0;
-//
-//                while (i < gattService.size()) {
-//                    Log.i(TAG, "i value " + gattService.get(i));
-//                    if ()
-//                    i++;
+//                for (BluetoothGattService gattService : mBluetoothLeService.getSupportedGattServices()) {
+//                    Log.i(TAG, "Service found " + gattService.getUuid().toString());
+//                    if (BLEGattAttributes.lookup(gattService.getUuid().toString()).equals("0000ffe0-0000-1000-8000-00805f9b34fb")) {
+//                        for (BluetoothGattCharacteristic gattCharacteristic : mBluetoothLeService.getSupportedGattCharacteristics(gattService)) {
+//                            Log.i(TAG, "Character found " + gattCharacteristic.getUuid().toString());
+//                            if (((gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) || ((gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_INDICATE) > 0)) {
+//                                mBluetoothLeService.setCharacteristicNotification(gattCharacteristic, true);
+//                                try {
+//                                    Thread.sleep(350);
+//                                } catch (InterruptedException e) {
+//                                }
+//                            }
+//                            if (BLEGattAttributes.lookup(gattCharacteristic.getUuid().toString()).matches("Character Level")) {
+//                                mNotifyCharacteristic = gattCharacteristic;
+//                            }
+//                        }
+//                    }
 //                }
+
             }
 
 //                Iterator<BluetoothGattService> i = gattService.iterator();

@@ -111,7 +111,7 @@ public class BLEService extends Service implements DecodeListener {
                     intentAction = Constants.ACTION_GATT_DISCONNECTED;
                     broadcastUpdate(intentAction);
                     mConnectionState = Constants.STATE_DISCONNECTED;
-                    gatt.close();
+                    disconnect();
                     break;
 
                 default:
@@ -187,20 +187,12 @@ public class BLEService extends Service implements DecodeListener {
     public void broadcastUpdate(final String action, final BluetoothGattCharacteristic characteristic) {
         final Intent intent = new Intent(action);
         if (UUID_CHAR_LEVEL.equals(characteristic.getUuid())) {
-//            Log.i(TAG, "before array data " + characteristic.getValue());
             final byte[] data = characteristic.getValue();
 
-//            try {
-//                wait(200);
-//                Log.i(TAG, "byte data " + data);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
             decoder.add1(data);
             if (data != null && data.length > 0) {
                 final StringBuilder stringBuilder = new StringBuilder(data.length);
                 for (byte byteChar : data) {
-//                    Log.i(TAG, "final hex " + String.format("%02X ", byteChar));
                     stringBuilder.append(String.format("%02X ", byteChar));
                 }
                 intent.putExtra(Constants.EXTRA_DATA, new String(data) + "\n" +stringBuilder.toString());
