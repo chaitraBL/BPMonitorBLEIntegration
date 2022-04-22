@@ -133,6 +133,7 @@ public class DataTransferActivity extends AppCompatActivity {
 
                 builder.setView(customView);
                 AlertDialog dialog = builder.create();
+                //To hide Ok button until readings complete.
                 dialog.setOnShowListener(new DialogInterface.OnShowListener() {
                     @Override
                     public void onShow(DialogInterface dialogInterface) {
@@ -163,6 +164,7 @@ public class DataTransferActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        //Disconnect through services.
         unregisterReceiver(broadCastReceiver);
     }
 
@@ -175,12 +177,12 @@ public class DataTransferActivity extends AppCompatActivity {
         return intentFilter;
     }
 
+    //Broadcast receiver to receive services and data.
     private final BroadcastReceiver broadCastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
             if (Constants.ACTION_GATT_CONNECTED.equals(action)) {
-
                 mConnected = true;
                 updateConnectionState("Connected");
             }
@@ -245,6 +247,7 @@ public class DataTransferActivity extends AppCompatActivity {
         }
     };
 
+    //Updating connection status through text field.
     private void updateConnectionState(final String status) {
         runOnUiThread(new Runnable() {
             @Override
