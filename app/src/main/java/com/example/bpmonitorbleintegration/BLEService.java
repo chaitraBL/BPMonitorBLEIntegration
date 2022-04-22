@@ -322,14 +322,8 @@ public class BLEService extends Service implements DecodeListener {
 
     @Override
     public void pulseValue(int value) {
-//        pressureValue = value;
+        SessionManager sessionManager = new SessionManager();
 
-//        intent.putExtra(Constants.PRESSURE_DATA, value);
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        preferences.edit().putString("Pressure", String.valueOf(value));
-//        preferences.edit().putInt("Pressure", value);
-//        pressureValue = preferences.getInt("Pressure", value);
-        Log.i(TAG, "pressure value " + preferences.getString("Pressure",""));
         if (mHandler != null) {
             Log.i(TAG, "pulse data " + value);
             mHandler.obtainMessage(value).sendToTarget();
