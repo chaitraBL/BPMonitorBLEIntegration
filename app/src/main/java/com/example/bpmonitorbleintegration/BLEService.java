@@ -55,6 +55,7 @@ public class BLEService extends Service implements DecodeListener {
     private Decoder decoder;
     int cuffValue;
     int pressureValue;
+    RawDataModel dataModel;
 
     Intent intent;
     Handler mHandler;
@@ -307,13 +308,11 @@ public class BLEService extends Service implements DecodeListener {
 
     @Override
     public void pressureValue(int value) {
-        cuffValue = value;
-//        intent.putExtra(Constants.CUFF_DATA, value);
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        preferences.edit().putString("Cuff", String.valueOf(value));
-//        preferences.edit().putInt("Cuff", value);
-        Log.i(TAG, "cuff value " + preferences.getString("Cuff",""));
+        dataModel = new RawDataModel();
+//        dataModel.setCuff_val(value);
+        dataModel.setCuff_val(this,value);
 
+        Log.i(TAG, "pressure data " + value);
         if (mHandler != null) {
             Log.i(TAG, "pressure data " + value);
             mHandler.obtainMessage(value).sendToTarget();
@@ -322,8 +321,10 @@ public class BLEService extends Service implements DecodeListener {
 
     @Override
     public void pulseValue(int value) {
-        SessionManager sessionManager = new SessionManager();
+        dataModel = new RawDataModel();
+        dataModel.setPressure_val(value);
 
+        Log.i(TAG, "pulse data " + value);
         if (mHandler != null) {
             Log.i(TAG, "pulse data " + value);
             mHandler.obtainMessage(value).sendToTarget();
@@ -332,7 +333,7 @@ public class BLEService extends Service implements DecodeListener {
 
     @Override
     public void deviceId(int deviceId) {
-//        Log.i(TAG, "device Id" + deviceId);
+        Log.i(TAG, "device Id" + deviceId);
         if (mHandler != null) {
             mHandler.obtainMessage(deviceId).sendToTarget();
         }
@@ -358,12 +359,15 @@ public class BLEService extends Service implements DecodeListener {
         Log.i(TAG, "range " + value);
     }
 
-//    private void SavePreferences(String key, int value) {
-//        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
-//        SharedPreferences.Editor editor = sharedPreferences.edit();
-//        editor.putInt(key, value);
-//        editor.commit();
-//    }
+    @Override
+    public void errorMsg(int errNo) {
+        Log.i(TAG, "Error " + errNo);
+    }
+
+    @Override
+    public void ackMsg(int ackNo) {
+        Log.i(TAG, "Ack " + ackNo);
+    }
 
     public class LocalBinder extends Binder {
         BLEService getService() {

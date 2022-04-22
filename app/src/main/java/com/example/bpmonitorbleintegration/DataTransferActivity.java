@@ -29,6 +29,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -58,6 +59,7 @@ public class DataTransferActivity extends AppCompatActivity {
     Intent intent;
     Handler mHandler;
     SharedPreferences pref;
+    RawDataModel dataModel;
 
 
     @Override
@@ -89,13 +91,12 @@ public class DataTransferActivity extends AppCompatActivity {
 //                    mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, startValue);
                 }
 
-//                SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-//                int cuff = pref.getInt("Cuff",-1);
-//                int pressure = pref.getInt("Pressure", -1);
-                String cuff = pref.getString("Cuff","");
-                String pressure = pref.getString("Pressure","");
-                Log.i(TAG,"cuff " + cuff);
-                Log.i(TAG, "Pressure " + pressure);
+                dataModel = new RawDataModel();
+//                int cuff = dataModel.getCuff_val();
+                int cuff = dataModel.getCuff_val(DataTransferActivity.this);
+                int pressure = dataModel.getPressure_val();
+                Log.i(TAG, "cuff " + cuff);
+                Log.i(TAG,"pressure " + pressure);
 
                 //Alert controller.
                 builder = new AlertDialog.Builder(DataTransferActivity.this);
@@ -109,8 +110,8 @@ public class DataTransferActivity extends AppCompatActivity {
                 TextView tv = customView.findViewById(R.id.tvpopup);
 
                 TextView tv1 = customView.findViewById(R.id.tvpopup1);
-                tv.setText(cuff);
-                tv1.setText(pressure);
+                tv.setText(String.valueOf(cuff));
+                tv1.setText(String.valueOf(pressure));
                 //Send request to force STOP the readings.
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
@@ -144,7 +145,6 @@ public class DataTransferActivity extends AppCompatActivity {
                 dialog.show();
             }
         });
-
     }
 
     @Override
@@ -193,7 +193,7 @@ public class DataTransferActivity extends AppCompatActivity {
                 Log.i("TAG", "Size " + gattService.size());
                 for (int i = 0; i < gattService.size(); i++) {
                     BluetoothGattService service = gattService.get(2);
-                    Log.i("Tag", "Services found " + gattService.get(i).getUuid().toString());
+                    Log.i("Tag", "Services found " + gattService.get(2).getUuid().toString());
                     if (BLEGattAttributes.lookup(service.getUuid().toString()).matches("Service")) {
                         for (BluetoothGattCharacteristic gattCharacteristic : mBluetoothLeService.getSupportedGattCharacteristics(service)) {
                             Log.i("Tag", "Character found " + gattCharacteristic.getUuid().toString());
@@ -209,28 +209,7 @@ public class DataTransferActivity extends AppCompatActivity {
                             }
                         }
                     }
-
                 }
-
-//                for (BluetoothGattService gattService : mBluetoothLeService.getSupportedGattServices()) {
-//                    Log.i(TAG, "Service found " + gattService.getUuid().toString());
-//                    if (BLEGattAttributes.lookup(gattService.getUuid().toString()).equals("0000ffe0-0000-1000-8000-00805f9b34fb")) {
-//                        for (BluetoothGattCharacteristic gattCharacteristic : mBluetoothLeService.getSupportedGattCharacteristics(gattService)) {
-//                            Log.i(TAG, "Character found " + gattCharacteristic.getUuid().toString());
-//                            if (((gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) || ((gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_INDICATE) > 0)) {
-//                                mBluetoothLeService.setCharacteristicNotification(gattCharacteristic, true);
-//                                try {
-//                                    Thread.sleep(350);
-//                                } catch (InterruptedException e) {
-//                                }
-//                            }
-//                            if (BLEGattAttributes.lookup(gattCharacteristic.getUuid().toString()).matches("Character Level")) {
-//                                mNotifyCharacteristic = gattCharacteristic;
-//                            }
-//                        }
-//                    }
-//                }
-
             }
 
             else if (Constants.ACTION_DATA_AVAILABLE.equals(action)) {
@@ -275,3 +254,4 @@ public class DataTransferActivity extends AppCompatActivity {
         });
     }
 }
+

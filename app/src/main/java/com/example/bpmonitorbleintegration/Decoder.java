@@ -10,8 +10,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class Decoder
 {
-    private  byte[] byteStream;
-    private int dataIndex;
     String buffer = "";
     private boolean isData;
     DecodeListener decodeListener;
@@ -21,7 +19,6 @@ public class Decoder
     }
 
     public void start() {
-        byteStream = new byte[15];
 //        Arrays.fill(byteStream,(byte) 0);
         isData = false;
     }
@@ -43,20 +40,26 @@ public class Decoder
                         decodeListener.pressureValue(cuffValue);
                         decodeListener.pulseValue(pulseValue);
 
-                        Log.i("Decoder", " device id " + bytes[1] + " " + bytes[2] + " " + bytes[3] + " " + bytes[4]);
-                        int final_devid = Integer.valueOf(String.valueOf(bytes[1]) + String.valueOf(bytes[2]) + String.valueOf(bytes[3]) + String.valueOf(bytes[4]));
+                        int dev_id1 = Integer.parseInt(Integer.toHexString(ByteBuffer.wrap(new byte[]{0x00,0x00,bytes[1],bytes[2]}).getInt()));
+                        int dev_id2 = Integer.parseInt(Integer.toHexString(ByteBuffer.wrap(new byte[]{0x00,0x00,bytes[3],bytes[4]}).getInt()));
+                        int final_devid = Integer.valueOf(String.valueOf(dev_id1) + String.valueOf(dev_id2));
+//                        Log.i("Decoder", " device id " + bytes[1] + " " + bytes[2] + " " + bytes[3] + " " + bytes[4]);
+//                        int final_devid = Integer.valueOf(String.valueOf(bytes[1]) + String.valueOf(bytes[2]) + String.valueOf(bytes[3]) + String.valueOf(bytes[4]));
                         buffer += String.valueOf(final_devid);
                         decodeListener.deviceId(final_devid);
                         break;
 
                     case Constants.resultCommandID:
-
-                        int systolicValue = bytes[8] * 256 + bytes[9];
-                        Log.i("Decoder", "systolic " + systolicValue);
-                        decodeListener.systolic(systolicValue);
-                        int dystolicValue = bytes[10] * 256 + bytes[11];
-                        Log.i("Decoder", "Diastolic " + dystolicValue);
-                        decodeListener.diastolic(dystolicValue);
+////                        int systolicValue = bytes[8] * 256 + bytes[9];
+//                        int systolicValue = ByteBuffer.wrap(new byte[]{0x00,0x00,bytes[8],bytes[9]}).getInt();
+//                        Log.i("Decoder", "systolic " + systolicValue);
+//                        decodeListener.systolic(systolicValue);
+////                        int dystolicValue = bytes[10] * 256 + bytes[11];
+//                        int dystolicValue = ByteBuffer.wrap(new byte[]{0x00,0x00,bytes[10],bytes[11]}).getInt();
+//                        Log.i("Decoder", "Diastolic " + dystolicValue);
+//                        decodeListener.diastolic(dystolicValue);
+                        decodeListener.systolic(ByteBuffer.wrap(new byte[]{0x00,0x00,bytes[8],bytes[9]}).getInt());
+                        decodeListener.diastolic(ByteBuffer.wrap(new byte[]{0x00,0x00,bytes[10],bytes[11]}).getInt());
                         int heartRateValue = bytes[12];
                         Log.i("Decoder", "Heart Rate " + heartRateValue);
                         decodeListener.heartRate(heartRateValue);
@@ -67,36 +70,13 @@ public class Decoder
 
                     case Constants.errorCommandID:
                         int error = bytes[8];
-                        Log.i("Decoder", "Error " + error);
+                        decodeListener.errorMsg(error);
                         break;
 
                     case Constants.ackCommandID:
                         int ack = bytes[8];
-                        Log.i("Decoder", "Ack " + ack);
+                        decodeListener.ackMsg(ack);
                         break;
                 }
         }
-
-
-//    public void add(byte[] bytes) {
-//        if (byteStream != null) {
-//
-//            for (int i = 0; i < bytes.length; i++) {
-//
-//                Log.i("Decoder", "byte value " + bytes[i]);
-//                byteStream[dataIndex++] = bytes[i];
-//
-//                decodeListener.pressureValue(ByteBuffer.wrap(new byte[]{0x00,0x00, (byte) (byteStream[8]),byteStream[9]}).getInt());
-//                decodeListener.pulseValue(ByteBuffer.wrap(new byte[]{0x00,0x00, (byte) (byteStream[10]),byteStream[11]}).getInt());
-//
-//                int dev_id1 = Integer.parseInt(Integer.toHexString(ByteBuffer.wrap(new byte[]{0x00,0x00,byteStream[1],byteStream[2]}).getInt()));
-//                int dev_id2 = Integer.parseInt(Integer.toHexString(ByteBuffer.wrap(new byte[]{0x00,0x00,byteStream[3],byteStream[4]}).getInt()));
-//
-//                int final_devid = Integer.valueOf(String.valueOf(dev_id1)+String.valueOf(dev_id2));
-//                buffer += String.valueOf(final_devid);
-////                Log.i("Decoder","device id " + final_devid);
-//                decodeListener.deviceId(final_devid);
-//            }
-//        }
-//    }
 }

@@ -8,4 +8,6 @@ public interface DecodeListener {
     void diastolic(int value);
     void heartRate(int value);
     void range(int value);
+    void errorMsg(int errNo);
+    void ackMsg(int ackNo);
 }
