@@ -81,7 +81,6 @@ public class DataTransferActivity extends AppCompatActivity {
                     mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
                 }
 
-//               int[] cuff = getIntent().getIntArrayExtra("Cuff");
                 String cuff = getIntent().getStringExtra("Cuff");
                 String pressure = getIntent().getStringExtra("pressure");
                 Log.i(TAG,"cuff " + cuff);
