@@ -19,11 +19,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.ParcelUuid;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,6 +57,8 @@ public class DataTransferActivity extends AppCompatActivity {
     MainActivity mainActivity;
     Intent intent;
     Handler mHandler;
+    SharedPreferences pref;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,16 +77,23 @@ public class DataTransferActivity extends AppCompatActivity {
         Intent getServiceIntent = new Intent(DataTransferActivity.this, BLEService.class);
         bindService(getServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
 
+        pref = PreferenceManager.getDefaultSharedPreferences(this);
         //Send request to START the readings.
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mNotifyCharacteristic != null) {
+
+//                     byte[] startValue = {0x7B,0x04,0x16,0x00,0x01,0x01,0x09,0x01,0x00,0x39,0x7D};
                     mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
+//                    mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, startValue);
                 }
 
-                String cuff = getIntent().getStringExtra("Cuff");
-                String pressure = getIntent().getStringExtra("pressure");
+//                SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+//                int cuff = pref.getInt("Cuff",-1);
+//                int pressure = pref.getInt("Pressure", -1);
+                String cuff = pref.getString("Cuff","");
+                String pressure = pref.getString("Pressure","");
                 Log.i(TAG,"cuff " + cuff);
                 Log.i(TAG, "Pressure " + pressure);
 
@@ -263,6 +274,4 @@ public class DataTransferActivity extends AppCompatActivity {
             }
         });
     }
-
-
 }

@@ -12,6 +12,9 @@ public class Constants {
     public final static String EXTRA_DATA =
             "android-er.EXTRA_DATA";
 
+    public final static String CUFF_DATA = "android-er.EXTRA_DATA";
+
+    public final static String PRESSURE_DATA = "android-er.EXTRA_DATA";
     public static final int STATE_DISCONNECTED = 0;
     public static final int STATE_CONNECTING = 1;
     public static final int STATE_CONNECTED = 2;

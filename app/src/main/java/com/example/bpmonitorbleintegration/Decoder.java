@@ -30,6 +30,7 @@ public class Decoder
 //            Log.i("Decoder", "length of data " + bytes.length);
 //            for (int i = 0; i < bytes.length; i++) {
 //                byteStream[dataIndex++] = bytes[i];
+        Log.i("Decoder", "Command id " + bytes[5]);
                 switch (bytes[5]) {
                     case Constants.rawCommandID:
 //                        Log.i("Decoder", " value1 " + bytes[10]);
@@ -42,6 +43,7 @@ public class Decoder
                         decodeListener.pressureValue(cuffValue);
                         decodeListener.pulseValue(pulseValue);
 
+                        Log.i("Decoder", " device id " + bytes[1] + " " + bytes[2] + " " + bytes[3] + " " + bytes[4]);
                         int final_devid = Integer.valueOf(String.valueOf(bytes[1]) + String.valueOf(bytes[2]) + String.valueOf(bytes[3]) + String.valueOf(bytes[4]));
                         buffer += String.valueOf(final_devid);
                         decodeListener.deviceId(final_devid);
@@ -49,17 +51,28 @@ public class Decoder
 
                     case Constants.resultCommandID:
 
-                        int systolic = bytes[8];
-//                        int dystolic =
-                        int heartRate = bytes[12];
-                        int range = bytes[13];
-
+                        int systolicValue = bytes[8] * 256 + bytes[9];
+                        Log.i("Decoder", "systolic " + systolicValue);
+                        decodeListener.systolic(systolicValue);
+                        int dystolicValue = bytes[10] * 256 + bytes[11];
+                        Log.i("Decoder", "Diastolic " + dystolicValue);
+                        decodeListener.diastolic(dystolicValue);
+                        int heartRateValue = bytes[12];
+                        Log.i("Decoder", "Heart Rate " + heartRateValue);
+                        decodeListener.heartRate(heartRateValue);
+                        int rangeValue = bytes[13];
+                        Log.i("Decoder", "range  " + rangeValue);
+                        decodeListener.range(rangeValue);
                         break;
 
                     case Constants.errorCommandID:
+                        int error = bytes[8];
+                        Log.i("Decoder", "Error " + error);
                         break;
 
                     case Constants.ackCommandID:
+                        int ack = bytes[8];
+                        Log.i("Decoder", "Ack " + ack);
                         break;
                 }
         }

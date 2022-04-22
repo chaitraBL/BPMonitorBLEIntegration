@@ -13,6 +13,7 @@ import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.icu.text.UFormat;
 import android.os.Binder;
 import android.os.Build;
@@ -20,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.SparseArray;
 import android.widget.Toast;
@@ -196,7 +198,7 @@ public class BLEService extends Service implements DecodeListener {
             if (data != null && data.length > 0) {
                 final StringBuilder stringBuilder = new StringBuilder(data.length);
                 for (byte byteChar : data) {
-                    Log.i(TAG, "hex value " + String.format("%02X ", byteChar));
+//                    Log.i(TAG, "hex value " + String.format("%02X ", byteChar));
                     stringBuilder.append(String.format("%02X ", byteChar));
                 }
                 intent.putExtra(Constants.EXTRA_DATA, new String(data) + "\n" +stringBuilder.toString());
@@ -306,8 +308,12 @@ public class BLEService extends Service implements DecodeListener {
     @Override
     public void pressureValue(int value) {
         cuffValue = value;
-        intent = new Intent();
-        intent.putExtra("Cuff",value);
+//        intent.putExtra(Constants.CUFF_DATA, value);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        preferences.edit().putString("Cuff", String.valueOf(value));
+//        preferences.edit().putInt("Cuff", value);
+        Log.i(TAG, "cuff value " + preferences.getString("Cuff",""));
+
         if (mHandler != null) {
             Log.i(TAG, "pressure data " + value);
             mHandler.obtainMessage(value).sendToTarget();
@@ -316,9 +322,14 @@ public class BLEService extends Service implements DecodeListener {
 
     @Override
     public void pulseValue(int value) {
-        pressureValue = value;
-        intent = new Intent();
-        intent.putExtra("pressure",value);
+//        pressureValue = value;
+
+//        intent.putExtra(Constants.PRESSURE_DATA, value);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        preferences.edit().putString("Pressure", String.valueOf(value));
+//        preferences.edit().putInt("Pressure", value);
+//        pressureValue = preferences.getInt("Pressure", value);
+        Log.i(TAG, "pressure value " + preferences.getString("Pressure",""));
         if (mHandler != null) {
             Log.i(TAG, "pulse data " + value);
             mHandler.obtainMessage(value).sendToTarget();
@@ -327,11 +338,38 @@ public class BLEService extends Service implements DecodeListener {
 
     @Override
     public void deviceId(int deviceId) {
+//        Log.i(TAG, "device Id" + deviceId);
         if (mHandler != null) {
             mHandler.obtainMessage(deviceId).sendToTarget();
         }
     }
 
+    @Override
+    public void systolic(int value) {
+        Log.i(TAG, "Systa " + value);
+    }
+
+    @Override
+    public void diastolic(int value) {
+        Log.i(TAG, "Diasta " + value);
+    }
+
+    @Override
+    public void heartRate(int value) {
+        Log.i(TAG, "heart " + value);
+    }
+
+    @Override
+    public void range(int value) {
+        Log.i(TAG, "range " + value);
+    }
+
+//    private void SavePreferences(String key, int value) {
+//        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+//        SharedPreferences.Editor editor = sharedPreferences.edit();
+//        editor.putInt(key, value);
+//        editor.commit();
+//    }
 
     public class LocalBinder extends Binder {
         BLEService getService() {
