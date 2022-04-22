@@ -21,6 +21,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.ParcelUuid;
 import android.util.Log;
@@ -38,7 +39,6 @@ import java.util.UUID;
 
 public class DataTransferActivity extends AppCompatActivity {
 
-    Button writeBtn;
     ImageButton startBtn;
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothGatt mBluetoothGatt;
@@ -54,14 +54,13 @@ public class DataTransferActivity extends AppCompatActivity {
     private String TAG = "DataTransferActivity";
     MainActivity mainActivity;
     Intent intent;
+    Handler mHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(activity_data_transfer);
 
-
-//        writeBtn = findViewById(R.id.btn_write);
         startBtn = findViewById(R.id.btn_read);
         statusText = findViewById(R.id.actual_status);
         receivedMsg = findViewById(R.id.receivedMsg);
@@ -74,15 +73,23 @@ public class DataTransferActivity extends AppCompatActivity {
         Intent getServiceIntent = new Intent(DataTransferActivity.this, BLEService.class);
         bindService(getServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
 
+        //Send request to START the readings.
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mNotifyCharacteristic != null) {
                     mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
                 }
-                Log.i("TAG", "received in alert " + receivedData);
+
+//               int[] cuff = getIntent().getIntArrayExtra("Cuff");
+                String cuff = getIntent().getStringExtra("Cuff");
+                String pressure = getIntent().getStringExtra("pressure");
+                Log.i(TAG,"cuff " + cuff);
+                Log.i(TAG, "Pressure " + pressure);
+
+                //Alert controller.
                 builder = new AlertDialog.Builder(DataTransferActivity.this);
-                builder.setTitle("Readings");
+                builder.setTitle("Raw Readings");
                 LayoutInflater layoutInflater = getLayoutInflater();
 
                 //this is custom dialog
@@ -91,7 +98,10 @@ public class DataTransferActivity extends AppCompatActivity {
                 // reference the textview of custom_popup_dialog
                 TextView tv = customView.findViewById(R.id.tvpopup);
 
-                tv.setText(receivedData);
+                TextView tv1 = customView.findViewById(R.id.tvpopup1);
+                tv.setText(cuff);
+                tv1.setText(pressure);
+                //Send request to force STOP the readings.
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -100,6 +110,7 @@ public class DataTransferActivity extends AppCompatActivity {
                         }
                     }
                 });
+                //Send Ack - received readings.
                 builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -129,6 +140,7 @@ public class DataTransferActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        // Connect to the device through BLE.
             registerReceiver(broadCastReceiver, GattUpdateIntentFilter());
         if (mBluetoothLeService != null) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -211,28 +223,6 @@ public class DataTransferActivity extends AppCompatActivity {
 
             }
 
-//                Iterator<BluetoothGattService> i = gattService.iterator();
-//                while (i.hasNext()) {
-//                    BluetoothGattService service = (BluetoothGattService) i.next();
-//                    String serviceUuid = String.valueOf(service.getUuid());
-//                    Log.i(TAG, "services " + serviceUuid);
-//                    if (BLEGattAttributes.lookup(serviceUuid).matches("Service")) {
-//                        for (BluetoothGattCharacteristic gattCharacteristic : mBluetoothLeService.getSupportedGattCharacteristics(service)) {
-//                            Log.i("Tag", "Character found " + gattCharacteristic.getUuid().toString());
-//                            if (((gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) || ((gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_INDICATE) > 0)) {
-//                                mBluetoothLeService.setCharacteristicNotification(gattCharacteristic, true);
-//                                try {
-//                                    Thread.sleep(350);
-//                                } catch (InterruptedException e) {
-//                                }
-//                            }
-//                            if (BLEGattAttributes.lookup(gattCharacteristic.getUuid().toString()).matches("Character Level")) {
-//                                mNotifyCharacteristic = gattCharacteristic;
-//                            }
-//                        }
-//                    }
-//                }
-//            }
             else if (Constants.ACTION_DATA_AVAILABLE.equals(action)) {
                 receivedData = intent.getStringExtra(Constants.EXTRA_DATA);
                 displayData(intent.getStringExtra(Constants.EXTRA_DATA));

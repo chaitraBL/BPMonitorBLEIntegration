@@ -8,4 +8,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/tvpopup"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvpopup1"/>
+
 </RelativeLayout>

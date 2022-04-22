@@ -29,6 +29,7 @@ import androidx.annotation.RequiresApi;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,7 +51,10 @@ public class BLEService extends Service implements DecodeListener {
     public final static UUID UUID_CHAR_LEVEL = UUID.fromString(BLEGattAttributes.CLIENT_CHARACTERISTIC_CONFIG);
     public final static UUID UUI_SERVICE_LEVEL = UUID.fromString(BLEGattAttributes.CLIENT_SERVICE_CONFIG);
     private Decoder decoder;
+    int cuffValue;
+    int pressureValue;
 
+    Intent intent;
     Handler mHandler;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -188,15 +192,14 @@ public class BLEService extends Service implements DecodeListener {
         final Intent intent = new Intent(action);
         if (UUID_CHAR_LEVEL.equals(characteristic.getUuid())) {
             final byte[] data = characteristic.getValue();
-
             decoder.add1(data);
             if (data != null && data.length > 0) {
                 final StringBuilder stringBuilder = new StringBuilder(data.length);
                 for (byte byteChar : data) {
+                    Log.i(TAG, "hex value " + String.format("%02X ", byteChar));
                     stringBuilder.append(String.format("%02X ", byteChar));
                 }
                 intent.putExtra(Constants.EXTRA_DATA, new String(data) + "\n" +stringBuilder.toString());
-                Arrays.fill(data,(byte) 0);
             }
         }
         sendBroadcast(intent);
@@ -302,7 +305,9 @@ public class BLEService extends Service implements DecodeListener {
 
     @Override
     public void pressureValue(int value) {
-        Log.i(TAG, "pressure data " + value);
+        cuffValue = value;
+        intent = new Intent();
+        intent.putExtra("Cuff",value);
         if (mHandler != null) {
             Log.i(TAG, "pressure data " + value);
             mHandler.obtainMessage(value).sendToTarget();
@@ -311,7 +316,9 @@ public class BLEService extends Service implements DecodeListener {
 
     @Override
     public void pulseValue(int value) {
-        Log.i(TAG, "pulse data " + value);
+        pressureValue = value;
+        intent = new Intent();
+        intent.putExtra("pressure",value);
         if (mHandler != null) {
             Log.i(TAG, "pulse data " + value);
             mHandler.obtainMessage(value).sendToTarget();
@@ -320,43 +327,11 @@ public class BLEService extends Service implements DecodeListener {
 
     @Override
     public void deviceId(int deviceId) {
-        Log.i(TAG, "device id data " + deviceId);
         if (mHandler != null) {
             mHandler.obtainMessage(deviceId).sendToTarget();
         }
     }
 
-    @Override
-    public void data1(int value) {
-        if (mHandler != null) {
-//            Log.i(TAG, "data1 " + value);
-            mHandler.obtainMessage(value).sendToTarget();
-        }
-    }
-
-    @Override
-    public void data2(int value) {
-        if (mHandler != null) {
-//            Log.i(TAG, "data2 " + value);
-            mHandler.obtainMessage(value).sendToTarget();
-        }
-    }
-
-    @Override
-    public void data3(int value) {
-        if (mHandler != null) {
-//            Log.i(TAG, "data3 " + value);
-            mHandler.obtainMessage(value).sendToTarget();
-        }
-    }
-
-    @Override
-    public void data4(int value) {
-        if (mHandler != null) {
-//            Log.i(TAG, "data4 " + value);
-            mHandler.obtainMessage(value).sendToTarget();
-        }
-    }
 
     public class LocalBinder extends Binder {
         BLEService getService() {
@@ -370,7 +345,7 @@ public class BLEService extends Service implements DecodeListener {
             super.run();
             decoder = new Decoder(BLEService.this);
             decoder.start();
-
+            setHandler(mHandler);
         }
     }
 }
