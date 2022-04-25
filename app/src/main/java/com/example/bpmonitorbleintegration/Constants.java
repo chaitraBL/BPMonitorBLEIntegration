@@ -20,8 +20,8 @@ public class Constants {
     public static final int STATE_CONNECTED = 2;
 
     public static final byte[] startValue = {0x7B,0x00,0x00,0x00,0x01,0x10,0x0A,0x00,0x01,0x00,0x1C,0x7D};
-    public static final byte rawCommandID = 17;
-    public static final byte resultCommandID = 18;
-    public static final byte errorCommandID = 19;
-    public static final byte ackCommandID = 20;
+    public static final byte RAW_COMMANDID = 17;
+    public static final byte RESULT_COMMANDID = 18;
+    public static final byte ERROR_COMMANDID = 19;
+    public static final byte ACK_COMMANDID = 20;
 }

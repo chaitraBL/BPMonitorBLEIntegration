@@ -24,6 +24,7 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.SparseArray;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
@@ -56,20 +57,25 @@ public class BLEService extends Service implements DecodeListener {
     int cuffValue;
     int pressureValue;
     RawDataModel dataModel;
+    public int systalic;
+    public int dystolic;
+    public int rate;
+    public int range;
+    public long pressure;
 
+    DecodeListener decodeListener;
     Intent intent;
     Handler mHandler;
 
+    // To connect to bluetooth device and gatt services.
     @RequiresApi(api = Build.VERSION_CODES.O)
     public boolean connect(String address) {
         if (mBluetoothAdapter == null || address == null) {
-//            Log.w("TAG", "BluetoothAdapter not initialize or unspecified address");
             Toast.makeText(getApplicationContext(), "BluetoothAdapter not initialize or unspecified address", Toast.LENGTH_SHORT).show();
             return false;
         }
         bluetoothGattCallback.onConnectionStateChange(mBluetoothGatt, BluetoothGatt.GATT_SUCCESS, BluetoothProfile.STATE_CONNECTING);
         if (mBluetoothAdapter != null && address.equals(bluetoothAddress) && mBluetoothGatt != null) {
-//            Log.d(TAG, "Try to use existing connection");
             Toast.makeText(getApplicationContext(), "Try to use existing connection", Toast.LENGTH_SHORT).show();
             if (mBluetoothGatt.connect()) {
                 mConnectionState = Constants.STATE_CONNECTING;
@@ -82,7 +88,6 @@ public class BLEService extends Service implements DecodeListener {
         }
         final BluetoothDevice bluetoothDevice = mBluetoothAdapter.getRemoteDevice(address);
         if (bluetoothDevice == null) {
-//            Log.w(TAG, "Device not found");
             Toast.makeText(getApplicationContext(), "Device not found ", Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -98,6 +103,7 @@ public class BLEService extends Service implements DecodeListener {
         return true;
     }
 
+    // BluetoothGatt callback to connect, discover services etc...
     private final BluetoothGattCallback bluetoothGattCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
@@ -170,15 +176,15 @@ public class BLEService extends Service implements DecodeListener {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
             super.onCharacteristicChanged(gatt, characteristic);
-            byte[] messageBytes = characteristic.getValue();
-//            Log.i(TAG, "onCharacteristicChange " + messageBytes);
-
-            String messageString = null;
-            try {
-                messageString = new String(messageBytes, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                Log.e(TAG, "Unable to convert message bytes to string");
-            }
+//            byte[] messageBytes = characteristic.getValue();
+////            Log.i(TAG, "onCharacteristicChange " + messageBytes);
+//
+//            String messageString = null;
+//            try {
+//                messageString = new String(messageBytes, "UTF-8");
+//            } catch (UnsupportedEncodingException e) {
+//                Log.e(TAG, "Unable to convert message bytes to string");
+//            }
             broadcastUpdate(Constants.ACTION_DATA_AVAILABLE, characteristic);
         }
     };
@@ -187,32 +193,49 @@ public class BLEService extends Service implements DecodeListener {
         this.mHandler = mHandler;
     }
 
-    public void broadcastUpdate(final String action) {
+    private void broadcastUpdate(final String action) {
         final Intent intent = new Intent(action);
         sendBroadcast(intent);
     }
-    public void broadcastUpdate(final String action, final BluetoothGattCharacteristic characteristic) {
+
+    // To retrieve the packets from device.
+    private void broadcastUpdate(final String action, final BluetoothGattCharacteristic characteristic) {
         final Intent intent = new Intent(action);
         if (UUID_CHAR_LEVEL.equals(characteristic.getUuid())) {
             final byte[] data = characteristic.getValue();
+            Log.i(TAG, "data " + data);
             decoder.add1(data);
+
+            switch (data[5]) {
+                case Constants.RAW_COMMANDID:
+                    int cuffValue = data[8] * 256 + data[9];
+//                        Log.i(TAG, "pressure value in BLE " + cuffValue);
+                    int pulseValue = data[10] * 256 + data[11];
+//                        Log.i(TAG, "pulse value in BLE " + pulseValue);
+                    intent.putExtra(Constants.EXTRA_DATA, cuffValue + " / " + pulseValue);
+                    break;
+            }
+
+//             To convert data to hex value.
             if (data != null && data.length > 0) {
                 final StringBuilder stringBuilder = new StringBuilder(data.length);
                 for (byte byteChar : data) {
-//                    Log.i(TAG, "hex value " + String.format("%02X ", byteChar));
-                    stringBuilder.append(String.format("%02X ", byteChar));
+                    Log.i(TAG, "hex value " + String.format("%02X ", byteChar));
+//                    stringBuilder.append(String.format("%02X ", byteChar));
                 }
-                intent.putExtra(Constants.EXTRA_DATA, new String(data) + "\n" +stringBuilder.toString());
+//                intent.putExtra(Constants.EXTRA_DATA, new String(data) + "\n" +stringBuilder.toString());
             }
         }
         sendBroadcast(intent);
     }
 
+    // Constructor
     public BLEService()
     {
 
     }
 
+    // To read the data.
     public void readCharacteristic(BluetoothGattCharacteristic bluetoothGattCharacteristic) {
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
             Toast.makeText(getApplicationContext(), "BluetoothAdapter not initialised", Toast.LENGTH_SHORT).show();
@@ -221,6 +244,7 @@ public class BLEService extends Service implements DecodeListener {
         mBluetoothGatt.readCharacteristic(bluetoothGattCharacteristic);
     }
 
+    //To write data to the device.
     public void writeCharacteristics(BluetoothGattCharacteristic characteristics, byte[] value){
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
             Toast.makeText(getApplicationContext(), "BluetoothAdapter not initialised", Toast.LENGTH_SHORT).show();
@@ -229,6 +253,7 @@ public class BLEService extends Service implements DecodeListener {
         characteristics.setValue(value);
         mBluetoothGatt.writeCharacteristic(characteristics);
     }
+
 
     public void setCharacteristicNotification( BluetoothGattCharacteristic characteristic, boolean enabled) {
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
@@ -256,12 +281,14 @@ public class BLEService extends Service implements DecodeListener {
 
     }
 
+    // To get list of gatt services from bluetooth device.
     public List<BluetoothGattService> getSupportedGattServices() {
         if (mBluetoothGatt == null) return null;
 
         return mBluetoothGatt.getServices();
     }
 
+    // To get list of gatt characteristics from bluetooth device.
     public List<BluetoothGattCharacteristic> getSupportedGattCharacteristics(BluetoothGattService service) {
         if (mBluetoothGatt == null){
             return null;
@@ -307,29 +334,37 @@ public class BLEService extends Service implements DecodeListener {
     }
 
     @Override
-    public void pressureValue(int value) {
-        dataModel = new RawDataModel();
-//        dataModel.setCuff_val(value);
-        dataModel.setCuff_val(this,value);
+    public void pressureValue(int value1, int value2) {
+        pressure = value1;
+        //To save integer value
+//        SharedPreferences preference = getSharedPreferences("SharedPref", 0);
+//        SharedPreferences.Editor editor = preference.edit();
+//        editor.putInt("Cuff",value1);
+//        editor.putInt("Pulse",value2);
+//        editor.apply();
 
-        Log.i(TAG, "pressure data " + value);
         if (mHandler != null) {
-            Log.i(TAG, "pressure data " + value);
-            mHandler.obtainMessage(value).sendToTarget();
+//            Log.i(TAG, " pressure value " + value1 + " " + value2);
+            mHandler.obtainMessage(Constants.RAW_COMMANDID,value1,value2);
         }
     }
 
-    @Override
-    public void pulseValue(int value) {
-        dataModel = new RawDataModel();
-        dataModel.setPressure_val(value);
 
-        Log.i(TAG, "pulse data " + value);
-        if (mHandler != null) {
-            Log.i(TAG, "pulse data " + value);
-            mHandler.obtainMessage(value).sendToTarget();
-        }
-    }
+//    @Override
+//    public void pressureValue(long value1, long value2) {
+//        pressure = value1;
+//        //To save integer value
+////        SharedPreferences preference = getSharedPreferences("SharedPref", 0);
+////        SharedPreferences.Editor editor = preference.edit();
+////        editor.putInt("Cuff",value1);
+////        editor.putInt("Pulse",value2);
+////        editor.apply();
+//
+//        if (mHandler != null) {
+////            Log.i(TAG, " pressure value " + value1 + " " + value2);
+////            mHandler.obtainMessage(Constants.RAW_COMMANDID,int(value1),value2);
+//        }
+//    }
 
     @Override
     public void deviceId(int deviceId) {
@@ -342,21 +377,25 @@ public class BLEService extends Service implements DecodeListener {
     @Override
     public void systolic(int value) {
         Log.i(TAG, "Systa " + value);
+        systalic = value;
     }
 
     @Override
     public void diastolic(int value) {
         Log.i(TAG, "Diasta " + value);
+        dystolic = value;
     }
 
     @Override
     public void heartRate(int value) {
         Log.i(TAG, "heart " + value);
+        rate = value;
     }
 
     @Override
     public void range(int value) {
         Log.i(TAG, "range " + value);
+        range = value;
     }
 
     @Override
@@ -381,7 +420,7 @@ public class BLEService extends Service implements DecodeListener {
             super.run();
             decoder = new Decoder(BLEService.this);
             decoder.start();
-            setHandler(mHandler);
+//            setHandler(mHandler);
         }
     }
 }

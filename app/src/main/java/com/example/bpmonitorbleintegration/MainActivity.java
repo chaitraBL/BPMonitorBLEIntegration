@@ -127,7 +127,6 @@ public class MainActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
 
                             //Navigating to next activity on tap of bluetooth device address.
-
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                                 Intent intent = new Intent(MainActivity.this, DataTransferActivity.class);
                                 intent.putExtra("Device", deviceAddress);
@@ -139,17 +138,6 @@ public class MainActivity extends AppCompatActivity {
                     .show();
         }
     };
-
-    private void deleteAppData() {
-        try {
-            // clearing app data.
-            String packageName = getApplicationContext().getPackageName();
-            Runtime runtime = Runtime.getRuntime();
-            runtime.exec("pm clear "+packageName);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } }
 
         //Describes bluetooth device type.
     private String getBTDevieType(BluetoothDevice d) {
@@ -328,22 +316,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     PERMISSIONS_REQUEST_LOCATION);
-        }
-    }
-
-    private void clearAppData() {
-        try {
-            // clearing app data
-            if (Build.VERSION_CODES.KITKAT <= Build.VERSION.SDK_INT) {
-                ((ActivityManager)getSystemService(ACTIVITY_SERVICE)).clearApplicationUserData(); // note: it has a return value!
-            } else {
-                String packageName = getApplicationContext().getPackageName();
-                Runtime runtime = Runtime.getRuntime();
-                runtime.exec("pm clear "+packageName);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 

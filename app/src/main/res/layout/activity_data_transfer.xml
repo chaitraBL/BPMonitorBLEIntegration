@@ -27,11 +27,84 @@
         android:layout_below="@+id/txt_status"
         android:src="@drawable/ic_baseline_add_circle_24"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/final_val"
+        android:layout_margin="8dp"
+        android:layout_toRightOf="@+id/btn_read"
+        android:layout_below="@id/txt_status"
+        android:text="Read"/>
+
+<!--    <TextView-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:id="@+id/receivedMsg"-->
+<!--        android:layout_below="@+id/btn_read"-->
+<!--        android:layout_margin="8dp"/>-->
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/receivedMsg"
-        android:layout_below="@+id/btn_read"/>
+        android:id="@+id/systa"
+        android:text="Systolic"
+        android:layout_below="@+id/btn_read"
+        android:layout_margin="8dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/systalic_val"
+        android:layout_toRightOf="@+id/systa"
+        android:layout_below="@+id/btn_read"
+        android:layout_margin="8dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/diasta"
+        android:text="Diastolic"
+        android:layout_below="@+id/systa"
+        android:layout_margin="8dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/dystalic_val"
+        android:layout_toRightOf="@+id/diasta"
+        android:layout_below="@+id/systalic_val"
+        android:layout_margin="8dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/rate"
+        android:text="Heart Rate"
+        android:layout_below="@+id/diasta"
+        android:layout_margin="8dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/rate_val"
+        android:layout_toRightOf="@+id/rate"
+        android:layout_below="@+id/dystalic_val"
+        android:layout_margin="8dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/range"
+        android:text="Range"
+        android:layout_below="@+id/rate"
+        android:layout_margin="8dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/range_val"
+        android:layout_toRightOf="@+id/range"
+        android:layout_below="@+id/rate_val"
+        android:layout_margin="8dp"/>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/range"
+        android:layout_margin="10dp"
+        android:id="@+id/recyclerview_tasks"/>
 
 </RelativeLayout>
