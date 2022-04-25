@@ -14,6 +14,7 @@ public class Decoder
     String buffer = "";
     private boolean isData;
     DecodeListener decodeListener;
+    BLEService mBLEservice;
 
     public Decoder(DecodeListener decodeListener) {
         this.decodeListener = decodeListener;
@@ -45,11 +46,8 @@ public class Decoder
                 case Constants.RAW_COMMANDID:
                     //Method 1: conversion of cuff and pulse pressure value.
                     int cuffValue = value[8] * 256 + value[9];
-//
                     int pulseValue = value[10] * 256 + value[11];
-//
                     decodeListener.pressureValue(cuffValue, pulseValue);
-//              decodeListener.pulseValue(pulseValue);
 
                     // Accessing device id.
 //                    int dev_id1 = Integer.parseInt(Integer.toHexString(ByteBuffer.wrap(new byte[]{0x00,0x00,bytes[1],bytes[2]}).getInt()));
@@ -88,9 +86,6 @@ public class Decoder
                     break;
             }
         }
-        else {
-
-        }
 
     }
 
@@ -115,9 +110,11 @@ public class Decoder
 
         if (checkSum == checkSumVerified)
         {
+//            mBLEservice.writeCharacteristics();
             return true;
         }
         else{
+
             return false;
         }
     }
