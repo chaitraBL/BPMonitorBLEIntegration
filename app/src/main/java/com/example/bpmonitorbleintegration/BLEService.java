@@ -47,6 +47,7 @@ public class BLEService extends Service implements DecodeListener {
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothGatt mBluetoothGatt;
 
+    DecodeListener decodeListener;
     private static int mConnectionState = Constants.STATE_DISCONNECTED;
 
     private final IBinder mBinder = new LocalBinder();
@@ -63,8 +64,7 @@ public class BLEService extends Service implements DecodeListener {
     public int range;
     public long pressure;
 
-    DecodeListener decodeListener;
-    Intent intent;
+//    Decoder mDecoder;
     Handler mHandler;
 
     // To connect to bluetooth device and gatt services.
@@ -189,6 +189,12 @@ public class BLEService extends Service implements DecodeListener {
         }
     };
 
+    // Constructor
+    public BLEService()
+    {
+
+    }
+
     public void setHandler(Handler mHandler){
         this.mHandler = mHandler;
     }
@@ -203,37 +209,103 @@ public class BLEService extends Service implements DecodeListener {
         final Intent intent = new Intent(action);
         if (UUID_CHAR_LEVEL.equals(characteristic.getUuid())) {
             final byte[] data = characteristic.getValue();
-            Log.i(TAG, "data " + data);
-            decoder.add1(data);
 
-            switch (data[5]) {
-                case Constants.RAW_COMMANDID:
-                    int cuffValue = data[8] * 256 + data[9];
-//                        Log.i(TAG, "pressure value in BLE " + cuffValue);
-                    int pulseValue = data[10] * 256 + data[11];
-//                        Log.i(TAG, "pulse value in BLE " + pulseValue);
-                    intent.putExtra(Constants.EXTRA_DATA, cuffValue + " / " + pulseValue);
-                    break;
+            String msg;
+//            To convert data to hex value.
+//            if (data != null && data.length > 0) {
+//                final StringBuilder stringBuilder = new StringBuilder(data.length);
+//                for (byte byteChar : data) {
+//                    Log.i(TAG, "hex value " + String.format("%02X ", byteChar));
+////                    stringBuilder.append(String.format("%02X ", byteChar));
+//                }
+////                intent.putExtra(Constants.EXTRA_DATA, new String(data) + "\n" +stringBuilder.toString());
+//            }
+            int length = data[6];
+            int[] value = new int[20];
+            for (int i = 0; i <= length; i++)
+            {
+//                Log.i("Decoder", "values " + i + " " + data[i]);
+                value[i] = (int) (data[i] & 0xff);
+//                Log.i("Decoder", "new values " + value[i]);
             }
 
-//             To convert data to hex value.
-            if (data != null && data.length > 0) {
-                final StringBuilder stringBuilder = new StringBuilder(data.length);
-                for (byte byteChar : data) {
-                    Log.i(TAG, "hex value " + String.format("%02X ", byteChar));
-//                    stringBuilder.append(String.format("%02X ", byteChar));
+//            Log.i("Decoder", "Command id " + (value[5]));
+
+            boolean checkSumVal = decoder.checkSumValidation(value,characteristic);
+//            Log.i("Decoder", "checksum " + checkSumVal);
+
+            if (checkSumVal == true)
+            {
+                decoder.add1(value,action);
+                switch (value[5]) {
+                    case Constants.DEVICE_COMMANDID:
+                        Log.i(TAG, "Device id " + value);
+                        Constants.deviceId = new byte[]{(byte) value[1], (byte) value[2], (byte) value[3], (byte) value[4]};
+                        break;
+                    case Constants.RAW_COMMANDID:
+                        int cuffValue = value[8] * 256 + value[9];
+                        int pulseValue = value[10] * 256 + value[11];
+                        intent.putExtra(Constants.EXTRA_DATA, cuffValue + " / " + pulseValue);
+
+                        break;
+
+                    case Constants.RESULT_COMMANDID:
+                        int systolic = value[8] * 256 + value[9];
+                        int dystolic = value[10] * 256 + value[11];
+                        int heartRateValue = value[12];
+//                        Log.i("Decoder", "Heart Rate " + heartRateValue);
+                        int rangeValue = value[13];
+//                        Log.i("Decoder", "range  " + rangeValue);
+                        intent.putExtra(Constants.EXTRA_DATA, systolic + " / " + dystolic + " / " + heartRateValue);
+                        writeCharacteristics(characteristic,Constants.checkSumError);
+                        break;
+
+                    case Constants.ERROR_COMMANDID:
+                        int error = value[8];
+                        switch (error) {
+                            case 1:
+                                msg = "Indicates cuff placement/fitment incorrect";
+                                intent.putExtra(Constants.EXTRA_DATA, msg);
+                                break;
+                            case 2:
+                                msg = "Indicates hand movement detected";
+                                intent.putExtra(Constants.EXTRA_DATA, msg);
+                                break;
+                            case 3:
+                                msg = "Indicates irregular heartbeat during measurement";
+                                intent.putExtra(Constants.EXTRA_DATA, msg);
+                                break;
+                            case 4:
+                                msg = "Indicates cuff over pressurised";
+                                intent.putExtra(Constants.EXTRA_DATA, msg);
+                                break;
+                            case 5:
+                                msg = "Indicates low battery";
+                                intent.putExtra(Constants.EXTRA_DATA, msg);
+                                break;
+                            default:
+                                msg = " ";
+                                intent.putExtra(Constants.EXTRA_DATA, msg);
+                                break;
+                        }
+                        writeCharacteristics(characteristic,Constants.ack);
+//                        decodeListener.errorMsg(error);
+
+                        break;
                 }
-//                intent.putExtra(Constants.EXTRA_DATA, new String(data) + "\n" +stringBuilder.toString());
             }
+            else {
+//                Log.i("Decoder", "Characteristics " + characteristic);
+//                Log.i("Decoder", "error " + Constants.checkSumError);
+                writeCharacteristics(characteristic,Constants.checkSumError);
+            }
+            Arrays.fill(value,(byte) 0);
+
         }
         sendBroadcast(intent);
     }
 
-    // Constructor
-    public BLEService()
-    {
 
-    }
 
     // To read the data.
     public void readCharacteristic(BluetoothGattCharacteristic bluetoothGattCharacteristic) {
@@ -349,23 +421,6 @@ public class BLEService extends Service implements DecodeListener {
         }
     }
 
-
-//    @Override
-//    public void pressureValue(long value1, long value2) {
-//        pressure = value1;
-//        //To save integer value
-////        SharedPreferences preference = getSharedPreferences("SharedPref", 0);
-////        SharedPreferences.Editor editor = preference.edit();
-////        editor.putInt("Cuff",value1);
-////        editor.putInt("Pulse",value2);
-////        editor.apply();
-//
-//        if (mHandler != null) {
-////            Log.i(TAG, " pressure value " + value1 + " " + value2);
-////            mHandler.obtainMessage(Constants.RAW_COMMANDID,int(value1),value2);
-//        }
-//    }
-
     @Override
     public void deviceId(int deviceId) {
         Log.i(TAG, "device Id" + deviceId);
@@ -376,36 +431,42 @@ public class BLEService extends Service implements DecodeListener {
 
     @Override
     public void systolic(int value) {
-        Log.i(TAG, "Systa " + value);
+//        Log.i(TAG, "Systa " + value);
         systalic = value;
     }
 
     @Override
     public void diastolic(int value) {
-        Log.i(TAG, "Diasta " + value);
+//        Log.i(TAG, "Diasta " + value);
         dystolic = value;
     }
 
     @Override
     public void heartRate(int value) {
-        Log.i(TAG, "heart " + value);
+//        Log.i(TAG, "heart " + value);
         rate = value;
     }
 
     @Override
     public void range(int value) {
-        Log.i(TAG, "range " + value);
+//        Log.i(TAG, "range " + value);
         range = value;
     }
 
     @Override
     public void errorMsg(int errNo) {
-        Log.i(TAG, "Error " + errNo);
+//        Log.i(TAG, "Error " + errNo);
+        if (mHandler != null) {
+            mHandler.obtainMessage(errNo).sendToTarget();
+        }
     }
 
     @Override
     public void ackMsg(int ackNo) {
-        Log.i(TAG, "Ack " + ackNo);
+//        Log.i(TAG, "Ack " + ackNo);
+        if (mHandler != null) {
+            mHandler.obtainMessage(ackNo).sendToTarget();
+        }
     }
 
     public class LocalBinder extends Binder {

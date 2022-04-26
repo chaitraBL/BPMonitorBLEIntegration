@@ -1,5 +1,6 @@
 package com.example.bpmonitorbleintegration;
 
+import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +16,7 @@ public class Decoder
     private boolean isData;
     DecodeListener decodeListener;
     BLEService mBLEservice;
+    DataTransferActivity dataTransferActivity;
 
     public Decoder(DecodeListener decodeListener) {
         this.decodeListener = decodeListener;
@@ -25,22 +27,8 @@ public class Decoder
         isData = false;
     }
 
-    public void add1(byte[] bytes){
-        int[] value = new int[20];
-        for (int i = 0; i <= bytes[6]; i++)
-        {
-//            Log.i("Decoder", "values " + bytes[i]);
-            value[i] = (int) (bytes[i] & 0xff);
-//            Log.i("Decoder", "new values " + value[i]);
-        }
-
-        Log.i("Decoder", "Command id " + (bytes[5]&0xff));
-
-        boolean checkSumVal = checkSumValidation(value);
-        Log.i("Decoder", "checksum " + checkSumVal);
-
-        if (checkSumVal == true)
-        {
+    public void add1(int[] value, final String action){
+//        final Intent intent = new Intent(action);
             // As per the command id data will be retrieved.
             switch (value[5]) {
                 case Constants.RAW_COMMANDID:
@@ -48,6 +36,7 @@ public class Decoder
                     int cuffValue = value[8] * 256 + value[9];
                     int pulseValue = value[10] * 256 + value[11];
                     decodeListener.pressureValue(cuffValue, pulseValue);
+//                    intent.putExtra(Constants.EXTRA_DATA, cuffValue + " / " + pulseValue);
 
                     // Accessing device id.
 //                    int dev_id1 = Integer.parseInt(Integer.toHexString(ByteBuffer.wrap(new byte[]{0x00,0x00,bytes[1],bytes[2]}).getInt()));
@@ -68,54 +57,85 @@ public class Decoder
                     int dystolic = value[10] * 256 + value[11];
                     decodeListener.diastolic(dystolic);
                     int heartRateValue = value[12];
-                    Log.i("Decoder", "Heart Rate " + heartRateValue);
+//                    Log.i("Decoder", "Heart Rate " + heartRateValue);
                     decodeListener.heartRate(heartRateValue);
                     int rangeValue = value[13];
-                    Log.i("Decoder", "range  " + rangeValue);
+//                    Log.i("Decoder", "range  " + rangeValue);
                     decodeListener.range(rangeValue);
+//                    intent.putExtra(Constants.EXTRA_DATA, systolic + " / " + dystolic + " / " + heartRateValue);
                     break;
 
                 case Constants.ERROR_COMMANDID:
                     int error = value[8];
                     decodeListener.errorMsg(error);
+//                    intent.putExtra(Constants.EXTRA_DATA, error);
                     break;
 
                 case Constants.ACK_COMMANDID:
                     int ack = value[8];
                     decodeListener.ackMsg(ack);
+//                    intent.putExtra(Constants.EXTRA_DATA, ack);
                     break;
             }
-        }
-
     }
 
         // Checking checksum conversion is true/false to retrieve data.
-    private boolean checkSumValidation(int[] data) {
-        int checkSum = data[12] * 256 + data[13];
+    public boolean checkSumValidation(int[] data, BluetoothGattCharacteristic bluetoothGattCharacteristic) {
+        int checkSum = 0;
+        switch (data[5]) {
+            case Constants.DEVICE_COMMANDID:
+                checkSum = data[8] * 256 + data[9];
+                break;
 
-        long final_checksum = 0;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            final_checksum = Integer.toUnsignedLong(checkSum);
+            case Constants.RAW_COMMANDID:
+                checkSum = data[12] * 256 + data[13];
+                break;
+
+            case Constants.RESULT_COMMANDID:
+                checkSum = data[14] * 256 + data[15];
+                break;
+
+            case Constants.ERROR_COMMANDID:
+                checkSum = data[9] * 256 + data[10];
+                break;
+
+            case Constants.ACK_COMMANDID:
+                checkSum = data[9] * 256 + data[10];
+                break;
+            default:
+                Log.i("Decoder", "Command ID not match");
+                checkSum = data[9] * 256 + data[10];
         }
-        Log.i("Decoder", "checkSum " + checkSum);
+//        Log.i("Decoder", "checkSum val " + checkSum);
         int checkSumVerified = 0;
 
-        Log.i("Decoder", "length " + data.length);
         int length = data[6];
         for (int i = 1; i <= length - 2; ++i) {
-
             checkSumVerified += data[i];
         }
-            Log.i("Decoder", "checkSumVerified " + checkSumVerified);
+//            Log.i("Decoder", "checkSumVerified " + checkSumVerified);
 
         if (checkSum == checkSumVerified)
         {
-//            mBLEservice.writeCharacteristics();
             return true;
         }
-        else{
-
+        else {
             return false;
         }
+    }
+
+    public void computeCheckSum(byte[] data){
+        int[] value = new int[20];
+        int length = data[6];
+        int newLength = value[6];
+        for (int i = 0; i <= length; i++)
+        {
+                Log.i("Decoder", "data in computeCheckSum " + i + " " + data[i]);
+            value[i] = (int) (data[i] & 0xff);
+                Log.i("Decoder", "new data in computeCheckSum " + value[i]);
+        }
+
+
+
     }
 }

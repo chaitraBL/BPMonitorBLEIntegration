@@ -89,7 +89,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/range"
-        android:text="Range"
+        android:text="MAP"
         android:layout_below="@+id/rate"
         android:layout_margin="8dp"/>
     <TextView

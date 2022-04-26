@@ -43,6 +43,7 @@ import java.lang.ref.WeakReference;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
@@ -55,7 +56,7 @@ public class DataTransferActivity extends AppCompatActivity {
     private BluetoothGatt mBluetoothGatt;
     private BLEService mBluetoothLeService;
     private String deviceAddress;
-    private BluetoothGattCharacteristic mNotifyCharacteristic;
+    public BluetoothGattCharacteristic mNotifyCharacteristic;
     private boolean mConnected;
     BluetoothDevice bluetoothDevice;
     IntentFilter intentFilter;
@@ -72,6 +73,7 @@ public class DataTransferActivity extends AppCompatActivity {
     int pressureVal;
     Button readBtn;
     RecyclerView recyclerView;
+    Decoder decoder;
 
     private Handler myHandler = new Handler(new Handler.Callback() {
         @Override
@@ -106,6 +108,8 @@ public class DataTransferActivity extends AppCompatActivity {
         intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
         registerReceiver(broadCastReceiver, intentFilter);
 
+//        decoder.start();
+
         Intent getServiceIntent = new Intent(DataTransferActivity.this, BLEService.class);
         bindService(getServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
 
@@ -116,6 +120,9 @@ public class DataTransferActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (mNotifyCharacteristic != null) {
 
+                    Log.i(TAG, "Device id " + Arrays.toString(Constants.deviceId) + " " + Constants.deviceId);
+                    Log.i(TAG, "Start value " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
+                    decoder.computeCheckSum(Constants.startValue);
 //                     byte[] startValue = {0x7B,0x04,0x16,0x00,0x01,0x01,0x09,0x01,0x00,0x39,0x7D};
                     mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
 //                    mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, startValue);
@@ -229,22 +236,25 @@ public class DataTransferActivity extends AppCompatActivity {
             }
             else if (Constants.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 List<BluetoothGattService> gattService = mBluetoothLeService.getSupportedGattServices();
-                Log.i("TAG", "Size " + gattService.size());
-                for (int i = 0; i < gattService.size(); i++) {
-                    BluetoothGattService service = gattService.get(2);
-                    Log.i("Tag", "Services found " + gattService.get(i).getUuid().toString());
-                    if (BLEGattAttributes.lookup(service.getUuid().toString()).matches("Service")) {
-                        for (BluetoothGattCharacteristic gattCharacteristic : mBluetoothLeService.getSupportedGattCharacteristics(service)) {
-                            Log.i("Tag", "Character found " + gattCharacteristic.getUuid().toString());
-                            if (((gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) || ((gattCharacteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_INDICATE) > 0)) {
-                                mBluetoothLeService.setCharacteristicNotification(gattCharacteristic, true);
-                                try {
-                                    Thread.sleep(350);
-                                } catch (InterruptedException e) {
-                                }
-                            }
-                            if (BLEGattAttributes.lookup(gattCharacteristic.getUuid().toString()).matches("Character Level")) {
+//                Log.i("TAG", "Size " + gattService.size());
+                for (BluetoothGattService service : gattService)
+                {
+//                    Log.i(TAG, service.getUuid().toString());
+//                    Log.i(TAG, BLEGattAttributes.CLIENT_SERVICE_CONFIG);
+                    if(service.getUuid().toString().equalsIgnoreCase(BLEGattAttributes.CLIENT_SERVICE_CONFIG))
+                    {
+                        List<BluetoothGattCharacteristic> gattCharacteristics =
+                                service.getCharacteristics();
+//                        Log.i(TAG, "Count is:" + gattCharacteristics.size());
+                        for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics)
+                        {
+                            if(gattCharacteristic.getUuid().toString().equalsIgnoreCase(BLEGattAttributes.CLIENT_CHARACTERISTIC_CONFIG))
+                            {
+//                                Log.i(TAG, gattCharacteristic.getUuid().toString());
+//                                Log.i(TAG, BLEGattAttributes.CLIENT_CHARACTERISTIC_CONFIG);
                                 mNotifyCharacteristic = gattCharacteristic;
+                                mBluetoothLeService.setCharacteristicNotification(gattCharacteristic,true);
+                                return;
                             }
                         }
                     }
@@ -262,7 +272,7 @@ public class DataTransferActivity extends AppCompatActivity {
         if (data != null) {
 //           receivedMsg.setText(data);
 //           receivedData = data;
-//           Log.i(TAG, "received data " + receivedData);
+           Log.i(TAG, "received data " + data);
            tv.setText(data);
         }
 
