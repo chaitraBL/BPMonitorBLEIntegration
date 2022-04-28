@@ -5,6 +5,7 @@ import static com.example.bpmonitorbleintegration.R.layout.activity_data_transfe
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.bluetooth.BluetoothAdapter;
@@ -25,6 +26,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -32,6 +34,8 @@ import android.os.ParcelUuid;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -49,11 +53,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-public class DataTransferActivity extends AppCompatActivity {
+public class DataTransferActivity extends AppCompatActivity{
 
     ImageButton startBtn;
-    private BluetoothAdapter mBluetoothAdapter;
-    private BluetoothGatt mBluetoothGatt;
     private BLEService mBluetoothLeService;
     private String deviceAddress;
     public BluetoothGattCharacteristic mNotifyCharacteristic;
@@ -61,19 +63,15 @@ public class DataTransferActivity extends AppCompatActivity {
     BluetoothDevice bluetoothDevice;
     IntentFilter intentFilter;
     AlertDialog.Builder builder;
-    String receivedData;
     TextView statusText, systolicText, diastolicText, heartRateText,rangeText, tv;
     private String TAG = "DataTransferActivity";
-    MainActivity mainActivity;
-    Intent intent;
-    Handler mHandler;
     SharedPreferences pref;
-    RawDataModel dataModel;
-    int cuffValue;
-    int pressureVal;
+
+    CountDownTimer timer;
     Button readBtn;
     RecyclerView recyclerView;
     Decoder decoder;
+    public AlertDialog dialog;
 
     private Handler myHandler = new Handler(new Handler.Callback() {
         @Override
@@ -94,7 +92,6 @@ public class DataTransferActivity extends AppCompatActivity {
 
         startBtn = findViewById(R.id.btn_read);
         statusText = findViewById(R.id.actual_status);
-//        receivedMsg = findViewById(R.id.receivedMsg);
         systolicText = findViewById(R.id.systalic_val);
         diastolicText = findViewById(R.id.dystalic_val);
         heartRateText = findViewById(R.id.rate_val);
@@ -102,13 +99,14 @@ public class DataTransferActivity extends AppCompatActivity {
         deviceAddress = getIntent().getStringExtra("Device");
         readBtn = findViewById(R.id.final_val);
         recyclerView = findViewById(R.id.recyclerview_tasks);
-//        mHandler = new MyHandler(this);
 
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         intentFilter = new IntentFilter(BluetoothDevice.ACTION_PAIRING_REQUEST);
         intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
         registerReceiver(broadCastReceiver, intentFilter);
 
-//        decoder.start();
+        //Initialising Decoder class.
+        decoder = new Decoder();
 
         Intent getServiceIntent = new Intent(DataTransferActivity.this, BLEService.class);
         bindService(getServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
@@ -119,24 +117,34 @@ public class DataTransferActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (mNotifyCharacteristic != null) {
-
-                    Log.i(TAG, "Device id " + Arrays.toString(Constants.deviceId) + " " + Constants.deviceId);
-                    Log.i(TAG, "Start value " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
-                    decoder.computeCheckSum(Constants.startValue);
-//                     byte[] startValue = {0x7B,0x04,0x16,0x00,0x01,0x01,0x09,0x01,0x00,0x39,0x7D};
+//                    Log.i(TAG, "Start value " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
+                    Constants.startValue = decoder.computeCheckSum(Constants.startValue);
+//                    Log.i(TAG, "Start value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
                     mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
-//                    mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, startValue);
+
+                    timer=  new CountDownTimer(0, 2000) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+//                            time.setText(String.valueOf(count));
+//                            count++;
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            LayoutInflater layoutInflater = getLayoutInflater();
+                            View customView = layoutInflater.inflate(R.layout.custom_popup_dialog, null);
+                            tv = customView.findViewById(R.id.tvpopup);
+                            tv.setText("Please Start again");
+                        }
+                    };
+                    timer.start();
+
                 }
 
                 //Alert controller.
                 builder = new AlertDialog.Builder(DataTransferActivity.this);
-                builder.setTitle("Raw Readings");
+                builder.setTitle("Readings");
                 LayoutInflater layoutInflater = getLayoutInflater();
-
-                //To retrieve integer value
-//                SharedPreferences settings = getSharedPreferences("SharedPref", 0);
-//                int snowDensity = settings.getInt("Cuff", 0); //0 is the default value
-//                Log.i(TAG, "Cuff pressure " + snowDensity);
 
                 //this is custom dialog
                 //custom_popup_dialog contains textview only
@@ -144,12 +152,31 @@ public class DataTransferActivity extends AppCompatActivity {
                 // reference the textview of custom_popup_dialog
                 tv = customView.findViewById(R.id.tvpopup);
                 tv.setTextSize(15);
+
                 //Send request to force STOP the readings.
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if (mNotifyCharacteristic != null) {
+                            Constants.startValue = decoder.computeCheckSum(Constants.startValue);
+//                            Log.i(TAG, "Force stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
                             mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
+                            timer=  new CountDownTimer(0, 500) {
+                                @Override
+                                public void onTick(long millisUntilFinished) {
+//                            time.setText(String.valueOf(count));
+//                            count++;
+                                }
+
+                                @Override
+                                public void onFinish() {
+//                                    LayoutInflater layoutInflater = getLayoutInflater();
+//                                    View customView = layoutInflater.inflate(R.layout.custom_popup_dialog, null);
+//                                    tv = customView.findViewById(R.id.tvpopup);
+//                                    tv.setText("Please Start again");
+                                }
+                            };
+                            timer.start();
                         }
                     }
                 });
@@ -158,27 +185,48 @@ public class DataTransferActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if (mNotifyCharacteristic != null) {
+                            Constants.startValue = decoder.computeCheckSum(Constants.startValue);
+//                            Log.i(TAG, "Stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
                             mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
+                            timer=  new CountDownTimer(0, 500) {
+                                @Override
+                                public void onTick(long millisUntilFinished) {
+//                            time.setText(String.valueOf(count));
+//                            count++;
+                                }
+
+                                @Override
+                                public void onFinish() {
+//                                    LayoutInflater layoutInflater = getLayoutInflater();
+//                                    View customView = layoutInflater.inflate(R.layout.custom_popup_dialog, null);
+//                                    tv = customView.findViewById(R.id.tvpopup);
+//                                    tv.setText("Please Start again");
+                                }
+                            };
+                            timer.start();
+                            Constants.is_resultReceived = false;
                         }
                     }
                 });
 
                 builder.setView(customView);
-                AlertDialog dialog = builder.create();
+                dialog = builder.create();
+                //Prevent dialog box from getting dismissed on back key pressed
+                dialog.setCancelable(false);
+                //Prevent dialog box from getting dismissed on outside touch
+                dialog.setCanceledOnTouchOutside(false);
                 //To hide Ok button until readings complete.
                 dialog.setOnShowListener(new DialogInterface.OnShowListener() {
                     @Override
                     public void onShow(DialogInterface dialogInterface) {
-//                        if (mNotifyCharacteristic.getValue() == ) {
-//
-//                        }
-                        ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                            ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                     }
                 });
                 dialog.show();
             }
         });
 
+        // To read final values and store it to local DB.
         readBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -212,6 +260,28 @@ public class DataTransferActivity extends AppCompatActivity {
         unregisterReceiver(broadCastReceiver);
     }
 
+    //Menu item.
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.data_menu_file, menu);
+        return super.onCreateOptionsMenu(menu);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.read_database:
+                getTasks();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
+
+// To add actions to intent filter.
     private static IntentFilter GattUpdateIntentFilter() {
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Constants.ACTION_GATT_CONNECTED);
@@ -235,6 +305,7 @@ public class DataTransferActivity extends AppCompatActivity {
                 updateConnectionState("Disconnected");
             }
             else if (Constants.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+                //Receive services and characteristics
                 List<BluetoothGattService> gattService = mBluetoothLeService.getSupportedGattServices();
 //                Log.i("TAG", "Size " + gattService.size());
                 for (BluetoothGattService service : gattService)
@@ -262,22 +333,30 @@ public class DataTransferActivity extends AppCompatActivity {
             }
 
             else if (Constants.ACTION_DATA_AVAILABLE.equals(action)) {
-//                receivedData = intent.getStringExtra(Constants.EXTRA_DATA);
                 displayData(intent.getStringExtra(Constants.EXTRA_DATA));
+
             }
         }
     };
 
     private  void displayData(String data) {
         if (data != null) {
-//           receivedMsg.setText(data);
-//           receivedData = data;
-           Log.i(TAG, "received data " + data);
+//           Log.i(TAG, "received data " + data);
            tv.setText(data);
+//           Log.i(TAG,"flag " + Constants.is_resultReceived);
+            //To enable/disable Ok button on basis of readings.
+           if (Constants.is_resultReceived == true) {
+               ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+           }
+           else
+           {
+               ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+           }
         }
 
     }
 
+    // Connect and disconnect to the services.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
@@ -314,20 +393,15 @@ public class DataTransferActivity extends AppCompatActivity {
 //        final String sMessage = message.trim();
         final String sAddress = address.trim();
 
+        // To get current time and date.
         DateFormat df = new SimpleDateFormat("HH:mm"); // Format time
         String time = df.format(Calendar.getInstance().getTime());
-        Log.i(TAG, "Time " + time);
+//        Log.i(TAG, "Time " + time);
 
-        DateFormat df1 = new SimpleDateFormat("yyyy/MM/dd"); // Format date
+//        DateFormat df1 = new SimpleDateFormat("yyyy/MM/dd"); // Format date
+        DateFormat df1 = new SimpleDateFormat("dd,MM"); // Format date
         String date = df1.format(Calendar.getInstance().getTime());
-        Log.i(TAG, "date " + date);
-//
-//        if (sMessage.isEmpty())
-//        {
-//            edCreateMessage.setError("Task required");
-//            edCreateMessage.requestFocus();
-//            return;
-//        }
+//        Log.i(TAG, "date " + date);
 
         class SaveTask extends AsyncTask<Void, Void, Void> {
 
@@ -379,9 +453,9 @@ public class DataTransferActivity extends AppCompatActivity {
                 super.onPostExecute(tasks);
                 ReadingsAdapter adapter = new ReadingsAdapter(DataTransferActivity.this, tasks);
                 recyclerView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
             }
         }
-
         GetTasks gt = new GetTasks();
         gt.execute();
     }

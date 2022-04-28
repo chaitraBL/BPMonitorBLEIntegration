@@ -19,23 +19,25 @@ public class ReadingsAdapter extends RecyclerView.Adapter<ReadingsAdapter.Readin
         this.readingList = taskList;
     }
 
+
     @Override
     public ReadingViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mCtx).inflate(R.layout.recyclerview_tasks, parent, false);
+        int height = parent.getMeasuredHeight() / 4;
+        view.setMinimumHeight(height);
         return new ReadingViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ReadingViewHolder holder, int position) {
         BloodPressureDB t = readingList.get(position);
-        holder.textViewTask.setText(t.getName());
-        holder.textViewDesc.setText(t.getDate());
-//        holder.textViewFinishBy.setText(t.getFinishBy());
-
-//        if (t.isFinished())
-//            holder.textViewStatus.setText("Completed");
-//        else
-//            holder.textViewStatus.setText("Not Completed");
+//        holder.textViewAddress.setText(t.getName());
+        holder.textViewDate.setText(t.getDate());
+        holder.textViewTime.setText(t.getTime());
+        holder.textViewSysta.setText(String.valueOf(t.getSystolic()));
+        holder.textViewDiasta.setText(String.valueOf(t.getDystolic()));
+        holder.textViewRate.setText(String.valueOf(t.getHeartRate()));
+        holder.textViewRange.setText(String.valueOf(t.getRange()));
     }
 
     @Override
@@ -44,16 +46,18 @@ public class ReadingsAdapter extends RecyclerView.Adapter<ReadingsAdapter.Readin
     }
     public class ReadingViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView textViewStatus, textViewTask, textViewDesc;
+        TextView textViewAddress, textViewDate, textViewTime, textViewSysta, textViewDiasta, textViewRate, textViewRange;
 
         public ReadingViewHolder(View itemView) {
             super(itemView);
 
-//                   textViewStatus = itemView.findViewById(R.id.textViewStatus);
-//            textViewTask = itemView.findViewById(R.id.textViewMessage);
-//            textViewDesc = itemView.findViewById(R.id.textViewAddress);
-//            textViewFinishBy = itemView.findViewById(R.id.textViewFinishBy);
-
+//            textViewAddress = itemView.findViewById(R.id.address);
+            textViewDate = itemView.findViewById(R.id.date);
+            textViewTime = itemView.findViewById(R.id.time1);
+            textViewSysta = itemView.findViewById(R.id.systalic);
+            textViewDiasta = itemView.findViewById(R.id.dystalic);
+            textViewRate = itemView.findViewById(R.id.heartRate);
+            textViewRange = itemView.findViewById(R.id.map);
 
             itemView.setOnClickListener(this);
         }

@@ -28,6 +28,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -41,7 +42,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.WeakHashMap;
 
-public class BLEService extends Service implements DecodeListener {
+public class BLEService extends Service implements DecodeListener{
 
     private final static String TAG = BLEService.class.getSimpleName();
     private BluetoothAdapter mBluetoothAdapter;
@@ -63,6 +64,8 @@ public class BLEService extends Service implements DecodeListener {
     public int rate;
     public int range;
     public long pressure;
+    public boolean is_enteredFinalResult = false;
+    DataTransferActivity dataTransferActivity;
 
 //    Decoder mDecoder;
     Handler mHandler;
@@ -220,9 +223,11 @@ public class BLEService extends Service implements DecodeListener {
 //                }
 ////                intent.putExtra(Constants.EXTRA_DATA, new String(data) + "\n" +stringBuilder.toString());
 //            }
+
+//            Log.i(TAG, "Device id before switch " + data);
             int length = data[6];
-            int[] value = new int[20];
-            for (int i = 0; i <= length; i++)
+            int[] value = new int[30];
+            for (int i = 0; i <= length; ++i)
             {
 //                Log.i("Decoder", "values " + i + " " + data[i]);
                 value[i] = (int) (data[i] & 0xff);
@@ -236,11 +241,14 @@ public class BLEService extends Service implements DecodeListener {
 
             if (checkSumVal == true)
             {
-                decoder.add1(value,action);
                 switch (value[5]) {
                     case Constants.DEVICE_COMMANDID:
-                        Log.i(TAG, "Device id " + value);
+//                        Log.i(TAG, "Device id " + value);
                         Constants.deviceId = new byte[]{(byte) value[1], (byte) value[2], (byte) value[3], (byte) value[4]};
+                        Constants.startValue = decoder.replaceArrayVal(Constants.startValue,Constants.deviceId);
+                        Constants.ack = decoder.replaceArrayVal(Constants.ack,Constants.deviceId);
+                        Constants.checkSumError = decoder.replaceArrayVal(Constants.checkSumError,Constants.deviceId);
+//                        Log.i(TAG, "new start value " + Constants.startValue);
                         break;
                     case Constants.RAW_COMMANDID:
                         int cuffValue = value[8] * 256 + value[9];
@@ -250,17 +258,37 @@ public class BLEService extends Service implements DecodeListener {
                         break;
 
                     case Constants.RESULT_COMMANDID:
+                        Constants.is_resultReceived = true;
                         int systolic = value[8] * 256 + value[9];
                         int dystolic = value[10] * 256 + value[11];
                         int heartRateValue = value[12];
-//                        Log.i("Decoder", "Heart Rate " + heartRateValue);
-                        int rangeValue = value[13];
-//                        Log.i("Decoder", "range  " + rangeValue);
+//                        int rangeValue = value[13];
                         intent.putExtra(Constants.EXTRA_DATA, systolic + " / " + dystolic + " / " + heartRateValue);
+                        Constants.ack = decoder.computeCheckSum(Constants.ack);
+//                        Log.i(TAG, "ack " + Arrays.toString(Constants.ack));
+//                        Log.i(TAG, "ack sent " + Constants.ack);
                         writeCharacteristics(characteristic,Constants.checkSumError);
+//                        timer=  new CountDownTimer(0, 800) {
+//                        @Override
+//                        public void onTick(long millisUntilFinished) {
+////                            time.setText(String.valueOf(count));
+////                            count++;
+//                        }
+//
+//                        @Override
+//                        public void onFinish() {
+////                                    LayoutInflater layoutInflater = getLayoutInflater();
+////                                    View customView = layoutInflater.inflate(R.layout.custom_popup_dialog, null);
+////                                    tv = customView.findViewById(R.id.tvpopup);
+////                                    tv.setText("Please Start again");
+//                        }
+//                    };
+//                    timer.start();
+
                         break;
 
                     case Constants.ERROR_COMMANDID:
+                        Constants.is_resultReceived = true;
                         int error = value[8];
                         switch (error) {
                             case 1:
@@ -288,15 +316,19 @@ public class BLEService extends Service implements DecodeListener {
                                 intent.putExtra(Constants.EXTRA_DATA, msg);
                                 break;
                         }
+                        Constants.ack = decoder.computeCheckSum(Constants.ack);
+//                        Log.i(TAG, "error" + Arrays.toString(Constants.ack));
+//                        Log.i(TAG, "ack sent " + Constants.ack);
                         writeCharacteristics(characteristic,Constants.ack);
-//                        decodeListener.errorMsg(error);
 
                         break;
                 }
+                decoder.add1(value,action);
             }
             else {
-//                Log.i("Decoder", "Characteristics " + characteristic);
-//                Log.i("Decoder", "error " + Constants.checkSumError);
+                Constants.checkSumError = decoder.computeCheckSum(Constants.checkSumError);
+//                Log.i(TAG, "check sum error " + Arrays.toString(Constants.checkSumError));
+//                Log.i(TAG, "ack sent " + Constants.ack);
                 writeCharacteristics(characteristic,Constants.checkSumError);
             }
             Arrays.fill(value,(byte) 0);
@@ -304,8 +336,6 @@ public class BLEService extends Service implements DecodeListener {
         }
         sendBroadcast(intent);
     }
-
-
 
     // To read the data.
     public void readCharacteristic(BluetoothGattCharacteristic bluetoothGattCharacteristic) {
@@ -423,7 +453,7 @@ public class BLEService extends Service implements DecodeListener {
 
     @Override
     public void deviceId(int deviceId) {
-        Log.i(TAG, "device Id" + deviceId);
+//        Log.i(TAG, "device Id" + deviceId);
         if (mHandler != null) {
             mHandler.obtainMessage(deviceId).sendToTarget();
         }
@@ -481,7 +511,6 @@ public class BLEService extends Service implements DecodeListener {
             super.run();
             decoder = new Decoder(BLEService.this);
             decoder.start();
-//            setHandler(mHandler);
         }
     }
 }

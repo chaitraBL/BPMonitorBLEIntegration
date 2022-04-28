@@ -9,56 +9,44 @@ import androidx.core.content.ContextCompat;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
-import android.util.Log;
-import android.util.SparseArray;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 
 @TargetApi(21)
 public class MainActivity extends AppCompatActivity {
 
     List<BluetoothDevice> listBluetoothDevice;
-    ArrayAdapter<BluetoothDevice> adapterBluetoothDevice;
+    List<String> listBluetoothDevice1;
+    BluetoothAdapter bluetoothAdapter;
+    ArrayAdapter<String> adapterBluetoothDevice;
     ArrayList<BluetoothDevice> foundDevices;
     ListAdapter adapterLeScanResult;
     private BluetoothAdapter mBluetoothAdapter;
@@ -75,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "BluetoothLEService";
     BluetoothDevice bluetoothDevice;
     BluetoothManager bluetoothManager;
+    Context context;
 
     private static final char[] HEX_ARRAY = {'0', '1', '2', '3', '4', '5', '6',
             '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
@@ -92,14 +81,22 @@ public class MainActivity extends AppCompatActivity {
 //            finish();
         }
 
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        context = this;
         listView = findViewById(R.id.lelist);
         listBluetoothDevice = new ArrayList<BluetoothDevice>();
         adapterLeScanResult = new ArrayAdapter<BluetoothDevice>(this, android.R.layout.simple_list_item_1, listBluetoothDevice);
         listView.setAdapter(adapterLeScanResult);
+//        listBluetoothDevice1 = new ArrayList<String>();
+//        adapterLeScanResult = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listBluetoothDevice1);
+//        listView.setAdapter(adapterLeScanResult);
+//        adapterBluetoothDevice = new ArrayAdapter<String>(context, R.layout.list_item, R.id.textView);
+//        listView.setAdapter(adapterBluetoothDevice);
 
         listView.setOnItemClickListener(scanResultOnItemClickListener);
         checkPermissions(MainActivity.this, this);
         mHandler = new Handler();
+
 
         bluetoothManager =
                 (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
@@ -177,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
                 scanLeDevice(true);
                 return true;
 
-                default:
+            default:
                 return super.onOptionsItemSelected(item);
         }
 
@@ -255,6 +252,7 @@ public class MainActivity extends AppCompatActivity {
             if (Build.VERSION.SDK_INT < 21) {
                 mBluetoothAdapter.startLeScan(mLeScanCallback);
             } else {
+                adapterBluetoothDevice.clear();
                 mLEScanner.startScan(filters, settings, mScanCallback);
 
             }
@@ -271,7 +269,14 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             bluetoothDevice = result.getDevice();
+//            Set<BluetoothDevice> device = Collections.singleton(result.getDevice());
             addBluetoothDevice(bluetoothDevice);
+            //Adding the scanned devices to listview.
+//            for (BluetoothDevice bluetoothDevice : device) {
+//                adapterBluetoothDevice.add(bluetoothDevice.getName() + "\n" + bluetoothDevice.getAddress());
+//                adapterBluetoothDevice.notifyDataSetChanged();
+//            }
+//            adapterBluetoothDevice.clear();
         }
 
         @Override
@@ -279,6 +284,9 @@ public class MainActivity extends AppCompatActivity {
             for (ScanResult sr : results) {
 //                Log.i("TAG", "scan data" + sr.getDevice());
                 addBluetoothDevice(sr.getDevice());
+//                for (BluetoothDevice bluetoothDevice : device) {
+//                    adapterBluetoothDevice.add(sr.get + "\n" + sr.getDevice());
+//                }
             }
         }
 
@@ -290,6 +298,7 @@ public class MainActivity extends AppCompatActivity {
         //Adding the scanned devices to listview.
         private void addBluetoothDevice(BluetoothDevice device) {
             if (!listBluetoothDevice.contains(device)) {
+//                listBluetoothDevic1.add(device.getName() + "\n" + device.getAddress());
                 listBluetoothDevice.add(device);
                 listView.invalidateViews();
             }
