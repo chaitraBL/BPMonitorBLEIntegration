@@ -292,28 +292,28 @@ public class BLEService extends Service implements DecodeListener{
                         int error = value[8];
                         switch (error) {
                             case 1:
-                                msg = "Indicates cuff placement/fitment incorrect";
-                                intent.putExtra(Constants.EXTRA_DATA, msg);
+                                msg = "Indicates cuff placement/fitment incorrect!!!";
+                                intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
                                 break;
                             case 2:
-                                msg = "Indicates hand movement detected";
-                                intent.putExtra(Constants.EXTRA_DATA, msg);
+                                msg = "Indicates hand movement detected!!!";
+                                intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
                                 break;
                             case 3:
-                                msg = "Indicates irregular heartbeat during measurement";
-                                intent.putExtra(Constants.EXTRA_DATA, msg);
+                                msg = "Indicates irregular heartbeat during measurement!!!";
+                                intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
                                 break;
                             case 4:
-                                msg = "Indicates cuff over pressurised";
-                                intent.putExtra(Constants.EXTRA_DATA, msg);
+                                msg = "Indicates cuff over pressurised!!!";
+                                intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
                                 break;
                             case 5:
-                                msg = "Indicates low battery";
-                                intent.putExtra(Constants.EXTRA_DATA, msg);
+                                msg = "Indicates low battery!!!";
+                                intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
                                 break;
                             default:
                                 msg = " ";
-                                intent.putExtra(Constants.EXTRA_DATA, msg);
+                                intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
                                 break;
                         }
                         Constants.ack = decoder.computeCheckSum(Constants.ack);

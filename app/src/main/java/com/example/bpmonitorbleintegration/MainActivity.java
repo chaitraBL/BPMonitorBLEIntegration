@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
             if (Build.VERSION.SDK_INT < 21) {
                 mBluetoothAdapter.startLeScan(mLeScanCallback);
             } else {
-                adapterBluetoothDevice.clear();
+//                adapterBluetoothDevice.clear();
                 mLEScanner.startScan(filters, settings, mScanCallback);
 
             }
