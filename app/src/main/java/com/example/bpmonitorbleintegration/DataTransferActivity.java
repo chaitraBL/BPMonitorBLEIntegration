@@ -161,22 +161,6 @@ public class DataTransferActivity extends AppCompatActivity{
                             Constants.startValue = decoder.computeCheckSum(Constants.startValue);
 //                            Log.i(TAG, "Force stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
                             mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
-                            timer=  new CountDownTimer(0, 500) {
-                                @Override
-                                public void onTick(long millisUntilFinished) {
-//                            time.setText(String.valueOf(count));
-//                            count++;
-                                }
-
-                                @Override
-                                public void onFinish() {
-//                                    LayoutInflater layoutInflater = getLayoutInflater();
-//                                    View customView = layoutInflater.inflate(R.layout.custom_popup_dialog, null);
-//                                    tv = customView.findViewById(R.id.tvpopup);
-//                                    tv.setText("Please Start again");
-                                }
-                            };
-                            timer.start();
                         }
                     }
                 });
@@ -188,22 +172,6 @@ public class DataTransferActivity extends AppCompatActivity{
                             Constants.startValue = decoder.computeCheckSum(Constants.startValue);
 //                            Log.i(TAG, "Stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
                             mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
-                            timer=  new CountDownTimer(0, 500) {
-                                @Override
-                                public void onTick(long millisUntilFinished) {
-//                            time.setText(String.valueOf(count));
-//                            count++;
-                                }
-
-                                @Override
-                                public void onFinish() {
-//                                    LayoutInflater layoutInflater = getLayoutInflater();
-//                                    View customView = layoutInflater.inflate(R.layout.custom_popup_dialog, null);
-//                                    tv = customView.findViewById(R.id.tvpopup);
-//                                    tv.setText("Please Start again");
-                                }
-                            };
-                            timer.start();
                             Constants.is_resultReceived = false;
                         }
                     }
@@ -295,6 +263,7 @@ public class DataTransferActivity extends AppCompatActivity{
     private final BroadcastReceiver broadCastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            updateGUI(intent);
             final String action = intent.getAction();
             if (Constants.ACTION_GATT_CONNECTED.equals(action)) {
                 mConnected = true;
@@ -303,6 +272,18 @@ public class DataTransferActivity extends AppCompatActivity{
             else if (Constants.ACTION_GATT_DISCONNECTED.equals(action)) {
                 mConnected = false;
                 updateConnectionState("Disconnected");
+                new AlertDialog.Builder(DataTransferActivity.this)
+                    .setTitle("Message")
+                        .setMessage("Connection terminated!, please connect again")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(DataTransferActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                }
+                            })
+                        .show();
+
             }
             else if (Constants.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 //Receive services and characteristics
@@ -338,6 +319,13 @@ public class DataTransferActivity extends AppCompatActivity{
             }
         }
     };
+
+    private void updateGUI(Intent intent) {
+        if (intent.getExtras() != null) {
+            long millisUntilFinished = intent.getLongExtra("countdown", 0);
+            Log.i(TAG, "Countdown seconds remaining: " +  millisUntilFinished / 1000);
+        }
+    }
 
     private  void displayData(String data) {
         if (data != null) {
