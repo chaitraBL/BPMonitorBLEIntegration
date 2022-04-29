@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -63,7 +64,7 @@ public class DataTransferActivity extends AppCompatActivity{
     BluetoothDevice bluetoothDevice;
     IntentFilter intentFilter;
     AlertDialog.Builder builder;
-    TextView statusText, systolicText, diastolicText, heartRateText,rangeText, tv;
+    TextView statusText, systolicText, diastolicText, heartRateText,rangeText, tv, batteryLevel;
     private String TAG = "DataTransferActivity";
     SharedPreferences pref;
 
@@ -100,6 +101,7 @@ public class DataTransferActivity extends AppCompatActivity{
         readBtn = findViewById(R.id.final_val);
         recyclerView = findViewById(R.id.recyclerview_tasks);
 
+        batteryLevel = findViewById(R.id.battery_level);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         intentFilter = new IntentFilter(BluetoothDevice.ACTION_PAIRING_REQUEST);
         intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
@@ -112,6 +114,7 @@ public class DataTransferActivity extends AppCompatActivity{
         bindService(getServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
 
         pref = PreferenceManager.getDefaultSharedPreferences(this);
+
         //Send request to START the readings.
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,22 +125,22 @@ public class DataTransferActivity extends AppCompatActivity{
 //                    Log.i(TAG, "Start value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
                     mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
 
-                    timer=  new CountDownTimer(0, 2000) {
-                        @Override
-                        public void onTick(long millisUntilFinished) {
-//                            time.setText(String.valueOf(count));
-//                            count++;
-                        }
-
-                        @Override
-                        public void onFinish() {
-                            LayoutInflater layoutInflater = getLayoutInflater();
-                            View customView = layoutInflater.inflate(R.layout.custom_popup_dialog, null);
-                            tv = customView.findViewById(R.id.tvpopup);
-                            tv.setText("Please Start again");
-                        }
-                    };
-                    timer.start();
+//                    timer=  new CountDownTimer(0, 2000) {
+//                        @Override
+//                        public void onTick(long millisUntilFinished) {
+////                            time.setText(String.valueOf(count));
+////                            count++;
+//                        }
+//
+//                        @Override
+//                        public void onFinish() {
+//                            LayoutInflater layoutInflater = getLayoutInflater();
+//                            View customView = layoutInflater.inflate(R.layout.custom_popup_dialog, null);
+//                            tv = customView.findViewById(R.id.tvpopup);
+//                            tv.setText("Please Start again");
+//                        }
+//                    };
+//                    timer.start();
 
                 }
 
@@ -331,6 +334,7 @@ public class DataTransferActivity extends AppCompatActivity{
         if (data != null) {
 //           Log.i(TAG, "received data " + data);
            tv.setText(data);
+
 //           Log.i(TAG,"flag " + Constants.is_resultReceived);
             //To enable/disable Ok button on basis of readings.
            if (Constants.is_resultReceived == true) {
@@ -341,7 +345,21 @@ public class DataTransferActivity extends AppCompatActivity{
                ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
            }
         }
+        //Showing battery level using color code.
+        showBattery();
+    }
 
+    public void showBattery(){
+//        Log.i(TAG, "Battery level " + mBluetoothLeService.batteryLevel);
+        if (mBluetoothLeService.batteryLevel == Constants.HIGH_BATTERY) {
+            batteryLevel.setBackgroundColor(Color.parseColor("#008000"));
+        }
+        else if (mBluetoothLeService.batteryLevel == Constants.MID_BATTERY){
+            batteryLevel.setBackgroundColor(Color.parseColor("#FFA500"));
+        }
+        else if (mBluetoothLeService.batteryLevel == Constants.LOW_BATTERY) {
+            batteryLevel.setBackgroundColor(Color.parseColor("#FF0000"));
+        }
     }
 
     // Connect and disconnect to the services.

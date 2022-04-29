@@ -11,21 +11,31 @@ public class Constants {
             "android-er.ACTION_DATA_AVAILABLE";
     public final static String EXTRA_DATA =
             "android-er.EXTRA_DATA";
+    public final static String EXTRA_DATA1 =
+            "android-er.EXTRA_DATA";
+    public static final String COUNTDOWN_BR = "your_package_name.countdown_br";
 
     public static final int STATE_DISCONNECTED = 0;
     public static final int STATE_CONNECTING = 1;
     public static final int STATE_CONNECTED = 2;
 
-    public static byte[] deviceId;
+    public static byte[] deviceId = {0x00,0x00,0x00,0x01};
 //    public static final byte[] startValue = {0x7B,deviceId[0],deviceId[1],deviceId[2],deviceId[3],0x10,0x0A,0x00,0x01,0x00,0x1C,0x7D};
 //    public static final byte[] checkSumError = {0x7B,deviceId[0],deviceId[1],deviceId[2],deviceId[3],0x14,0x0A,0x00,0x0E ,0x00,0x1C,0x7D};
 //    public static final byte[] ack = {0x7B,deviceId[0],deviceId[1],deviceId[2],deviceId[3],0x14,0x0A,0x00,0x0A,0x00,0x1C,0x7D};
-    public static byte[] startValue = {0x7B,deviceId[0],deviceId[1],deviceId[2],deviceId[3],0x10,0x0A,0x00,0x01,0x00,0x1C,0x7D};
+    public static byte[] startValue = {0x7B,0x00,0x00,0x00,0x01,0x10,0x0A,0x00,0x01,0x00,0x1C,0x7D};
     public static byte[] checkSumError = {0x7B,deviceId[0],deviceId[1],deviceId[2],deviceId[3],0x14,0x0A,0x00,0x0E ,0x00,0x1C,0x7D};
     public static byte[] ack = {0x7B,deviceId[0],deviceId[1],deviceId[2],deviceId[3],0x14,0x0A,0x00,0x0A,0x00,0x1C,0x7D};
-    public static final byte RAW_COMMANDID = 17;
-    public static final byte RESULT_COMMANDID = 18;
-    public static final byte ERROR_COMMANDID = 19;
-    public static final byte ACK_COMMANDID = 20;
-    public static final byte DEVICE_COMMANDID = 01;
+    public static byte[] noAck = {0x7B,deviceId[0],deviceId[1],deviceId[2],deviceId[3],0x14,0x0A,0x00,0x00,0x00,0x1C,0x7D};
+    public static final int RAW_COMMANDID = 17;
+    public static final int RESULT_COMMANDID = 18;
+    public static final int ERROR_COMMANDID = 19;
+    public static final int ACK_COMMANDID = 20;
+    public static final int DEVICE_COMMANDID = 01;
+    public static final int BATTERY_COMMANDID = 21;
+    public static boolean is_resultReceived = false;
+    public static final int HIGH_BATTERY = 51;
+    public static final int MID_BATTERY = 34;
+    public static final int LOW_BATTERY = 17;
+
 }

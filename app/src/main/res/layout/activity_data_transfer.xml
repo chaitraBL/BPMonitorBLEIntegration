@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".DataTransferActivity">
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,6 +19,26 @@
         android:id="@+id/actual_status"
         android:layout_toEndOf="@+id/txt_status"
         android:layout_margin="8dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Battery"
+        android:id="@+id/txt_battery"
+        android:layout_toEndOf="@+id/actual_status"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="70dp"/>
+
+    <TextView
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:id="@+id/battery_level"
+        android:layout_toEndOf="@+id/txt_battery"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="8dp"/>
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -50,6 +71,7 @@
         android:text="Systolic"
         android:layout_below="@+id/btn_read"
         android:layout_margin="8dp"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -57,6 +79,7 @@
         android:layout_toRightOf="@+id/systa"
         android:layout_below="@+id/btn_read"
         android:layout_margin="8dp"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -64,6 +87,7 @@
         android:text="Diastolic"
         android:layout_below="@+id/systa"
         android:layout_margin="8dp"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -71,6 +95,7 @@
         android:layout_toRightOf="@+id/diasta"
         android:layout_below="@+id/systalic_val"
         android:layout_margin="8dp"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -78,6 +103,7 @@
         android:text="Heart Rate"
         android:layout_below="@+id/diasta"
         android:layout_margin="8dp"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -85,6 +111,7 @@
         android:layout_toRightOf="@+id/rate"
         android:layout_below="@+id/dystalic_val"
         android:layout_margin="8dp"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -92,6 +119,7 @@
         android:text="MAP"
         android:layout_below="@+id/rate"
         android:layout_margin="8dp"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -104,7 +132,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/range"
-        android:padding="5dp"
-        android:id="@+id/recyclerview_tasks"/>
+        android:id="@+id/recyclerview_tasks" />
 
 </RelativeLayout>

@@ -12,13 +12,16 @@ import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.icu.text.UFormat;
 import android.os.Binder;
 import android.os.Build;
 
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -64,11 +67,12 @@ public class BLEService extends Service implements DecodeListener{
     public int rate;
     public int range;
     public long pressure;
-    public boolean is_enteredFinalResult = false;
-    DataTransferActivity dataTransferActivity;
+    public int batteryLevel;
 
 //    Decoder mDecoder;
     Handler mHandler;
+    Intent bi = new Intent(Constants.COUNTDOWN_BR);
+    CountDownTimer cdt = null;
 
     // To connect to bluetooth device and gatt services.
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -139,6 +143,11 @@ public class BLEService extends Service implements DecodeListener{
         public void onMtuChanged(BluetoothGatt gatt, int mtu, int status) {
             super.onMtuChanged(gatt, mtu, status);
             if (status == BluetoothGatt.GATT_SUCCESS){
+                try {
+                    Thread.sleep(600);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 gatt.discoverServices();
             }
         }
@@ -224,7 +233,7 @@ public class BLEService extends Service implements DecodeListener{
 ////                intent.putExtra(Constants.EXTRA_DATA, new String(data) + "\n" +stringBuilder.toString());
 //            }
 
-//            Log.i(TAG, "Device id before switch " + data);
+//            Log.i(TAG, "length before switch " + data[6]);
             int length = data[6];
             int[] value = new int[30];
             for (int i = 0; i <= length; ++i)
@@ -236,11 +245,13 @@ public class BLEService extends Service implements DecodeListener{
 
 //            Log.i("Decoder", "Command id " + (value[5]));
 
+            // Check for checksum
             boolean checkSumVal = decoder.checkSumValidation(value,characteristic);
 //            Log.i("Decoder", "checksum " + checkSumVal);
-
+            decoder.add1(value,action);
             if (checkSumVal == true)
             {
+                //Command Id wise receiving data.
                 switch (value[5]) {
                     case Constants.DEVICE_COMMANDID:
 //                        Log.i(TAG, "Device id " + value);
@@ -259,31 +270,63 @@ public class BLEService extends Service implements DecodeListener{
 
                     case Constants.RESULT_COMMANDID:
                         Constants.is_resultReceived = true;
+                        Log.i(TAG, "Starting timer...");
+//                        mHandler.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                new AlertDialog.Builder(BLEService.this)
+//                                        .setTitle("Message")
+//                                        .setMessage("Please start again!!!")
+//                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                                            @Override
+//                                            public void onClick(DialogInterface dialog, int which) {
+//
+//                                            }
+//                                        })
+//                                        .show();
+//                            }
+//                        }, 5000);
+
                         int systolic = value[8] * 256 + value[9];
                         int dystolic = value[10] * 256 + value[11];
                         int heartRateValue = value[12];
-//                        int rangeValue = value[13];
                         intent.putExtra(Constants.EXTRA_DATA, systolic + " / " + dystolic + " / " + heartRateValue);
+//                        cdt = new CountDownTimer(2000, 500) {
+//                            @Override
+//                            public void onTick(long millisUntilFinished) {
+//                                int systolic = value[8] * 256 + value[9];
+//                                int dystolic = value[10] * 256 + value[11];
+//                                int heartRateValue = value[12];
+//                                intent.putExtra(Constants.EXTRA_DATA, systolic + " / " + dystolic + " / " + heartRateValue);
+//                                Log.i(TAG, "Countdown seconds remaining: " + millisUntilFinished / 1000 + " " + millisUntilFinished);
+//                                bi.putExtra("countdown", millisUntilFinished);
+//                                sendBroadcast(bi);
+//                            }
+//
+//                            @Override
+//                            public void onFinish() {
+//                                Log.i(TAG, "Timer finished");
+//                                new AlertDialog.Builder(BLEService.this)
+//                                        .setTitle("Message")
+//                                        .setMessage("Please start again!!!")
+//                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                                            @Override
+//                                            public void onClick(DialogInterface dialog, int which) {
+//
+//                                            }
+//                                        })
+//                                        .show();
+//                            }
+//                        };
+//
+//                        cdt.start();
+
+//                        int rangeValue = value[13];
+
                         Constants.ack = decoder.computeCheckSum(Constants.ack);
 //                        Log.i(TAG, "ack " + Arrays.toString(Constants.ack));
 //                        Log.i(TAG, "ack sent " + Constants.ack);
                         writeCharacteristics(characteristic,Constants.checkSumError);
-//                        timer=  new CountDownTimer(0, 800) {
-//                        @Override
-//                        public void onTick(long millisUntilFinished) {
-////                            time.setText(String.valueOf(count));
-////                            count++;
-//                        }
-//
-//                        @Override
-//                        public void onFinish() {
-////                                    LayoutInflater layoutInflater = getLayoutInflater();
-////                                    View customView = layoutInflater.inflate(R.layout.custom_popup_dialog, null);
-////                                    tv = customView.findViewById(R.id.tvpopup);
-////                                    tv.setText("Please Start again");
-//                        }
-//                    };
-//                    timer.start();
 
                         break;
 
@@ -320,10 +363,55 @@ public class BLEService extends Service implements DecodeListener{
 //                        Log.i(TAG, "error" + Arrays.toString(Constants.ack));
 //                        Log.i(TAG, "ack sent " + Constants.ack);
                         writeCharacteristics(characteristic,Constants.ack);
+                    case Constants.ACK_COMMANDID:
+//                        int ack = value[8];
+//                    Log.i("Decoder", "ack " + ack);decodeListener.ackMsg(ack);
+                        Log.i("Decoder", "Starting timer...");
 
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Constants.noAck = decoder.computeCheckSum(Constants.noAck);
+//                                Log.i(TAG, "check sum error " + Arrays.toString(Constants.checkSumError));
+//                                Log.i(TAG, "ack sent " + Constants.ack);
+                                writeCharacteristics(characteristic,Constants.noAck);
+                            }
+                        }, 2000);
+
+                        int ack = value[8];
+                        Log.i(TAG, "ack " + ack);
+//                        cdt = new CountDownTimer(2000, 500) {
+//                            @Override
+//                            public void onTick(long millisUntilFinished) {
+//                                int ack = value[8];
+//                                Log.i("Decoder", "Countdown seconds remaining: " + millisUntilFinished / 1000);
+//                                bi.putExtra("countdown", millisUntilFinished);
+//                                sendBroadcast(bi);
+//                            }
+//
+//                            @Override
+//                            public void onFinish() {
+//                                Log.i(TAG, "Timer finished");
+//                                Constants.noAck = decoder.computeCheckSum(Constants.noAck);
+////                Log.i(TAG, "check sum error " + Arrays.toString(Constants.checkSumError));
+////                Log.i(TAG, "ack sent " + Constants.ack);
+//                                writeCharacteristics(characteristic,Constants.noAck);
+//                            }
+//                        };
+//
+//                        cdt.start();
                         break;
+
+                    case Constants.BATTERY_COMMANDID:
+                        int batteryLevel = value[8];
+//                        Log.i(TAG, "Battery level " + batteryLevel);
+//                        intent.putExtra(Constants.EXTRA_DATA, batteryLevel);
+                        Constants.ack = decoder.computeCheckSum(Constants.ack);
+//                        Log.i(TAG, "error" + Arrays.toString(Constants.ack));
+//                        Log.i(TAG, "ack sent " + Constants.ack);
+                        writeCharacteristics(characteristic,Constants.ack);
                 }
-                decoder.add1(value,action);
+
             }
             else {
                 Constants.checkSumError = decoder.computeCheckSum(Constants.checkSumError);
@@ -425,6 +513,22 @@ public class BLEService extends Service implements DecodeListener{
         mBluetoothGatt.disconnect();
     }
 
+    //remove device authorization/ bond/ pairing
+//    public static void removeBond(BluetoothDevice device){
+//        try {
+//            if (device == null){
+//                throw new Exception();
+//            }
+//            Method method = device.getClass().getMethod("removeBond", (Class[]) null);
+//            method.invoke(device, (Object[]) null);
+//            Log.d(LOG_TAG, "removeBond() called");
+//            Thread.sleep(600);
+//            Log.d(LOG_TAG, "removeBond() - finished method");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+
     public static BluetoothAdapter getBluetoothAdapter(Context context) {
         BluetoothManager mBluetoothManager = (BluetoothManager) context.getSystemService(BLUETOOTH_SERVICE);
         return mBluetoothManager.getAdapter();
@@ -497,6 +601,13 @@ public class BLEService extends Service implements DecodeListener{
         if (mHandler != null) {
             mHandler.obtainMessage(ackNo).sendToTarget();
         }
+    }
+
+    @Override
+    public void batteryMsg(int value) {
+        batteryLevel = value;
+//        Log.i(TAG, "Battery level " + batteryLevel);
+
     }
 
     public class LocalBinder extends Binder {

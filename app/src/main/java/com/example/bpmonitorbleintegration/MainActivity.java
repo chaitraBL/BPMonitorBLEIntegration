@@ -1,6 +1,7 @@
 package com.example.bpmonitorbleintegration;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -25,17 +26,21 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -44,10 +49,10 @@ import java.util.Set;
 public class MainActivity extends AppCompatActivity {
 
     List<BluetoothDevice> listBluetoothDevice;
-    List<String> listBluetoothDevice1;
+    List<String> mBlE;
     BluetoothAdapter bluetoothAdapter;
-    ArrayAdapter<String> adapterBluetoothDevice;
-    ArrayList<BluetoothDevice> foundDevices;
+    ArrayList<String> deviceList;
+    ArrayAdapter<String> deviceAdapter;
     ListAdapter adapterLeScanResult;
     private BluetoothAdapter mBluetoothAdapter;
     private int REQUEST_ENABLE_BT = 1;
@@ -64,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     BluetoothDevice bluetoothDevice;
     BluetoothManager bluetoothManager;
     Context context;
+    HashMap<String, String> filterDevices;
 
     private static final char[] HEX_ARRAY = {'0', '1', '2', '3', '4', '5', '6',
             '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
@@ -85,15 +91,13 @@ public class MainActivity extends AppCompatActivity {
         context = this;
         listView = findViewById(R.id.lelist);
         listBluetoothDevice = new ArrayList<BluetoothDevice>();
-        adapterLeScanResult = new ArrayAdapter<BluetoothDevice>(this, android.R.layout.simple_list_item_1, listBluetoothDevice);
-        listView.setAdapter(adapterLeScanResult);
-//        listBluetoothDevice1 = new ArrayList<String>();
-//        adapterLeScanResult = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listBluetoothDevice1);
-//        listView.setAdapter(adapterLeScanResult);
-//        adapterBluetoothDevice = new ArrayAdapter<String>(context, R.layout.list_item, R.id.textView);
-//        listView.setAdapter(adapterBluetoothDevice);
+        deviceList = new ArrayList<String>();
+        deviceAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, deviceList);
+        listView.setAdapter(deviceAdapter);
 
         listView.setOnItemClickListener(scanResultOnItemClickListener);
+
+        filterDevices = new HashMap<>();
         checkPermissions(MainActivity.this, this);
         mHandler = new Handler();
 
@@ -107,17 +111,24 @@ public class MainActivity extends AppCompatActivity {
     AdapterView.OnItemClickListener scanResultOnItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            bluetoothDevice = (BluetoothDevice) adapterView.getItemAtPosition(i);
+//            bluetoothDevice = (BluetoothDevice) adapterView.getItemAtPosition(i);
 
+            String info = ((TextView) view).getText().toString();
+//            Log.i(TAG, " length " + info.length());
+            String address = info.substring(info.length() - 17);
+//            Log.i(TAG, " address " + address);
 
-            String msg = bluetoothDevice.getAddress() + "\n"
-                    + bluetoothDevice.getBluetoothClass().toString() + "\n"
-                    + getBTDevieType(bluetoothDevice);
+//            String name = info.substring(info.length() + 8);
+//            Log.i(TAG, " name " + name);
 
-            deviceAddress = bluetoothDevice.getAddress();
+            String msg = info;
+//                    + "\n"
+//                    + getBTDevieType(bluetoothDevice);
+
+            deviceAddress = address;
 
             new AlertDialog.Builder(MainActivity.this)
-                    .setTitle(bluetoothDevice.getName())
+//                    .setTitle(bluetoothDevice.getName())
                     .setMessage(msg)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
@@ -127,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                                 Intent intent = new Intent(MainActivity.this, DataTransferActivity.class);
                                 intent.putExtra("Device", deviceAddress);
-                                intent.putExtra("DeviceName", bluetoothDevice.getName());
+                                intent.putExtra("DeviceName", info);
                                 startActivity(intent);
                             }
                         }
@@ -269,14 +280,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             bluetoothDevice = result.getDevice();
-//            Set<BluetoothDevice> device = Collections.singleton(result.getDevice());
             addBluetoothDevice(bluetoothDevice);
-            //Adding the scanned devices to listview.
-//            for (BluetoothDevice bluetoothDevice : device) {
-//                adapterBluetoothDevice.add(bluetoothDevice.getName() + "\n" + bluetoothDevice.getAddress());
-//                adapterBluetoothDevice.notifyDataSetChanged();
-//            }
-//            adapterBluetoothDevice.clear();
         }
 
         @Override
@@ -284,15 +288,12 @@ public class MainActivity extends AppCompatActivity {
             for (ScanResult sr : results) {
 //                Log.i("TAG", "scan data" + sr.getDevice());
                 addBluetoothDevice(sr.getDevice());
-//                for (BluetoothDevice bluetoothDevice : device) {
-//                    adapterBluetoothDevice.add(sr.get + "\n" + sr.getDevice());
-//                }
             }
         }
 
         @Override
         public void onScanFailed(int errorCode) {
-            Toast.makeText(getApplicationContext(), "error code" + errorCode, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "No devices found", Toast.LENGTH_SHORT).show();
         }
 
         //Adding the scanned devices to listview.
@@ -300,6 +301,9 @@ public class MainActivity extends AppCompatActivity {
             if (!listBluetoothDevice.contains(device)) {
 //                listBluetoothDevic1.add(device.getName() + "\n" + device.getAddress());
                 listBluetoothDevice.add(device);
+//                filterDevices.put(device, btMac);
+                deviceList.add(device.getName() + "\n" + device.getAddress());
+                deviceAdapter.notifyDataSetChanged();
                 listView.invalidateViews();
             }
         }

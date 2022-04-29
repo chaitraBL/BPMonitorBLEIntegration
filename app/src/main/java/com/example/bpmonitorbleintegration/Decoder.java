@@ -3,6 +3,7 @@ package com.example.bpmonitorbleintegration;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
@@ -15,11 +16,12 @@ public class Decoder
     String buffer = "";
     private boolean isData;
     DecodeListener decodeListener;
-    BLEService mBLEservice;
-    DataTransferActivity dataTransferActivity;
-
+    CountDownTimer timer;
     public Decoder(DecodeListener decodeListener) {
         this.decodeListener = decodeListener;
+    }
+    public Decoder() {
+
     }
 
     public void start() {
@@ -36,7 +38,6 @@ public class Decoder
                     int cuffValue = value[8] * 256 + value[9];
                     int pulseValue = value[10] * 256 + value[11];
                     decodeListener.pressureValue(cuffValue, pulseValue);
-//                    intent.putExtra(Constants.EXTRA_DATA, cuffValue + " / " + pulseValue);
 
                     // Accessing device id.
 //                    int dev_id1 = Integer.parseInt(Integer.toHexString(ByteBuffer.wrap(new byte[]{0x00,0x00,bytes[1],bytes[2]}).getInt()));
@@ -51,6 +52,7 @@ public class Decoder
                     //Method 2: conversion of systolic and dystiolic value for byte[].
 //                    decodeListener.systolic(ByteBuffer.wrap(new byte[]{0x00,0x00,bytes[8],bytes[9]}).getInt());
 //                    decodeListener.diastolic(ByteBuffer.wrap(new byte[]{0x00,0x00,bytes[10],bytes[11]}).getInt());
+                    Constants.is_resultReceived = true;
                     int systolic = value[8] * 256 + value[9];
 //
                     decodeListener.systolic(systolic);
@@ -62,20 +64,24 @@ public class Decoder
                     int rangeValue = value[13];
 //                    Log.i("Decoder", "range  " + rangeValue);
                     decodeListener.range(rangeValue);
-//                    intent.putExtra(Constants.EXTRA_DATA, systolic + " / " + dystolic + " / " + heartRateValue);
                     break;
 
                 case Constants.ERROR_COMMANDID:
+                    Constants.is_resultReceived = true;
                     int error = value[8];
                     decodeListener.errorMsg(error);
-//                    intent.putExtra(Constants.EXTRA_DATA, error);
                     break;
 
                 case Constants.ACK_COMMANDID:
                     int ack = value[8];
+//                    Log.i("Decoder", "ack " + ack);
                     decodeListener.ackMsg(ack);
-//                    intent.putExtra(Constants.EXTRA_DATA, ack);
                     break;
+
+                case Constants.BATTERY_COMMANDID:
+                    int batteryVal = value[8];
+//                    Log.i("Decoder", "Battery level " + batteryVal);
+                    decodeListener.batteryMsg(batteryVal);
             }
     }
 
@@ -95,13 +101,15 @@ public class Decoder
                 checkSum = data[14] * 256 + data[15];
                 break;
 
+                //Merging same cases.
             case Constants.ERROR_COMMANDID:
-                checkSum = data[9] * 256 + data[10];
-                break;
+
+            case Constants.BATTERY_COMMANDID:
 
             case Constants.ACK_COMMANDID:
                 checkSum = data[9] * 256 + data[10];
                 break;
+
             default:
                 Log.i("Decoder", "Command ID not match");
                 checkSum = data[9] * 256 + data[10];
@@ -124,18 +132,29 @@ public class Decoder
         }
     }
 
-    public void computeCheckSum(byte[] data){
-        int[] value = new int[20];
+    public byte[] computeCheckSum(byte[] data){
         int length = data[6];
-        int newLength = value[6];
-        for (int i = 0; i <= length; i++)
+        int final_checkSum = 0;
+
+//        Log.i("decoder", "new length " + length);
+        for (int j = 1; j <= length - 2; j++)
         {
-                Log.i("Decoder", "data in computeCheckSum " + i + " " + data[i]);
-            value[i] = (int) (data[i] & 0xff);
-                Log.i("Decoder", "new data in computeCheckSum " + value[i]);
+//            Log.i("Decoder","final_checSum in loop " + data[j]);
+            final_checkSum += (data[j] & 0xff);
+//            Log.i("Decoder","final_checSum in loop " + final_checkSum);
         }
+//        Log.i("Decoder","final_checSum " + final_checkSum);
+        data[9] = (byte) (final_checkSum >> 8 & 0xff);
+        data[10] = (byte) (final_checkSum & 0xff);
+//        Log.i("Decoder", "Check sum " + data[9] + " " + data[10]);
+        return data;
+    }
 
-
-
+    public byte[] replaceArrayVal(byte[] value, byte[] value1) {
+        value[1] = value1[0];
+        value[2] = value[1];
+        value[3] = value1[2];
+        value[4] = value1[3];
+        return value;
     }
 }

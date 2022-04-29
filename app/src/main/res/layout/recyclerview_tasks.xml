@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent"-->
+<!--    xmlns:app="http://schemas.android.com/apk/res-auto">-->
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardElevation="0dp"
-        app:cardMaxElevation="0dp"
-        app:cardUseCompatPadding="false"
-        android:layout_marginBottom="1dp"
-        app:contentPadding="-3dp"
-        app:cardPreventCornerOverlap="false">
+<!--    <androidx.cardview.widget.CardView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:cardElevation="10dp">-->
+<!--        app:cardElevation="0dp"-->
+<!--        app:cardMaxElevation="0dp"-->
+<!--        app:cardUseCompatPadding="false"-->
+<!--        android:layout_marginBottom="1dp"-->
+<!--        app:contentPadding="-3dp"-->
+<!--        app:cardPreventCornerOverlap="false">-->
 
-        <LinearLayout
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            xmlns:app="http://schemas.android.com/apk/res-auto">
 <!--            android:padding="5dp">-->
 
 <!--            <TextView-->
@@ -45,6 +47,7 @@
                 android:id="@+id/systalic"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"/>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -68,6 +71,6 @@
 
         </LinearLayout>
 
-    </androidx.cardview.widget.CardView>
+<!--    </androidx.cardview.widget.CardView>-->
 
-</RelativeLayout>
+<!--</RelativeLayout>-->
