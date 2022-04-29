@@ -368,15 +368,15 @@ public class BLEService extends Service implements DecodeListener{
 //                    Log.i("Decoder", "ack " + ack);decodeListener.ackMsg(ack);
                         Log.i("Decoder", "Starting timer...");
 
-                        mHandler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                Constants.noAck = decoder.computeCheckSum(Constants.noAck);
-//                                Log.i(TAG, "check sum error " + Arrays.toString(Constants.checkSumError));
-//                                Log.i(TAG, "ack sent " + Constants.ack);
-                                writeCharacteristics(characteristic,Constants.noAck);
-                            }
-                        }, 2000);
+//                        mHandler.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                Constants.noAck = decoder.computeCheckSum(Constants.noAck);
+////                                Log.i(TAG, "check sum error " + Arrays.toString(Constants.checkSumError));
+////                                Log.i(TAG, "ack sent " + Constants.ack);
+//                                writeCharacteristics(characteristic,Constants.noAck);
+//                            }
+//                        }, 2000);
 
                         int ack = value[8];
                         Log.i(TAG, "ack " + ack);
@@ -408,7 +408,7 @@ public class BLEService extends Service implements DecodeListener{
 //                        intent.putExtra(Constants.EXTRA_DATA, batteryLevel);
                         Constants.ack = decoder.computeCheckSum(Constants.ack);
 //                        Log.i(TAG, "error" + Arrays.toString(Constants.ack));
-//                        Log.i(TAG, "ack sent " + Constants.ack);
+                        Log.i(TAG, "ack sent " + Constants.ack);
                         writeCharacteristics(characteristic,Constants.ack);
                 }
 
@@ -419,7 +419,7 @@ public class BLEService extends Service implements DecodeListener{
 //                Log.i(TAG, "ack sent " + Constants.ack);
                 writeCharacteristics(characteristic,Constants.checkSumError);
             }
-            Arrays.fill(value,(byte) 0);
+//            Arrays.fill(value,(byte) 0);
 
         }
         sendBroadcast(intent);
@@ -542,12 +542,6 @@ public class BLEService extends Service implements DecodeListener{
     @Override
     public void pressureValue(int value1, int value2) {
         pressure = value1;
-        //To save integer value
-//        SharedPreferences preference = getSharedPreferences("SharedPref", 0);
-//        SharedPreferences.Editor editor = preference.edit();
-//        editor.putInt("Cuff",value1);
-//        editor.putInt("Pulse",value2);
-//        editor.apply();
 
         if (mHandler != null) {
 //            Log.i(TAG, " pressure value " + value1 + " " + value2);

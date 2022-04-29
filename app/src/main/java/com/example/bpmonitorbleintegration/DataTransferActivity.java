@@ -359,6 +359,16 @@ public class DataTransferActivity extends AppCompatActivity{
         }
         else if (mBluetoothLeService.batteryLevel == Constants.LOW_BATTERY) {
             batteryLevel.setBackgroundColor(Color.parseColor("#FF0000"));
+            new AlertDialog.Builder(DataTransferActivity.this)
+                    .setTitle("Message")
+                    .setMessage("Battery is low, Please Change battery")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    })
+                    .show();
         }
     }
 

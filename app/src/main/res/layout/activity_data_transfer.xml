@@ -128,10 +128,64 @@
         android:layout_below="@+id/rate_val"
         android:layout_margin="8dp"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/date_rv"
+        android:text="Date"
+        android:layout_below="@+id/range_val"
+        android:layout_margin="5dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/time_rv"
+        android:layout_toRightOf="@+id/date_rv"
+        android:text="Time"
+        android:layout_below="@+id/range_val"
+        android:layout_margin="5dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/systa_rv"
+        android:text="Systolic"
+        android:layout_toRightOf="@id/time_rv"
+        android:layout_below="@+id/range_val"
+        android:layout_margin="5dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/dysta_rv"
+        android:text="Dystolic"
+        android:layout_toRightOf="@+id/systa_rv"
+        android:layout_below="@+id/range_val"
+        android:layout_margin="5dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/rate_rv"
+        android:text="Heart Rate"
+        android:layout_below="@+id/range_val"
+        android:layout_toRightOf="@+id/dysta_rv"
+        android:layout_margin="5dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/map_rv"
+        android:text="MAP"
+        android:layout_toRightOf="@+id/rate_rv"
+        android:layout_below="@+id/range_val"
+        android:layout_margin="5dp"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/range"
+        android:layout_below="@+id/map_rv"
+        android:layout_margin="5dp"
         android:id="@+id/recyclerview_tasks" />
 
 </RelativeLayout>

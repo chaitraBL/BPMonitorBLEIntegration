@@ -1,76 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="match_parent"-->
-<!--    xmlns:app="http://schemas.android.com/apk/res-auto">-->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:weightSum="1.1"
+        android:layout_margin="3dp">
+<!--        android:background="@color/cardview_light_background">-->
+    <!--            android:padding="5dp">-->
 
-<!--    <androidx.cardview.widget.CardView-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:cardElevation="10dp">-->
-<!--        app:cardElevation="0dp"-->
-<!--        app:cardMaxElevation="0dp"-->
-<!--        app:cardUseCompatPadding="false"-->
-<!--        android:layout_marginBottom="1dp"-->
-<!--        app:contentPadding="-3dp"-->
-<!--        app:cardPreventCornerOverlap="false">-->
+    <!--            <TextView-->
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:id="@+id/address"/>-->
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            xmlns:app="http://schemas.android.com/apk/res-auto">
-<!--            android:padding="5dp">-->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/date"
+                    android:textSize="12sp"
+                    android:layout_weight="0.20"/>
+<!--                    android:layout_marginRight="5dp"/>-->
 
-<!--            <TextView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:id="@+id/address"/>-->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/time1"
+                    android:textSize="12sp"
+                    android:layout_weight="0.20"/>
+<!--                    android:layout_marginRight="3dp"/>-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/date"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/systalic"
+                    android:textSize="12sp"
+                    android:layout_weight="0.20"/>
+<!--                    android:layout_marginRight="3dp"/>-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/time1"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/dystalic"
+                    android:textSize="12sp"
+                    android:layout_weight="0.20"/>
+<!--                    android:layout_marginRight="3dp"/>-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/systalic"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/heartRate"
+                    android:textSize="12sp"
+                    android:layout_weight="0.20"/>
+<!--                    android:layout_marginRight="3dp"/>-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/dystalic"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/map"
+                    android:textSize="12sp"
+                    android:layout_weight="0.20"/>
+<!--                    android:layout_marginRight="3dp"/>-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/heartRate"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/map"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"/>
-
-        </LinearLayout>
-
-<!--    </androidx.cardview.widget.CardView>-->
-
-<!--</RelativeLayout>-->
+            </LinearLayout>
