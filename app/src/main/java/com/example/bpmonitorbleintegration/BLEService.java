@@ -419,7 +419,7 @@ public class BLEService extends Service implements DecodeListener{
 //                Log.i(TAG, "ack sent " + Constants.ack);
                 writeCharacteristics(characteristic,Constants.checkSumError);
             }
-//            Arrays.fill(value,(byte) 0);
+            Arrays.fill(value,(byte) 0);
 
         }
         sendBroadcast(intent);

@@ -10,4 +10,5 @@ public interface DecodeListener {
     void range(int value);
     void errorMsg(int errNo);
     void ackMsg(int ackNo);
+    void batteryMsg(int value);
 }

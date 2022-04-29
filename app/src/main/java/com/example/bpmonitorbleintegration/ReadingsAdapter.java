@@ -23,8 +23,8 @@ public class ReadingsAdapter extends RecyclerView.Adapter<ReadingsAdapter.Readin
     @Override
     public ReadingViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mCtx).inflate(R.layout.recyclerview_tasks, parent, false);
-        int height = parent.getMeasuredHeight() / 4;
-        view.setMinimumHeight(height);
+//        int height = parent.getMeasuredHeight() / 4;
+//        view.setMinimumHeight(height);
         return new ReadingViewHolder(view);
     }
 
