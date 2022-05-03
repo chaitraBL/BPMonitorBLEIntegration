@@ -6,19 +6,25 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
 
-    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true" />
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
 
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <uses-feature android:name="android.hardware.location.network" android:required="true" />
+    <uses-feature
+        android:name="android.hardware.location.network"
+        android:required="true" />
 
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <uses-feature android:name="android.hardware.location.gps" android:required="true" />
+    <uses-feature
+        android:name="android.hardware.location.gps"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -27,6 +33,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BPMonitorBLEIntegration">
+        <activity
+            android:name=".Statistics"
+            android:exported="false" />
+        <activity
+            android:name=".ManualReadings"
+            android:exported="false" />
         <activity
             android:name=".DataTransferActivity"
             android:exported="false" />
@@ -40,8 +52,9 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".BLEService" android:enabled="true" />
-
+        <service
+            android:name=".BLEService"
+            android:enabled="true" />
     </application>
 
 </manifest>

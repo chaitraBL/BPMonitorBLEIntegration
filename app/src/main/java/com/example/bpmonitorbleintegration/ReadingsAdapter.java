@@ -1,6 +1,7 @@
 package com.example.bpmonitorbleintegration;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +20,9 @@ public class ReadingsAdapter extends RecyclerView.Adapter<ReadingsAdapter.Readin
         this.readingList = taskList;
     }
 
-
     @Override
     public ReadingViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mCtx).inflate(R.layout.recyclerview_tasks, parent, false);
-//        int height = parent.getMeasuredHeight() / 4;
-//        view.setMinimumHeight(height);
         return new ReadingViewHolder(view);
     }
 

@@ -5,6 +5,8 @@
       <map>
         <entry key="app/src/main/res/layout/activity_data_transfer.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/activity_manual_readings.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_statistics.xml" value="0.5035897435897436" />
         <entry key="app/src/main/res/layout/custom_popup_dialog.xml" value="0.5082051282051282" />
         <entry key="app/src/main/res/layout/list_data_transfer.xml" value="0.5035897435897436" />
         <entry key="app/src/main/res/layout/recyclerview_tasks.xml" value="0.40572916666666664" />

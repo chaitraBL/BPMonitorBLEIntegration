@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.SparseArray;
@@ -59,9 +60,6 @@ public class BLEService extends Service implements DecodeListener{
     public final static UUID UUID_CHAR_LEVEL = UUID.fromString(BLEGattAttributes.CLIENT_CHARACTERISTIC_CONFIG);
     public final static UUID UUI_SERVICE_LEVEL = UUID.fromString(BLEGattAttributes.CLIENT_SERVICE_CONFIG);
     private Decoder decoder;
-    int cuffValue;
-    int pressureValue;
-    RawDataModel dataModel;
     public int systalic;
     public int dystolic;
     public int rate;
@@ -132,6 +130,9 @@ public class BLEService extends Service implements DecodeListener{
                     broadcastUpdate(intentAction);
                     mConnectionState = Constants.STATE_DISCONNECTED;
                     disconnect();
+//                    new Handler(Looper.getMainLooper()).postDelayed({
+////                            initialize()
+//                    }, 500);
                     break;
 
                 default:
@@ -270,56 +271,27 @@ public class BLEService extends Service implements DecodeListener{
 
                     case Constants.RESULT_COMMANDID:
                         Constants.is_resultReceived = true;
-                        Log.i(TAG, "Starting timer...");
-//                        mHandler.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                new AlertDialog.Builder(BLEService.this)
-//                                        .setTitle("Message")
-//                                        .setMessage("Please start again!!!")
-//                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//                                            @Override
-//                                            public void onClick(DialogInterface dialog, int which) {
-//
-//                                            }
-//                                        })
-//                                        .show();
-//                            }
-//                        }, 5000);
 
-                        int systolic = value[8] * 256 + value[9];
-                        int dystolic = value[10] * 256 + value[11];
-                        int heartRateValue = value[12];
-                        intent.putExtra(Constants.EXTRA_DATA, systolic + " / " + dystolic + " / " + heartRateValue);
-//                        cdt = new CountDownTimer(2000, 500) {
-//                            @Override
+//                        CountDownTimer yourCountDownTimer=
+//                        new CountDownTimer(50000, 1000) {
+//                            public void onFinish() {
+//                                Toast.makeText(BLEService.this, "Please start again!!!", Toast.LENGTH_SHORT).show();
+//                            }
 //                            public void onTick(long millisUntilFinished) {
+//                                // millisUntilFinished    The amount of time until finished.
+////                                if(!SendFlag)SendData( SendBuffer+"\r" );
+////                                else {Toast.makeText(ledControl.this, "sent", Toast.LENGTH_SHORT).show();this.cancel();}
 //                                int systolic = value[8] * 256 + value[9];
 //                                int dystolic = value[10] * 256 + value[11];
 //                                int heartRateValue = value[12];
 //                                intent.putExtra(Constants.EXTRA_DATA, systolic + " / " + dystolic + " / " + heartRateValue);
-//                                Log.i(TAG, "Countdown seconds remaining: " + millisUntilFinished / 1000 + " " + millisUntilFinished);
-//                                bi.putExtra("countdown", millisUntilFinished);
-//                                sendBroadcast(bi);
+//
 //                            }
-//
-//                            @Override
-//                            public void onFinish() {
-//                                Log.i(TAG, "Timer finished");
-//                                new AlertDialog.Builder(BLEService.this)
-//                                        .setTitle("Message")
-//                                        .setMessage("Please start again!!!")
-//                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//                                            @Override
-//                                            public void onClick(DialogInterface dialog, int which) {
-//
-//                                            }
-//                                        })
-//                                        .show();
-//                            }
-//                        };
-//
-//                        cdt.start();
+//                        }.start();
+                        int systolic = value[8] * 256 + value[9];
+                        int dystolic = value[10] * 256 + value[11];
+                        int heartRateValue = value[12];
+                        intent.putExtra(Constants.EXTRA_DATA, systolic + " / " + dystolic + " / " + heartRateValue);
 
 //                        int rangeValue = value[13];
 
@@ -367,39 +339,20 @@ public class BLEService extends Service implements DecodeListener{
 //                        int ack = value[8];
 //                    Log.i("Decoder", "ack " + ack);decodeListener.ackMsg(ack);
                         Log.i("Decoder", "Starting timer...");
-
-//                        mHandler.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                Constants.noAck = decoder.computeCheckSum(Constants.noAck);
-////                                Log.i(TAG, "check sum error " + Arrays.toString(Constants.checkSumError));
-////                                Log.i(TAG, "ack sent " + Constants.ack);
-//                                writeCharacteristics(characteristic,Constants.noAck);
+//                        new CountDownTimer(2000, 1000) {
+//                            public void onTick(long millisUntilFinished) {
+//                                int ack = value[8];
+//                                Log.i(TAG, "ack " + ack);
 //                            }
-//                        }, 2000);
+//                            // When the task is over it will print 00:00:00 there
+//                            public void onFinish() {
+//                                Toast.makeText(getApplicationContext(), "Please Start Again!!!",Toast.LENGTH_SHORT).show();
+//                            }
+//                        }.start();
 
                         int ack = value[8];
                         Log.i(TAG, "ack " + ack);
-//                        cdt = new CountDownTimer(2000, 500) {
-//                            @Override
-//                            public void onTick(long millisUntilFinished) {
-//                                int ack = value[8];
-//                                Log.i("Decoder", "Countdown seconds remaining: " + millisUntilFinished / 1000);
-//                                bi.putExtra("countdown", millisUntilFinished);
-//                                sendBroadcast(bi);
-//                            }
 //
-//                            @Override
-//                            public void onFinish() {
-//                                Log.i(TAG, "Timer finished");
-//                                Constants.noAck = decoder.computeCheckSum(Constants.noAck);
-////                Log.i(TAG, "check sum error " + Arrays.toString(Constants.checkSumError));
-////                Log.i(TAG, "ack sent " + Constants.ack);
-//                                writeCharacteristics(characteristic,Constants.noAck);
-//                            }
-//                        };
-//
-//                        cdt.start();
                         break;
 
                     case Constants.BATTERY_COMMANDID:
@@ -408,8 +361,19 @@ public class BLEService extends Service implements DecodeListener{
 //                        intent.putExtra(Constants.EXTRA_DATA, batteryLevel);
                         Constants.ack = decoder.computeCheckSum(Constants.ack);
 //                        Log.i(TAG, "error" + Arrays.toString(Constants.ack));
-                        Log.i(TAG, "ack sent " + Constants.ack);
+//                        Log.i(TAG, "ack sent " + Constants.ack);
                         writeCharacteristics(characteristic,Constants.ack);
+
+                    default:
+                        new CountDownTimer(2000, 1000) {
+                            public void onTick(long millisUntilFinished) {
+                               Log.i(TAG, "Default");
+                            }
+                            // When the task is over it will print 00:00:00 there
+                            public void onFinish() {
+                                Toast.makeText(getApplicationContext(), "Please Start Again!!!",Toast.LENGTH_SHORT).show();
+                            }
+                        }.start();
                 }
 
             }
@@ -420,7 +384,6 @@ public class BLEService extends Service implements DecodeListener{
                 writeCharacteristics(characteristic,Constants.checkSumError);
             }
             Arrays.fill(value,(byte) 0);
-
         }
         sendBroadcast(intent);
     }

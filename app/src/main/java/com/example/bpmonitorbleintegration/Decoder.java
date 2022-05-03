@@ -132,6 +132,7 @@ public class Decoder
         }
     }
 
+    //Checksum commputation for the sending values
     public byte[] computeCheckSum(byte[] data){
         int length = data[6];
         int final_checkSum = 0;
@@ -150,11 +151,19 @@ public class Decoder
         return data;
     }
 
+    // Placing device id in the array
     public byte[] replaceArrayVal(byte[] value, byte[] value1) {
         value[1] = value1[0];
         value[2] = value[1];
         value[3] = value1[2];
         value[4] = value1[3];
         return value;
+    }
+
+    //Calculates mean arterial pressure(MAP) value.
+    public int calculateMAP(int systa, int dista) {
+        int MAP = 0;
+        MAP = (systa+2*(dista)) /3;
+        return MAP;
     }
 }

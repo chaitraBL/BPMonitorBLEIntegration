@@ -128,64 +128,96 @@
         android:layout_below="@+id/rate_val"
         android:layout_margin="8dp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/date_rv"
-        android:text="Date"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_below="@+id/range_val"
-        android:layout_margin="5dp"/>
+        android:id="@+id/ll_list">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/time_rv"
-        android:layout_toRightOf="@+id/date_rv"
-        android:text="Time"
-        android:layout_below="@+id/range_val"
-        android:layout_margin="5dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date"
+            android:textSize="12sp"
+            android:layout_weight="0.17"
+            android:gravity="center"
+            android:textStyle="bold"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/systa_rv"
-        android:text="Systolic"
-        android:layout_toRightOf="@id/time_rv"
-        android:layout_below="@+id/range_val"
-        android:layout_margin="5dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/manual_time"
+            android:text="Time"
+            android:textSize="12sp"
+            android:layout_weight="0.17"
+            android:gravity="center"
+            android:textStyle="bold"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/dysta_rv"
-        android:text="Dystolic"
-        android:layout_toRightOf="@+id/systa_rv"
-        android:layout_below="@+id/range_val"
-        android:layout_margin="5dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Systa"
+            android:textSize="12sp"
+            android:layout_weight="0.17"
+            android:gravity="center"
+            android:textStyle="bold"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/rate_rv"
-        android:text="Heart Rate"
-        android:layout_below="@+id/range_val"
-        android:layout_toRightOf="@+id/dysta_rv"
-        android:layout_margin="5dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Diasta"
+            android:textSize="12sp"
+            android:layout_weight="0.17"
+            android:gravity="center"
+            android:textStyle="bold"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/map_rv"
-        android:text="MAP"
-        android:layout_toRightOf="@+id/rate_rv"
-        android:layout_below="@+id/range_val"
-        android:layout_margin="5dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rate"
+            android:textSize="12sp"
+            android:layout_weight="0.17"
+            android:gravity="center"
+            android:textStyle="bold"/>
 
-    <androidx.recyclerview.widget.RecyclerView
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MAP"
+            android:textSize="12sp"
+            android:layout_weight="0.17"
+            android:gravity="center"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/map_rv"
-        android:layout_margin="5dp"
-        android:id="@+id/recyclerview_tasks" />
+        android:layout_below="@+id/ll_list">
+        <!--        <TextView-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_centerInParent="true"-->
+        <!--            android:id="@+id/txt_no_data_found"-->
+        <!--            android:gravity="center"-->
+        <!--            android:textSize="18sp"-->
+        <!--            android:text="No Data Found"-->
+        <!--            android:visibility="invisible"></TextView>-->
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerview_tasks"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"></androidx.recyclerview.widget.RecyclerView>
+    </RelativeLayout>
 
 </RelativeLayout>

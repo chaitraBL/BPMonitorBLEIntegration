@@ -73,6 +73,7 @@ public class DataTransferActivity extends AppCompatActivity{
     RecyclerView recyclerView;
     Decoder decoder;
     public AlertDialog dialog;
+    RoomDB localDB;
 
     private Handler myHandler = new Handler(new Handler.Callback() {
         @Override
@@ -100,8 +101,8 @@ public class DataTransferActivity extends AppCompatActivity{
         deviceAddress = getIntent().getStringExtra("Device");
         readBtn = findViewById(R.id.final_val);
         recyclerView = findViewById(R.id.recyclerview_tasks);
-
         batteryLevel = findViewById(R.id.battery_level);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         intentFilter = new IntentFilter(BluetoothDevice.ACTION_PAIRING_REQUEST);
         intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
@@ -109,6 +110,7 @@ public class DataTransferActivity extends AppCompatActivity{
 
         //Initialising Decoder class.
         decoder = new Decoder();
+        localDB = new RoomDB();
 
         Intent getServiceIntent = new Intent(DataTransferActivity.this, BLEService.class);
         bindService(getServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
@@ -205,7 +207,8 @@ public class DataTransferActivity extends AppCompatActivity{
                 diastolicText.setText(String.valueOf(mBluetoothLeService.dystolic));
                 heartRateText.setText(String.valueOf(mBluetoothLeService.rate));
                 rangeText.setText(String.valueOf(mBluetoothLeService.range));
-                saveTask(deviceAddress, mBluetoothLeService.systalic, mBluetoothLeService.dystolic, mBluetoothLeService.rate, mBluetoothLeService.range);
+                localDB.saveTask(deviceAddress, mBluetoothLeService.systalic, mBluetoothLeService.dystolic, mBluetoothLeService.rate, mBluetoothLeService.range, DataTransferActivity.this);
+//                saveTask(deviceAddress, mBluetoothLeService.systalic, mBluetoothLeService.dystolic, mBluetoothLeService.rate, mBluetoothLeService.range);
             }
         });
 
@@ -221,7 +224,6 @@ public class DataTransferActivity extends AppCompatActivity{
                 boolean result = mBluetoothLeService.connect(deviceAddress);
             }
         }
-
     }
 
     @Override
@@ -236,7 +238,6 @@ public class DataTransferActivity extends AppCompatActivity{
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.data_menu_file, menu);
         return super.onCreateOptionsMenu(menu);
-
     }
 
     @Override
@@ -275,17 +276,18 @@ public class DataTransferActivity extends AppCompatActivity{
             else if (Constants.ACTION_GATT_DISCONNECTED.equals(action)) {
                 mConnected = false;
                 updateConnectionState("Disconnected");
-                new AlertDialog.Builder(DataTransferActivity.this)
-                    .setTitle("Message")
-                        .setMessage("Connection terminated!, please connect again")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent intent = new Intent(DataTransferActivity.this, MainActivity.class);
-                                startActivity(intent);
-                                }
-                            })
-                        .show();
+                Toast.makeText(getApplicationContext(),"Connection terminated!, please connect again",Toast.LENGTH_SHORT).show();
+//                new AlertDialog.Builder(DataTransferActivity.this)
+//                    .setTitle("Message")
+//                        .setMessage("Connection terminated!, please connect again")
+//                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                Intent intent = new Intent(DataTransferActivity.this, MainActivity.class);
+//                                startActivity(intent);
+//                                }
+//                            })
+//                        .show();
 
             }
             else if (Constants.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
@@ -319,6 +321,9 @@ public class DataTransferActivity extends AppCompatActivity{
             else if (Constants.ACTION_DATA_AVAILABLE.equals(action)) {
                 displayData(intent.getStringExtra(Constants.EXTRA_DATA));
 
+                //Showing battery level using color code.
+                showBattery();
+
             }
         }
     };
@@ -326,7 +331,7 @@ public class DataTransferActivity extends AppCompatActivity{
     private void updateGUI(Intent intent) {
         if (intent.getExtras() != null) {
             long millisUntilFinished = intent.getLongExtra("countdown", 0);
-            Log.i(TAG, "Countdown seconds remaining: " +  millisUntilFinished / 1000);
+//            Log.i(TAG, "Countdown seconds remaining: " +  millisUntilFinished / 1000);
         }
     }
 
@@ -345,8 +350,12 @@ public class DataTransferActivity extends AppCompatActivity{
                ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
            }
         }
-        //Showing battery level using color code.
-        showBattery();
+//        else
+//        {
+//            //Showing battery level using color code.
+//            showBattery();
+//        }
+
     }
 
     public void showBattery(){
@@ -359,16 +368,7 @@ public class DataTransferActivity extends AppCompatActivity{
         }
         else if (mBluetoothLeService.batteryLevel == Constants.LOW_BATTERY) {
             batteryLevel.setBackgroundColor(Color.parseColor("#FF0000"));
-            new AlertDialog.Builder(DataTransferActivity.this)
-                    .setTitle("Message")
-                    .setMessage("Battery is low, Please Change battery")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    })
-                    .show();
+            Toast.makeText(getApplicationContext(), "Battery is low, Please Change battery",Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -402,52 +402,6 @@ public class DataTransferActivity extends AppCompatActivity{
                 statusText.setText(status);
             }
         });
-    }
-
-    // Save to the Local Room DB.
-    private void saveTask(String address, int systolic, int dystolic, int heartRate, int range) {
-//        final String sMessage = message.trim();
-        final String sAddress = address.trim();
-
-        // To get current time and date.
-        DateFormat df = new SimpleDateFormat("HH:mm"); // Format time
-        String time = df.format(Calendar.getInstance().getTime());
-//        Log.i(TAG, "Time " + time);
-
-//        DateFormat df1 = new SimpleDateFormat("yyyy/MM/dd"); // Format date
-        DateFormat df1 = new SimpleDateFormat("dd,MM"); // Format date
-        String date = df1.format(Calendar.getInstance().getTime());
-//        Log.i(TAG, "date " + date);
-
-        class SaveTask extends AsyncTask<Void, Void, Void> {
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-
-                BloodPressureDB reading = new BloodPressureDB();
-                reading.setName(sAddress);
-                reading.setDate(date);
-                reading.setTime(time);
-                reading.setDystolic(dystolic);
-                reading.setSystolic(systolic);
-                reading.setHeartRate(heartRate);
-                reading.setRange(range);
-
-                DatabaseClient.getInstance(getApplicationContext()).getAppDatabase().bpReadingsDao().insert(reading);
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void unused) {
-                super.onPostExecute(unused);
-//                finish();
-//                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                Toast.makeText(getApplicationContext(),"Saved",Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        SaveTask st = new SaveTask();
-        st.execute();
     }
 
     //To retrieve data from Room DB.

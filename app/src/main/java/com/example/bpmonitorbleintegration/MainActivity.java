@@ -33,6 +33,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -64,15 +65,13 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothGatt mGatt;
     private static final int PERMISSIONS_REQUEST_LOCATION = 101;
     ListView listView;
+    Button manualMeasurement;
     String deviceAddress;
     private static final String TAG = "BluetoothLEService";
     BluetoothDevice bluetoothDevice;
     BluetoothManager bluetoothManager;
     Context context;
     HashMap<String, String> filterDevices;
-
-    private static final char[] HEX_ARRAY = {'0', '1', '2', '3', '4', '5', '6',
-            '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
         deviceList = new ArrayList<String>();
         deviceAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, deviceList);
         listView.setAdapter(deviceAdapter);
+        manualMeasurement = findViewById(R.id.measurement);
 
         listView.setOnItemClickListener(scanResultOnItemClickListener);
 
@@ -105,6 +105,15 @@ public class MainActivity extends AppCompatActivity {
         bluetoothManager =
                 (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
+        
+        // Navigates to manualReading activity.
+        manualMeasurement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, ManualReadings.class);
+                startActivity(intent);
+            }
+        });
     }
 
     // List of bluetooth scan devices.
@@ -184,6 +193,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.bluetooth_searching:
                 scanLeDevice(true);
                 return true;
+
+            case R.id.graph:
+                Intent intent = new Intent(MainActivity.this, Statistics.class);
+                startActivity(intent);
 
             default:
                 return super.onOptionsItemSelected(item);

@@ -4,7 +4,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_gravity="center"
-        android:weightSum="1.1"
+        android:weightSum="1"
         android:layout_margin="3dp">
 <!--        android:background="@color/cardview_light_background">-->
     <!--            android:padding="5dp">-->
@@ -19,7 +19,8 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/date"
                     android:textSize="12sp"
-                    android:layout_weight="0.20"/>
+                    android:layout_weight="0.17"
+                    android:gravity="center"/>
 <!--                    android:layout_marginRight="5dp"/>-->
 
                 <TextView
@@ -27,7 +28,8 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/time1"
                     android:textSize="12sp"
-                    android:layout_weight="0.20"/>
+                    android:layout_weight="0.17"
+                    android:gravity="center"/>
 <!--                    android:layout_marginRight="3dp"/>-->
 
                 <TextView
@@ -35,7 +37,8 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/systalic"
                     android:textSize="12sp"
-                    android:layout_weight="0.20"/>
+                    android:layout_weight="0.17"
+                    android:gravity="center"/>
 <!--                    android:layout_marginRight="3dp"/>-->
 
                 <TextView
@@ -43,7 +46,8 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/dystalic"
                     android:textSize="12sp"
-                    android:layout_weight="0.20"/>
+                    android:layout_weight="0.17"
+                    android:gravity="center"/>
 <!--                    android:layout_marginRight="3dp"/>-->
 
                 <TextView
@@ -51,7 +55,8 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/heartRate"
                     android:textSize="12sp"
-                    android:layout_weight="0.20"/>
+                    android:layout_weight="0.17"
+                    android:gravity="center"/>
 <!--                    android:layout_marginRight="3dp"/>-->
 
                 <TextView
@@ -59,7 +64,8 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/map"
                     android:textSize="12sp"
-                    android:layout_weight="0.20"/>
+                    android:layout_weight="0.17"
+                    android:gravity="center"/>
 <!--                    android:layout_marginRight="3dp"/>-->
 
             </LinearLayout>
