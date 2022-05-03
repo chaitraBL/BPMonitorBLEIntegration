@@ -80,6 +80,7 @@ public class Decoder
 
                 case Constants.BATTERY_COMMANDID:
                     int batteryVal = value[8];
+                    Constants.is_batterValueReceived = true;
 //                    Log.i("Decoder", "Battery level " + batteryVal);
                     decodeListener.batteryMsg(batteryVal);
             }
@@ -101,10 +102,13 @@ public class Decoder
                 checkSum = data[14] * 256 + data[15];
                 break;
 
-                //Merging same cases.
             case Constants.ERROR_COMMANDID:
+                checkSum = data[9] * 256 + data[10];
+                break;
 
             case Constants.BATTERY_COMMANDID:
+                checkSum = data[9] * 256 + data[10];
+                break;
 
             case Constants.ACK_COMMANDID:
                 checkSum = data[9] * 256 + data[10];

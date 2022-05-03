@@ -357,23 +357,24 @@ public class BLEService extends Service implements DecodeListener{
 
                     case Constants.BATTERY_COMMANDID:
                         int batteryLevel = value[8];
+                        Constants.is_batterValueReceived = true;
 //                        Log.i(TAG, "Battery level " + batteryLevel);
 //                        intent.putExtra(Constants.EXTRA_DATA, batteryLevel);
                         Constants.ack = decoder.computeCheckSum(Constants.ack);
 //                        Log.i(TAG, "error" + Arrays.toString(Constants.ack));
-//                        Log.i(TAG, "ack sent " + Constants.ack);
+                        Log.i(TAG, "ack sent " + Constants.ack);
                         writeCharacteristics(characteristic,Constants.ack);
 
-                    default:
-                        new CountDownTimer(2000, 1000) {
-                            public void onTick(long millisUntilFinished) {
-                               Log.i(TAG, "Default");
-                            }
-                            // When the task is over it will print 00:00:00 there
-                            public void onFinish() {
-                                Toast.makeText(getApplicationContext(), "Please Start Again!!!",Toast.LENGTH_SHORT).show();
-                            }
-                        }.start();
+//                    default:
+//                        new CountDownTimer(2000, 1000) {
+//                            public void onTick(long millisUntilFinished) {
+//                               Log.i(TAG, "Default");
+//                            }
+//                            // When the task is over it will print 00:00:00 there
+//                            public void onFinish() {
+//                                Toast.makeText(getApplicationContext(), "Please Start Again!!!",Toast.LENGTH_SHORT).show();
+//                            }
+//                        }.start();
                 }
 
             }

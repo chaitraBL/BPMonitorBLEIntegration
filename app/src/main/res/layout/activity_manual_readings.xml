@@ -6,25 +6,25 @@
     android:layout_height="match_parent"
     tools:context=".ManualReadings">
 
-    <androidx.appcompat.widget.Toolbar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/measurement_toolbar"
-        android:background="@color/purple_700"
-        android:theme="@style/AppTheme">
+<!--    <androidx.appcompat.widget.Toolbar-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:id="@+id/measurement_toolbar"-->
+<!--        android:background="@color/purple_700"-->
+<!--        android:theme="@style/AppTheme">-->
 
-<!--        <RelativeLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content">-->
+<!--&lt;!&ndash;        <RelativeLayout&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_width="match_parent"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_height="wrap_content">&ndash;&gt;-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Manual Measurement"
-                android:textSize="18sp"
-                android:textStyle="bold"></TextView>
-<!--        </RelativeLayout>-->
-    </androidx.appcompat.widget.Toolbar>
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Manual Measurement"-->
+<!--                android:textSize="18sp"-->
+<!--                android:textStyle="bold"></TextView>-->
+<!--&lt;!&ndash;        </RelativeLayout>&ndash;&gt;-->
+<!--    </androidx.appcompat.widget.Toolbar>-->
 
     <TextView
         android:layout_width="wrap_content"

@@ -276,20 +276,26 @@ public class DataTransferActivity extends AppCompatActivity{
             else if (Constants.ACTION_GATT_DISCONNECTED.equals(action)) {
                 mConnected = false;
                 updateConnectionState("Disconnected");
-                Toast.makeText(getApplicationContext(),"Connection terminated!, please connect again",Toast.LENGTH_SHORT).show();
-//                new AlertDialog.Builder(DataTransferActivity.this)
-//                    .setTitle("Message")
-//                        .setMessage("Connection terminated!, please connect again")
-//                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                Intent intent = new Intent(DataTransferActivity.this, MainActivity.class);
-//                                startActivity(intent);
-//                                }
-//                            })
-//                        .show();
+//                Toast.makeText(getApplicationContext(),"Connection terminated!, please connect again",Toast.LENGTH_SHORT).show();
+//                Intent intent1 = new Intent(DataTransferActivity.this, MainActivity.class);
+//                startActivity(intent1);
+                new AlertDialog.Builder(DataTransferActivity.this)
+                    .setTitle("Message")
+                        .setMessage("Connection terminated!, please connect again")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
 
+                                //Navigating to next activity on tap of ok button.
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                    Intent intent = new Intent(DataTransferActivity.this, MainActivity.class);
+                                    startActivity(intent);
+                                }
+                            }
+                        })
+                        .show();
             }
+
             else if (Constants.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 //Receive services and characteristics
                 List<BluetoothGattService> gattService = mBluetoothLeService.getSupportedGattServices();
@@ -320,10 +326,11 @@ public class DataTransferActivity extends AppCompatActivity{
 
             else if (Constants.ACTION_DATA_AVAILABLE.equals(action)) {
                 displayData(intent.getStringExtra(Constants.EXTRA_DATA));
-
-                //Showing battery level using color code.
-                showBattery();
-
+                if (Constants.is_batterValueReceived == true)
+                {
+                    //Showing battery level using color code.
+                    showBattery();
+                }
             }
         }
     };
@@ -350,12 +357,6 @@ public class DataTransferActivity extends AppCompatActivity{
                ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
            }
         }
-//        else
-//        {
-//            //Showing battery level using color code.
-//            showBattery();
-//        }
-
     }
 
     public void showBattery(){
@@ -370,6 +371,8 @@ public class DataTransferActivity extends AppCompatActivity{
             batteryLevel.setBackgroundColor(Color.parseColor("#FF0000"));
             Toast.makeText(getApplicationContext(), "Battery is low, Please Change battery",Toast.LENGTH_SHORT).show();
         }
+
+        Constants.is_batterValueReceived = false;
     }
 
     // Connect and disconnect to the services.

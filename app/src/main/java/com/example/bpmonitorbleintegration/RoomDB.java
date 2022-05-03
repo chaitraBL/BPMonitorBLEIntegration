@@ -9,6 +9,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class RoomDB {
 //    public static final String TIME_FORMAT = "hh:mm aa";
@@ -30,7 +31,7 @@ public class RoomDB {
         String Timein12hourFormat = TimeFormat.format(ATime.getTime());
 //        Log.i(TAG, "Time " + time);
 
-        DateFormat df1 = new SimpleDateFormat("dd,MM"); // Format date
+        DateFormat df1 = new SimpleDateFormat("dd-MM"); // Format date
         String date = df1.format(Calendar.getInstance().getTime());
 //        Log.i(TAG, "date " + date)
 
