@@ -13,7 +13,7 @@ import java.util.Locale;
 
 public class RoomDB {
 //    public static final String TIME_FORMAT = "hh:mm aa";
-    public static final String TIME_FORMAT = "hh:mm";
+    public static final String TIME_FORMAT = "hh:mm aa";
     public static final String TAG = "RawDataModel";
     public void RoomDB() {
 
@@ -32,7 +32,7 @@ public class RoomDB {
         String Timein12hourFormat = TimeFormat.format(ATime.getTime());
 //        Log.i(TAG, "Time " + time);
 
-        DateFormat df1 = new SimpleDateFormat("MMdd"); // Format date
+        DateFormat df1 = new SimpleDateFormat("MMM dd"); // Format date
         String date = df1.format(Calendar.getInstance().getTime());
 //        Log.i(TAG, "date " + date)
 
@@ -43,7 +43,7 @@ public class RoomDB {
 
                 BloodPressureDB reading = new BloodPressureDB();
                 reading.setName(sAddress);
-                reading.setDate(date);
+                reading.setDate("May 04");
                 reading.setTime(Timein12hourFormat);
                 reading.setDystolic(dystolic);
                 reading.setSystolic(systolic);
