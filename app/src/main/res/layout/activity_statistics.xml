@@ -4,13 +4,58 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".Statistics">
+
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:orientation="vertical"-->
+<!--        android:layout_margin="10dp"-->
+<!--        android:id="@+id/statistics_linear">-->
+
+<!--        <com.google.android.material.tabs.TabLayout-->
+<!--            android:id="@+id/tabLayout"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:padding="1dp"-->
+<!--            app:tabIndicatorColor="@color/colorAccent"-->
+<!--            app:tabTextColor="@color/black">-->
+
+<!--            <com.google.android.material.tabs.TabItem-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:padding="20dp"-->
+<!--                android:text="Time wise" />-->
+
+<!--            <com.google.android.material.tabs.TabItem-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:padding="20dp"-->
+<!--                android:text="Date Wise" />-->
+<!--        </com.google.android.material.tabs.TabLayout>-->
+
+<!--        <androidx.viewpager.widget.ViewPager-->
+<!--            android:id="@+id/viewPager"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_below="@id/tabLayout"-->
+<!--            android:layout_centerInParent="true"-->
+<!--            tools:layout_editor_absoluteX="8dp" />-->
+
+<!--    </LinearLayout>-->
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/linechart"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="250dp" />
+        android:layout_height="300dp"
+        android:layout_marginTop="20dp" />
+
+    <com.github.mikephil.charting.charts.ScatterChart
+        android:id = "@+id/scatterChart"
+        android:layout_width = "match_parent"
+        android:layout_below="@+id/linechart"
+        android:layout_height = "300dp"
+        android:layout_marginTop="20dp"/>
 
 </RelativeLayout>

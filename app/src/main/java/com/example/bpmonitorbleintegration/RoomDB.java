@@ -25,13 +25,14 @@ public class RoomDB {
 //        DateFormat df = new SimpleDateFormat("HH:mm a"); // Format time
 //        String time = df.format(Calendar.getInstance().getTime());
 
-        SimpleDateFormat TimeFormat = new SimpleDateFormat(TIME_FORMAT);
+        // To get current date and time.
+        SimpleDateFormat TimeFormat = new SimpleDateFormat(TIME_FORMAT); // Format time
 
         Calendar ATime = Calendar.getInstance();
         String Timein12hourFormat = TimeFormat.format(ATime.getTime());
 //        Log.i(TAG, "Time " + time);
 
-        DateFormat df1 = new SimpleDateFormat("dd-MM"); // Format date
+        DateFormat df1 = new SimpleDateFormat("MMdd"); // Format date
         String date = df1.format(Calendar.getInstance().getTime());
 //        Log.i(TAG, "date " + date)
 

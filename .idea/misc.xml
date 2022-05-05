@@ -8,6 +8,8 @@
         <entry key="app/src/main/res/layout/activity_manual_readings.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_statistics.xml" value="0.5035897435897436" />
         <entry key="app/src/main/res/layout/custom_popup_dialog.xml" value="0.5082051282051282" />
+        <entry key="app/src/main/res/layout/fragment_date_wise_graph.xml" value="0.4973958333333333" />
+        <entry key="app/src/main/res/layout/fragment_time_wise_graph.xml" value="0.5114583333333333" />
         <entry key="app/src/main/res/layout/list_data_transfer.xml" value="0.5035897435897436" />
         <entry key="app/src/main/res/layout/recyclerview_tasks.xml" value="0.40572916666666664" />
         <entry key="app/src/main/res/menu/data_menu_file.xml" value="0.5035897435897436" />
