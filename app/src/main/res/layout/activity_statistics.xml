@@ -45,17 +45,57 @@
 
 <!--    </LinearLayout>-->
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/linechart"
+    <!--Spinner widget-->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_marginTop="20dp" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <com.github.mikephil.charting.charts.ScatterChart
-        android:id = "@+id/scatterChart"
-        android:layout_width = "match_parent"
-        android:layout_below="@+id/linechart"
-        android:layout_height = "300dp"
-        android:layout_marginTop="20dp"/>
+        <Spinner
+            android:id="@+id/coursesspinner"
+            android:layout_height="50dp"
+            android:layout_width="160dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/linechart"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"/>
+
+        <com.github.mikephil.charting.charts.ScatterChart
+            android:id = "@+id/scatterChart"
+            android:layout_width = "match_parent"
+            android:layout_height = "300dp"
+            android:layout_marginTop="20dp"/>
+    </LinearLayout>
+<!--    <Spinner-->
+<!--        android:id="@+id/coursesspinner"-->
+<!--        android:layout_height="50dp"-->
+<!--        android:layout_width="160dp"-->
+<!--        android:layout_marginEnd="10dp"-->
+<!--        android:layout_marginStart="10dp"-->
+<!--        android:layout_marginBottom="10dp"-->
+<!--        android:layout_marginTop="10dp"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"/>-->
+<!--    -->
+<!--    <com.github.mikephil.charting.charts.LineChart-->
+<!--        android:id="@+id/linechart"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_below="@+id/coursesspinner"-->
+<!--        android:layout_height="300dp"-->
+<!--        android:layout_marginTop="20dp" />-->
+
+<!--    <com.github.mikephil.charting.charts.ScatterChart-->
+<!--        android:id = "@+id/scatterChart"-->
+<!--        android:layout_width = "match_parent"-->
+<!--        android:layout_below="@+id/linechart"-->
+<!--        android:layout_height = "300dp"-->
+<!--        android:layout_marginTop="20dp"/>-->
 
 </RelativeLayout>

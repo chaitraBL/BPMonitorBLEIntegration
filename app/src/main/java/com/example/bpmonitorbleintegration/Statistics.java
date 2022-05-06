@@ -4,6 +4,11 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Adapter;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -43,7 +48,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
-public class Statistics extends AppCompatActivity {
+public class Statistics extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     LineChart lineChart;
     LineData lineData;
@@ -60,7 +65,10 @@ public class Statistics extends AppCompatActivity {
     ScatterData scatterData;
     ScatterDataSet scatterDataSet1, scatterDataSet2, scatterDataSet3;
 
+    Spinner spin;
     int i = 0;
+
+    String[] optiion = {"Daily", "Weekly"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +77,11 @@ public class Statistics extends AppCompatActivity {
 
         lineChart = findViewById(R.id.linechart);
         scatterChart = findViewById(R.id.scatterChart);
+        spin = findViewById(R.id.coursesspinner);
+        spin.setOnItemSelectedListener(this);
+        ArrayAdapter ad = new ArrayAdapter(this, android.R.layout.simple_spinner_item, optiion);
+        ad.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spin.setAdapter(ad);
 //        tabLayout = findViewById(R.id.tabLayout);
 //        viewPager = findViewById(R.id.viewPager);
 
@@ -201,66 +214,7 @@ public class Statistics extends AppCompatActivity {
         return label;
     }
 
-//    // Multiple dataset line graph (Current day wise graph).
-//    public void plotLineGraph(List<BloodPressureDB> task) {
-//        lineData = lineChart.getData();
-//        // To get current date.
-//        DateFormat df1 = new SimpleDateFormat("MMM dd"); // Format date
-//        String date = df1.format(Calendar.getInstance().getTime());
-//
-//        int count = 0;
-//        for (i = 0; i < task.size(); i++){
-//            if (date.equals(task.get(i).getDate())) {
-//
-//                entryList1.add(new Entry(count, task.get(i).getSystolic()));
-//                entryList2.add(new Entry(count, task.get(i).getDystolic()));
-////                entryList3.add(new Entry(i, task.get(i).getHeartRate()));
-//                timeList.add(task.get(i).getTime());
-//                count++;
-//            }
-//        }
-//
-//        Log.i(TAG, "systolic " + entryList1);
-//        Log.i(TAG, "Diastolic " + entryList2);
-//        lineDataSet1 = new LineDataSet(entryList1,"Systolic");
-//        lineDataSet1.setColor(Color.MAGENTA);
-//        lineDataSet1.setValueTextColor(Color.BLACK);
-//        lineDataSet1.setValueTextSize(12f);
-//        lineDataSet1.setLineWidth(2);
-//
-//        lineDataSet2 = new LineDataSet(entryList2,"Diastolic");
-//        lineDataSet2.setColor(Color.RED);
-//        lineDataSet2.setValueTextColor(Color.BLACK);
-//        lineDataSet2.setValueTextSize(12f);
-//        lineDataSet2.setLineWidth(2);
-//
-//        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
-//        dataSets.add(lineDataSet1);
-//        dataSets.add(lineDataSet2);
-//
-//        lineData = new LineData(dataSets);
-//
-//        XAxis xAxis = lineChart.getXAxis();
-//        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-////        xAxis.setValueFormatter(new IndexAxisValueFormatter(getDate()));
-//        xAxis.setDrawAxisLine(true);
-//////        xAxis.setLabelCount(xAxisValues.size());
-//        xAxis.setDrawLabels(true);
-//        xAxis.setValueFormatter(new com.github.mikephil.charting.formatter.IndexAxisValueFormatter(timeList));
-//        lineChart.setData(lineData);
-//        //Leave some space before the line
-////        xAxis.setSpaceMin(50f);
-//////Leave some space after the line
-////        xAxis.setSpaceMax(50f);
-//        if (entryList1.size() > 10 && entryList2.size() > 10){
-//            lineChart.setVisibleXRangeMaximum(10f);
-//        }
-//
-//        lineChart.notifyDataSetChanged();
-//        lineChart.invalidate();
-//    }
-
-    // Multiple dataset line graph.
+    // Multiple dataset line graph (Current day wise graph).
     public void plotLineGraph(List<BloodPressureDB> task) {
         lineData = lineChart.getData();
         // To get current date.
@@ -269,17 +223,18 @@ public class Statistics extends AppCompatActivity {
 
         int count = 0;
         for (i = 0; i < task.size(); i++){
-//            if (date.equals(task.get(i).getDate())) {
+            if (date.equals(task.get(i).getDate())) {
 
                 entryList1.add(new Entry(count, task.get(i).getSystolic()));
                 entryList2.add(new Entry(count, task.get(i).getDystolic()));
 //                entryList3.add(new Entry(i, task.get(i).getHeartRate()));
-//                timeList.add(task.get(i).getTime());
-            daysList.add(task.get(i).getDate());
+                timeList.add(task.get(i).getTime());
                 count++;
-//            }
+            }
         }
 
+        Log.i(TAG, "systolic " + entryList1);
+        Log.i(TAG, "Diastolic " + entryList2);
         lineDataSet1 = new LineDataSet(entryList1,"Systolic");
         lineDataSet1.setColor(Color.MAGENTA);
         lineDataSet1.setValueTextColor(Color.BLACK);
@@ -298,20 +253,13 @@ public class Statistics extends AppCompatActivity {
 
         lineData = new LineData(dataSets);
 
-        // To remove duplicates from arraylist.
-        List<String> newList = new ArrayList<>();
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            newList = daysList.stream()
-                    .distinct()
-                    .collect(Collectors.toList());
-            Log.i(TAG, "new list " + newList);
-        }
-
         XAxis xAxis = lineChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+//        xAxis.setValueFormatter(new IndexAxisValueFormatter(getDate()));
         xAxis.setDrawAxisLine(true);
+////        xAxis.setLabelCount(xAxisValues.size());
         xAxis.setDrawLabels(true);
-        xAxis.setValueFormatter(new com.github.mikephil.charting.formatter.IndexAxisValueFormatter(newList));
+        xAxis.setValueFormatter(new com.github.mikephil.charting.formatter.IndexAxisValueFormatter(timeList));
         lineChart.setData(lineData);
         //Leave some space before the line
 //        xAxis.setSpaceMin(50f);
@@ -324,6 +272,64 @@ public class Statistics extends AppCompatActivity {
         lineChart.notifyDataSetChanged();
         lineChart.invalidate();
     }
+
+//    // Multiple dataset line graph.
+//    public void plotLineGraph(List<BloodPressureDB> task) {
+//        lineData = lineChart.getData();
+//
+//        int count = 0;
+//        for (i = 0; i < task.size(); i++){
+//                entryList1.add(new Entry(count, task.get(i).getSystolic()));
+//                entryList2.add(new Entry(count, task.get(i).getDystolic()));
+////                timeList.add(task.get(i).getTime());
+//            daysList.add(task.get(i).getDate());
+//                count++;
+//        }
+//
+//        lineDataSet1 = new LineDataSet(entryList1,"Systolic");
+//        lineDataSet1.setColor(Color.MAGENTA);
+//        lineDataSet1.setValueTextColor(Color.BLACK);
+//        lineDataSet1.setValueTextSize(12f);
+//        lineDataSet1.setLineWidth(2);
+//
+//        lineDataSet2 = new LineDataSet(entryList2,"Diastolic");
+//        lineDataSet2.setColor(Color.RED);
+//        lineDataSet2.setValueTextColor(Color.BLACK);
+//        lineDataSet2.setValueTextSize(12f);
+//        lineDataSet2.setLineWidth(2);
+//
+//        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+//        dataSets.add(lineDataSet1);
+//        dataSets.add(lineDataSet2);
+//
+//        lineData = new LineData(dataSets);
+//
+//        // To remove duplicates from arraylist.
+//        List<String> newList = new ArrayList<>();
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+//            newList = daysList.stream()
+//                    .distinct()
+//                    .collect(Collectors.toList());
+////            Log.i(TAG, "new list " + newList);
+//        }
+//
+//        XAxis xAxis = lineChart.getXAxis();
+//        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+//        xAxis.setDrawAxisLine(true);
+//        xAxis.setDrawLabels(true);
+//        xAxis.setValueFormatter(new com.github.mikephil.charting.formatter.IndexAxisValueFormatter(newList));
+//        lineChart.setData(lineData);
+//        //Leave some space before the line
+////        xAxis.setSpaceMin(50f);
+//////Leave some space after the line
+////        xAxis.setSpaceMax(50f);
+//        if (entryList1.size() > 10 && entryList2.size() > 10){
+//            lineChart.setVisibleXRangeMaximum(10f);
+//        }
+//
+//        lineChart.notifyDataSetChanged();
+//        lineChart.invalidate();
+//    }
 
     // Multiple datasets scatter chart.
     public void plotScatterGraph(List<BloodPressureDB> task) {
@@ -359,4 +365,17 @@ public class Statistics extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        Log.i(TAG, "Position " + i);
+        switch (i) {
+            case 0:
+
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
+    }
 }
