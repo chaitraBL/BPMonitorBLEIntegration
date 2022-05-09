@@ -135,8 +135,8 @@ public class Statistics extends AppCompatActivity{
         candleStickChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
 //        candleStickChart.getAxisLeft().setDrawGridLines(false);
         candleStickChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(daysList));
-        if (yAxisCandleStick.size() >= 10) {
-            candleStickChart.setVisibleXRangeMaximum(10f);
+        if (yAxisCandleStick.size() >= 6) {
+            candleStickChart.setVisibleXRangeMaximum(6f);
         }
         candleStickChart.invalidate();
         candleStickChart.notifyDataSetChanged();
@@ -168,9 +168,9 @@ public class Statistics extends AppCompatActivity{
         cds.setColor(Color.rgb(80, 80, 80));
         cds.setShadowColor(Color.DKGRAY);
         cds.setBarSpace(1f);
-        cds.setDecreasingColor(Color.parseColor("#FFA500"));
+        cds.setDecreasingColor(Color.parseColor("#151B54"));
         cds.setDecreasingPaintStyle(Paint.Style.FILL);
-        cds.setIncreasingColor(Color.parseColor("#FFA500"));
+        cds.setIncreasingColor(Color.parseColor("#151B54"));
         cds.setIncreasingPaintStyle(Paint.Style.STROKE);
         cds.setNeutralColor(Color.BLUE);
         cds.setValueTextColor(Color.BLACK);
