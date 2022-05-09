@@ -239,15 +239,14 @@ public class Statistics extends AppCompatActivity{
         DateFormat df1 = new SimpleDateFormat("MMM dd"); // Format date
         String date = df1.format(Calendar.getInstance().getTime());
 
-        getTimeSet(true);
-        Log.i(TAG, "time " + timeList);
-        Log.i(TAG, "time size " + timeList.size());
+//        getTimeSet(true);
+
         int count = 0;
         for (int i = 0; i < tasks.size(); i++){
             for (int j = 0; j < timeList.size(); j++) {
                 if (date.equals(tasks.get(i).getDate())) {
                     yAxisCandleStick1.add(new CandleEntry(count, tasks.get(i).getSystolic(),tasks.get(i).getDystolic(),tasks.get(i).getSystolic(),tasks.get(i).getDystolic()));
-//                timeList.add(tasks.get(i).getTime());
+                timeList.add(tasks.get(i).getTime());
                     count++;
                 }
             }
@@ -286,7 +285,7 @@ public class Statistics extends AppCompatActivity{
             String  day1 = sdf.format(calendar.getTime());
 //            Log.i(TAG, "day1 " + day1);
             timeResult = day1;
-            timeList.add(timeResult);
+//            timeList.add(timeResult);
 
             // add 15 minutes to the current time; the hour adjusts automatically!
             calendar.add(Calendar.MINUTE, 60);
