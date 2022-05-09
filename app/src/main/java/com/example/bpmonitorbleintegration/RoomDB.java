@@ -43,7 +43,7 @@ public class RoomDB {
 
                 BloodPressureDB reading = new BloodPressureDB();
                 reading.setName(sAddress);
-                reading.setDate("May 04");
+                reading.setDate(date);
                 reading.setTime(Timein12hourFormat);
                 reading.setDystolic(dystolic);
                 reading.setSystolic(systolic);

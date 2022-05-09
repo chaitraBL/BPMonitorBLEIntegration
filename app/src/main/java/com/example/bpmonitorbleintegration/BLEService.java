@@ -66,6 +66,10 @@ public class BLEService extends Service implements DecodeListener{
     public int range;
     public long pressure;
     public int batteryLevel;
+    public int counter = 6;
+    private CountDownTimer mCountDownTimer;
+    private boolean mTimerRunning;
+    private long mTimeLeftInMillis = 6000;
 
 //    Decoder mDecoder;
     Handler mHandler;
@@ -270,7 +274,6 @@ public class BLEService extends Service implements DecodeListener{
                         break;
 
                     case Constants.RESULT_COMMANDID:
-                        Constants.is_resultReceived = true;
 
 //                        CountDownTimer yourCountDownTimer=
 //                        new CountDownTimer(50000, 1000) {
@@ -299,11 +302,10 @@ public class BLEService extends Service implements DecodeListener{
 //                        Log.i(TAG, "ack " + Arrays.toString(Constants.ack));
 //                        Log.i(TAG, "ack sent " + Constants.ack);
                         writeCharacteristics(characteristic,Constants.checkSumError);
-
+                        Constants.is_resultReceived = true;
                         break;
 
                     case Constants.ERROR_COMMANDID:
-                        Constants.is_resultReceived = true;
                         int error = value[8];
                         switch (error) {
                             case 1:
@@ -335,6 +337,8 @@ public class BLEService extends Service implements DecodeListener{
 //                        Log.i(TAG, "error" + Arrays.toString(Constants.ack));
 //                        Log.i(TAG, "ack sent " + Constants.ack);
                         writeCharacteristics(characteristic,Constants.ack);
+                        Constants.is_resultReceived = true;
+                        break;
                     case Constants.ACK_COMMANDID:
 //                        int ack = value[8];
 //                    Log.i("Decoder", "ack " + ack);decodeListener.ackMsg(ack);
@@ -389,6 +393,33 @@ public class BLEService extends Service implements DecodeListener{
         sendBroadcast(intent);
     }
 
+    private void startTimer() {
+        mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                mTimeLeftInMillis = millisUntilFinished;
+                counter = counter-1;
+//                txtCounter.setText(String.valueOf(counter));
+//                bgChange(counter);
+//                if(counter == 0){
+//                   mCountDownTimer.cancel();
+//                   mTimerRunning = false;
+//                   txtCounter.setText("0");
+//                   bgChange(0);
+//                }
+            }
+
+            @Override
+            public void onFinish() {
+                mCountDownTimer.cancel();
+                mTimerRunning = false;
+//                txtCounter.setText("0");
+//                bgChange(0);
+            }
+        }.start();
+        mTimerRunning = true;
+    }
+
     // To read the data.
     public void readCharacteristic(BluetoothGattCharacteristic bluetoothGattCharacteristic) {
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
@@ -407,7 +438,6 @@ public class BLEService extends Service implements DecodeListener{
         characteristics.setValue(value);
         mBluetoothGatt.writeCharacteristic(characteristics);
     }
-
 
     public void setCharacteristicNotification( BluetoothGattCharacteristic characteristic, boolean enabled) {
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
