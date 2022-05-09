@@ -133,6 +133,7 @@ public class Statistics extends AppCompatActivity{
         candleStickChart.setData(cd);
         candleStickChart.getXAxis().setLabelCount(daysList.size());
         candleStickChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+        candleStickChart.getXAxis().setLabelRotationAngle(-45);
 //        candleStickChart.getAxisLeft().setDrawGridLines(false);
         candleStickChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(daysList));
         if (yAxisCandleStick.size() >= 6) {
@@ -178,6 +179,7 @@ public class Statistics extends AppCompatActivity{
         candleStickTimeChart.setData(cd);
         candleStickTimeChart.getXAxis().setLabelCount(timeList.size());
         candleStickTimeChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+        candleStickTimeChart.getXAxis().setLabelRotationAngle(-45);
 //        candleStickTimeChart.getAxisLeft().setDrawGridLines(false);
         candleStickTimeChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(timeList));
         if (yAxisCandleStick1.size() >= 6) {
