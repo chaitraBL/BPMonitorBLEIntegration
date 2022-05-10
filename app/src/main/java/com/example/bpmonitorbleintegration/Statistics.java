@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -111,83 +112,169 @@ public class Statistics extends AppCompatActivity{
 
     // Candle stick chart date based.
     public void plotCandleStick(List<BloodPressureDB> tasks) {
-        yAxisCandleStick.clear();
-        daysList.clear();
-        int count = 0;
-        for (int i = 0; i < tasks.size(); i++){
-            yAxisCandleStick.add(new CandleEntry(count, tasks.get(i).getSystolic(),tasks.get(i).getDystolic(),tasks.get(i).getSystolic(),tasks.get(i).getDystolic()));
-            daysList.add(tasks.get(i).getDate());
-            count++;
+//        yAxisCandleStick.clear();
+//        daysList.clear();
+        if (tasks.isEmpty()) {
+            Toast.makeText(Statistics.this, "No data available", Toast.LENGTH_SHORT).show();
         }
-        CandleDataSet cds = new CandleDataSet(yAxisCandleStick, "Blood Pressure");
-        cds.setColor(Color.rgb(80, 80, 80));
-        cds.setShadowColor(Color.DKGRAY);
-        cds.setBarSpace(1f);
-        cds.setDecreasingColor(Color.parseColor("#FFA500"));
-        cds.setDecreasingPaintStyle(Paint.Style.FILL);
-        cds.setIncreasingColor(Color.parseColor("#FFA500"));
-        cds.setIncreasingPaintStyle(Paint.Style.STROKE);
-        cds.setNeutralColor(Color.BLUE);
-        cds.setValueTextColor(Color.BLACK);
-        CandleData cd = new CandleData(cds);
-        candleStickChart.setData(cd);
-        candleStickChart.getXAxis().setLabelCount(daysList.size());
-        candleStickChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
-        candleStickChart.getXAxis().setLabelRotationAngle(-45);
-//        candleStickChart.getAxisLeft().setDrawGridLines(false);
-        candleStickChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(daysList));
-        if (yAxisCandleStick.size() >= 6) {
-            candleStickChart.setVisibleXRangeMaximum(6f);
+        else {
+            int count = 0;
+            for (int i = 0; i < tasks.size(); i++){
+                yAxisCandleStick.add(new CandleEntry(count, tasks.get(i).getSystolic(),tasks.get(i).getDystolic(),tasks.get(i).getSystolic(),tasks.get(i).getDystolic()));
+                daysList.add(tasks.get(i).getDate());
+                count++;
+            }
+
+            Collections.sort(yAxisCandleStick,new EntryXComparator());
+            CandleDataSet cds = new CandleDataSet(yAxisCandleStick, "");
+            cds.setColor(Color.rgb(80, 80, 80));
+            cds.setShadowColor(Color.DKGRAY);
+            cds.setBarSpace(1f);
+            cds.setDecreasingColor(Color.parseColor("#FFA500"));
+            cds.setDecreasingPaintStyle(Paint.Style.FILL);
+            cds.setIncreasingColor(Color.parseColor("#FFA500"));
+            cds.setIncreasingPaintStyle(Paint.Style.STROKE);
+            cds.setNeutralColor(Color.BLUE);
+            cds.setValueTextColor(Color.BLACK);
+            CandleData cd = new CandleData(cds);
+            candleStickChart.setData(cd);
+
+            // X axis
+            XAxis xAxis = candleStickChart.getXAxis();
+            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+            xAxis.setAvoidFirstLastClipping(true);
+            xAxis.setLabelRotationAngle(-45);
+            xAxis.setDrawGridLines(false);
+            xAxis.setDrawAxisLine(false);
+            xAxis.setGranularity(1f);
+            xAxis.setGranularityEnabled(true);
+            xAxis.setCenterAxisLabels(true);
+            xAxis.setEnabled(false);
+            xAxis.setLabelCount(daysList.size());
+            xAxis.setValueFormatter(new IndexAxisValueFormatter(daysList));
+
+            //Y axis
+            YAxis yAxisRight = candleStickChart.getAxisRight();
+            yAxisRight.setEnabled(false);
+            YAxis yAxisLeft = candleStickChart.getAxisLeft();
+            yAxisLeft.setLabelCount(6,true);
+            yAxisLeft.setDrawAxisLine(false);
+            yAxisLeft.setAxisMinimum(0);
+            yAxisLeft.setAxisMaximum(150);
+
+            if (yAxisCandleStick.size() > 1){
+                Entry lastEntry = yAxisCandleStick.get(yAxisCandleStick.size()-1);
+                Highlight highlight = new Highlight(lastEntry.getX(), lastEntry.getY(), 0);
+                highlight.setDataIndex(0);
+                candleStickChart.highlightValue(highlight);
+                candleStickChart.moveViewToX(daysList.size()-1);
+            }
+            else
+            {
+                Log.i(TAG, "No data found!!!");
+            }
+
+            if (yAxisCandleStick.size() >= 6) {
+                candleStickChart.setVisibleXRangeMaximum(6);
+            }
+            else {
+                candleStickChart.invalidate();
+            }
+            candleStickChart.invalidate();
+            candleStickChart.notifyDataSetChanged();
+            candleStickChart.animateXY(1000,1000);
         }
-        candleStickChart.invalidate();
-        candleStickChart.notifyDataSetChanged();
-        candleStickChart.animateXY(1000,1000);
+
     }
 
     // Candle stick chart time based.
     public void plotCandleStickTimeWise(List<BloodPressureDB> tasks) {
-        yAxisCandleStick1.clear();
-        timeList.clear();
-        // To get current date.
-        DateFormat df1 = new SimpleDateFormat("MMM dd"); // Format date
-        String date = df1.format(Calendar.getInstance().getTime());
+//        yAxisCandleStick1.clear();
+//        timeList.clear();
+        if (tasks.isEmpty()) {
+            Toast.makeText(Statistics.this, "No data available", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            // To get current date.
+            DateFormat df1 = new SimpleDateFormat("MMM dd"); // Format date
+            String date = df1.format(Calendar.getInstance().getTime());
 
 //        getTimeSet(true);
 
-        int count = 0;
-        for (int i = 0; i < tasks.size(); i++){
+            int count = 0;
+            for (int i = 0; i < tasks.size(); i++){
 //            for (int j = 0; j < timeList.size(); j++) {
                 if (date.equals(tasks.get(i).getDate())) {
                     yAxisCandleStick1.add(new CandleEntry(count, tasks.get(i).getSystolic(),tasks.get(i).getDystolic(),tasks.get(i).getSystolic(),tasks.get(i).getDystolic()));
-                timeList.add(tasks.get(i).getTime());
+                    timeList.add(tasks.get(i).getTime());
                     count++;
 //                }
+                }
             }
+
+            Collections.sort(yAxisCandleStick1,new EntryXComparator());
+
+            CandleDataSet cds = new CandleDataSet(yAxisCandleStick1, "");
+            cds.setColor(Color.rgb(80, 80, 80));
+            cds.setShadowColor(Color.DKGRAY);
+            cds.setBarSpace(1f);
+            cds.setDecreasingColor(Color.parseColor("#151B54"));
+            cds.setDecreasingPaintStyle(Paint.Style.FILL);
+            cds.setIncreasingColor(Color.parseColor("#151B54"));
+            cds.setIncreasingPaintStyle(Paint.Style.STROKE);
+            cds.setNeutralColor(Color.BLUE);
+            cds.setValueTextColor(Color.BLACK);
+            CandleData cd = new CandleData(cds);
+            candleStickTimeChart.setData(cd);
+
+            //X axis
+            XAxis xAxis = candleStickTimeChart.getXAxis();
+            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+            xAxis.setAvoidFirstLastClipping(true);
+            xAxis.setLabelRotationAngle(-45);
+            xAxis.setDrawGridLines(false);
+            xAxis.setDrawAxisLine(false);
+            xAxis.setGranularity(1f);
+            xAxis.setGranularityEnabled(true);
+            xAxis.setCenterAxisLabels(true);
+            xAxis.setEnabled(false);
+            xAxis.setLabelCount(timeList.size());
+            xAxis.setValueFormatter(new IndexAxisValueFormatter(timeList));
+
+            //Y axis
+            YAxis yAxisRight = candleStickTimeChart.getAxisRight();
+            yAxisRight.setEnabled(false);
+            YAxis yAxisLeft = candleStickTimeChart.getAxisLeft();
+            yAxisLeft.setLabelCount(6,true);
+            yAxisLeft.setDrawAxisLine(false);
+            yAxisLeft.setAxisMinimum(0);
+            yAxisLeft.setAxisMaximum(150);
+
+
+            if (yAxisCandleStick1.size() > 1){
+                Entry lastEntry = yAxisCandleStick1.get(yAxisCandleStick1.size()-1);
+                Highlight highlight = new Highlight(lastEntry.getX(), lastEntry.getY(), 0);
+                highlight.setDataIndex(0);
+                candleStickTimeChart.highlightValue(highlight);
+                candleStickTimeChart.moveViewToX(timeList.size()-1);
+            }
+            else
+            {
+                Log.i(TAG, "No data found!!!");
+            }
+
+            if (yAxisCandleStick1.size() >= 6) {
+                candleStickTimeChart.setVisibleXRangeMaximum(6);
+            }
+            else
+            {
+                candleStickTimeChart.invalidate();
+            }
+            candleStickTimeChart.invalidate();
+            candleStickTimeChart.notifyDataSetChanged();
+            candleStickTimeChart.animateXY(1000,1000);
         }
 
-        CandleDataSet cds = new CandleDataSet(yAxisCandleStick1, "Blood Pressure");
-        cds.setColor(Color.rgb(80, 80, 80));
-        cds.setShadowColor(Color.DKGRAY);
-        cds.setBarSpace(1f);
-        cds.setDecreasingColor(Color.parseColor("#151B54"));
-        cds.setDecreasingPaintStyle(Paint.Style.FILL);
-        cds.setIncreasingColor(Color.parseColor("#151B54"));
-        cds.setIncreasingPaintStyle(Paint.Style.STROKE);
-        cds.setNeutralColor(Color.BLUE);
-        cds.setValueTextColor(Color.BLACK);
-        CandleData cd = new CandleData(cds);
-        candleStickTimeChart.setData(cd);
-        candleStickTimeChart.getXAxis().setLabelCount(timeList.size());
-        candleStickTimeChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
-        candleStickTimeChart.getXAxis().setLabelRotationAngle(-45);
-//        candleStickTimeChart.getAxisLeft().setDrawGridLines(false);
-        candleStickTimeChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(timeList));
-        if (yAxisCandleStick1.size() >= 6) {
-            candleStickTimeChart.setVisibleXRangeMaximum(6f);
-        }
-        candleStickTimeChart.invalidate();
-        candleStickTimeChart.notifyDataSetChanged();
-        candleStickTimeChart.animateXY(1000,1000);
     }
 
     // To get the list of time intervals for an hour.
