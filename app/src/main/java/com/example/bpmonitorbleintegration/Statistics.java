@@ -112,8 +112,8 @@ public class Statistics extends AppCompatActivity{
 
     // Candle stick chart date based.
     public void plotCandleStick(List<BloodPressureDB> tasks) {
-//        yAxisCandleStick.clear();
-//        daysList.clear();
+        yAxisCandleStick.clear();
+        daysList.clear();
         if (tasks.isEmpty()) {
             Toast.makeText(Statistics.this, "No data available", Toast.LENGTH_SHORT).show();
         }
@@ -126,6 +126,7 @@ public class Statistics extends AppCompatActivity{
             }
 
             Collections.sort(yAxisCandleStick,new EntryXComparator());
+
             CandleDataSet cds = new CandleDataSet(yAxisCandleStick, "");
             cds.setColor(Color.rgb(80, 80, 80));
             cds.setShadowColor(Color.DKGRAY);
@@ -138,20 +139,21 @@ public class Statistics extends AppCompatActivity{
             cds.setValueTextColor(Color.BLACK);
             CandleData cd = new CandleData(cds);
             candleStickChart.setData(cd);
+            candleStickChart.getDescription().setEnabled(false);
 
             // X axis
             XAxis xAxis = candleStickChart.getXAxis();
             xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+            xAxis.setLabelCount(daysList.size());
+            xAxis.setValueFormatter(new IndexAxisValueFormatter(daysList));
             xAxis.setAvoidFirstLastClipping(true);
             xAxis.setLabelRotationAngle(-45);
             xAxis.setDrawGridLines(false);
-            xAxis.setDrawAxisLine(false);
+//            xAxis.setDrawAxisLine(false);
             xAxis.setGranularity(1f);
-            xAxis.setGranularityEnabled(true);
-            xAxis.setCenterAxisLabels(true);
-            xAxis.setEnabled(false);
-            xAxis.setLabelCount(daysList.size());
-            xAxis.setValueFormatter(new IndexAxisValueFormatter(daysList));
+//            xAxis.setGranularityEnabled(true);
+            xAxis.setCenterAxisLabels(false);
+//            xAxis.setEnabled(false);
 
             //Y axis
             YAxis yAxisRight = candleStickChart.getAxisRight();
@@ -184,13 +186,12 @@ public class Statistics extends AppCompatActivity{
             candleStickChart.notifyDataSetChanged();
             candleStickChart.animateXY(1000,1000);
         }
-
     }
 
     // Candle stick chart time based.
     public void plotCandleStickTimeWise(List<BloodPressureDB> tasks) {
-//        yAxisCandleStick1.clear();
-//        timeList.clear();
+        yAxisCandleStick1.clear();
+        timeList.clear();
         if (tasks.isEmpty()) {
             Toast.makeText(Statistics.this, "No data available", Toast.LENGTH_SHORT).show();
         }
@@ -226,20 +227,21 @@ public class Statistics extends AppCompatActivity{
             cds.setValueTextColor(Color.BLACK);
             CandleData cd = new CandleData(cds);
             candleStickTimeChart.setData(cd);
+            candleStickTimeChart.getDescription().setEnabled(false);
 
             //X axis
             XAxis xAxis = candleStickTimeChart.getXAxis();
             xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+            xAxis.setLabelCount(timeList.size());
+            xAxis.setValueFormatter(new IndexAxisValueFormatter(timeList));
             xAxis.setAvoidFirstLastClipping(true);
             xAxis.setLabelRotationAngle(-45);
             xAxis.setDrawGridLines(false);
-            xAxis.setDrawAxisLine(false);
+//            xAxis.setDrawAxisLine(false);
             xAxis.setGranularity(1f);
-            xAxis.setGranularityEnabled(true);
-            xAxis.setCenterAxisLabels(true);
-            xAxis.setEnabled(false);
-            xAxis.setLabelCount(timeList.size());
-            xAxis.setValueFormatter(new IndexAxisValueFormatter(timeList));
+//            xAxis.setGranularityEnabled(true);
+            xAxis.setCenterAxisLabels(false);
+//            xAxis.setEnabled(false);
 
             //Y axis
             YAxis yAxisRight = candleStickTimeChart.getAxisRight();
@@ -249,7 +251,6 @@ public class Statistics extends AppCompatActivity{
             yAxisLeft.setDrawAxisLine(false);
             yAxisLeft.setAxisMinimum(0);
             yAxisLeft.setAxisMaximum(150);
-
 
             if (yAxisCandleStick1.size() > 1){
                 Entry lastEntry = yAxisCandleStick1.get(yAxisCandleStick1.size()-1);
@@ -274,7 +275,6 @@ public class Statistics extends AppCompatActivity{
             candleStickTimeChart.notifyDataSetChanged();
             candleStickTimeChart.animateXY(1000,1000);
         }
-
     }
 
     // To get the list of time intervals for an hour.

@@ -267,6 +267,10 @@ public class BLEService extends Service implements DecodeListener{
 //                        Log.i(TAG, "new start value " + Constants.startValue);
                         break;
                     case Constants.RAW_COMMANDID:
+//                        startTimer(50000);
+//                        if (mTimerRunning == false) {
+//
+//                        }
                         int cuffValue = value[8] * 256 + value[9];
                         int pulseValue = value[10] * 256 + value[11];
                         intent.putExtra(Constants.EXTRA_DATA, cuffValue + " / " + pulseValue);
@@ -341,21 +345,9 @@ public class BLEService extends Service implements DecodeListener{
                         break;
                     case Constants.ACK_COMMANDID:
 //                        int ack = value[8];
-//                    Log.i("Decoder", "ack " + ack);decodeListener.ackMsg(ack);
-                        Log.i("Decoder", "Starting timer...");
-//                        new CountDownTimer(2000, 1000) {
-//                            public void onTick(long millisUntilFinished) {
-//                                int ack = value[8];
-//                                Log.i(TAG, "ack " + ack);
-//                            }
-//                            // When the task is over it will print 00:00:00 there
-//                            public void onFinish() {
-//                                Toast.makeText(getApplicationContext(), "Please Start Again!!!",Toast.LENGTH_SHORT).show();
-//                            }
-//                        }.start();
 
                         int ack = value[8];
-                        Log.i(TAG, "ack " + ack);
+//                        Log.i(TAG, "ack " + ack);
 //
                         break;
 
@@ -369,16 +361,11 @@ public class BLEService extends Service implements DecodeListener{
                         Log.i(TAG, "ack sent " + Constants.ack);
                         writeCharacteristics(characteristic,Constants.ack);
 
-//                    default:
-//                        new CountDownTimer(2000, 1000) {
-//                            public void onTick(long millisUntilFinished) {
-//                               Log.i(TAG, "Default");
-//                            }
-//                            // When the task is over it will print 00:00:00 there
-//                            public void onFinish() {
-//                                Toast.makeText(getApplicationContext(), "Please Start Again!!!",Toast.LENGTH_SHORT).show();
-//                            }
-//                        }.start();
+                    default:
+                        startTimer(2000);
+                       if (mTimerRunning == false) {
+                           Toast.makeText(BLEService.this,"Please Start again!!!",Toast.LENGTH_SHORT).show();
+                       }
                 }
 
             }
@@ -393,8 +380,8 @@ public class BLEService extends Service implements DecodeListener{
         sendBroadcast(intent);
     }
 
-    private void startTimer() {
-        mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
+    private void startTimer(int timeInMillis) {
+        mCountDownTimer = new CountDownTimer(timeInMillis, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 mTimeLeftInMillis = millisUntilFinished;
