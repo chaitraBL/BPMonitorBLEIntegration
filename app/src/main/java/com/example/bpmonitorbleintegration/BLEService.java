@@ -51,7 +51,7 @@ public class BLEService extends Service implements DecodeListener{
     private final static String TAG = BLEService.class.getSimpleName();
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothGatt mBluetoothGatt;
-
+    private BluetoothManager mBluuetoothManager;
     DecodeListener decodeListener;
     private static int mConnectionState = Constants.STATE_DISCONNECTED;
 
@@ -274,7 +274,7 @@ public class BLEService extends Service implements DecodeListener{
                         int cuffValue = value[8] * 256 + value[9];
                         int pulseValue = value[10] * 256 + value[11];
                         intent.putExtra(Constants.EXTRA_DATA, cuffValue + " / " + pulseValue);
-
+                        Constants.is_resultReceived = false;
                         break;
 
                     case Constants.RESULT_COMMANDID:
@@ -334,7 +334,8 @@ public class BLEService extends Service implements DecodeListener{
                                 break;
                             default:
                                 msg = " ";
-                                intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
+                                intent.putExtra(Constants.EXTRA_DATA, msg);
+//                                intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
                                 break;
                         }
                         Constants.ack = decoder.computeCheckSum(Constants.ack);
@@ -354,7 +355,7 @@ public class BLEService extends Service implements DecodeListener{
                     case Constants.BATTERY_COMMANDID:
                         int batteryLevel = value[8];
                         Constants.is_batterValueReceived = true;
-//                        Log.i(TAG, "Battery level " + batteryLevel);
+                        Log.i(TAG, "Battery level " + batteryLevel);
 //                        intent.putExtra(Constants.EXTRA_DATA, batteryLevel);
                         Constants.ack = decoder.computeCheckSum(Constants.ack);
 //                        Log.i(TAG, "error" + Arrays.toString(Constants.ack));
@@ -362,10 +363,10 @@ public class BLEService extends Service implements DecodeListener{
                         writeCharacteristics(characteristic,Constants.ack);
 
                     default:
-                        startTimer(2000);
-                       if (mTimerRunning == false) {
+//                        startTimer(2000);
+//                       if (mTimerRunning == false) {
                            Toast.makeText(BLEService.this,"Please Start again!!!",Toast.LENGTH_SHORT).show();
-                       }
+//                       }
                 }
 
             }
@@ -492,6 +493,22 @@ public class BLEService extends Service implements DecodeListener{
             return;
         }
         mBluetoothGatt.disconnect();
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        stopSelf();
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        super.onTaskRemoved(rootIntent);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 
     //remove device authorization/ bond/ pairing

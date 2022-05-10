@@ -112,10 +112,15 @@ public class DataTransferActivity extends AppCompatActivity{
         decoder = new Decoder();
         localDB = new RoomDB();
 
-        Intent getServiceIntent = new Intent(DataTransferActivity.this, BLEService.class);
-        bindService(getServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
-
         pref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // Connect to the device through BLE.
+        registerReceiver(broadCastReceiver, GattUpdateIntentFilter());
+        if (mBluetoothLeService != null) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                boolean result = mBluetoothLeService.connect(deviceAddress);
+            }
+        }
 
         //Send request to START the readings.
         startBtn.setOnClickListener(new View.OnClickListener() {
@@ -233,6 +238,19 @@ public class DataTransferActivity extends AppCompatActivity{
         unregisterReceiver(broadCastReceiver);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent getServiceIntent = new Intent(DataTransferActivity.this, BLEService.class);
+        bindService(getServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unbindService(mServiceConnection);
+    }
+
     //Menu item.
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -267,7 +285,7 @@ public class DataTransferActivity extends AppCompatActivity{
     private final BroadcastReceiver broadCastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            updateGUI(intent);
+//            updateGUI(intent);
             final String action = intent.getAction();
             if (Constants.ACTION_GATT_CONNECTED.equals(action)) {
                 mConnected = true;
@@ -276,24 +294,7 @@ public class DataTransferActivity extends AppCompatActivity{
             else if (Constants.ACTION_GATT_DISCONNECTED.equals(action)) {
                 mConnected = false;
                 updateConnectionState("Disconnected");
-//                Toast.makeText(getApplicationContext(),"Connection terminated!, please connect again",Toast.LENGTH_SHORT).show();
-//                Intent intent1 = new Intent(DataTransferActivity.this, MainActivity.class);
-//                startActivity(intent1);
-                new AlertDialog.Builder(DataTransferActivity.this)
-                    .setTitle("Message")
-                        .setMessage("Connection terminated!, please connect again")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
 
-                                //Navigating to next activity on tap of ok button.
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                    Intent intent = new Intent(DataTransferActivity.this, MainActivity.class);
-                                    startActivity(intent);
-                                }
-                            }
-                        })
-                        .show();
             }
 
             else if (Constants.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
@@ -330,6 +331,9 @@ public class DataTransferActivity extends AppCompatActivity{
                 {
                     //Showing battery level using color code.
                     showBattery();
+                }
+                else {
+                    Toast.makeText(DataTransferActivity.this,"Please Start again!!!",Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -394,6 +398,7 @@ public class DataTransferActivity extends AppCompatActivity{
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             mBluetoothLeService = null;
+//            IBinder.DeathRecipient;
         }
     };
 
@@ -403,6 +408,31 @@ public class DataTransferActivity extends AppCompatActivity{
             @Override
             public void run() {
                 statusText.setText(status);
+
+                if (status == "Disconnected"){
+                    //                Toast.makeText(getApplicationContext(),"Connection terminated!, please connect again",Toast.LENGTH_SHORT).show();
+//                Intent intent1 = new Intent(DataTransferActivity.this, MainActivity.class);
+//                startActivity(intent1);
+                    new AlertDialog.Builder(DataTransferActivity.this)
+                            .setTitle("Message")
+                            .setMessage("Connection terminated!, please connect again")
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    //Navigating to next activity on tap of ok button.
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                        Intent intent = new Intent(DataTransferActivity.this, MainActivity.class);
+                                        startActivity(intent);
+                                    }
+                                }
+                            })
+                            .show();
+                }
+
+//                if (mConnected == false){
+//
+//                }
             }
         });
     }

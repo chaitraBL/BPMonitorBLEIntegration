@@ -125,6 +125,13 @@ public class Statistics extends AppCompatActivity{
                 count++;
             }
 
+            // To remove duplicates in array list.
+            List<String> nonDup;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+               nonDup = daysList.stream().distinct().collect(Collectors.toList());
+               Log.i(TAG, "Non duplicates " + nonDup);
+            }
+
             Collections.sort(yAxisCandleStick,new EntryXComparator());
 
             CandleDataSet cds = new CandleDataSet(yAxisCandleStick, "");
@@ -149,11 +156,11 @@ public class Statistics extends AppCompatActivity{
             xAxis.setAvoidFirstLastClipping(true);
             xAxis.setLabelRotationAngle(-45);
             xAxis.setDrawGridLines(false);
-//            xAxis.setDrawAxisLine(false);
+            xAxis.setDrawAxisLine(false);
             xAxis.setGranularity(1f);
-//            xAxis.setGranularityEnabled(true);
+            xAxis.setGranularityEnabled(true);
             xAxis.setCenterAxisLabels(false);
-//            xAxis.setEnabled(false);
+            xAxis.setEnabled(true);
 
             //Y axis
             YAxis yAxisRight = candleStickChart.getAxisRight();
@@ -237,11 +244,11 @@ public class Statistics extends AppCompatActivity{
             xAxis.setAvoidFirstLastClipping(true);
             xAxis.setLabelRotationAngle(-45);
             xAxis.setDrawGridLines(false);
-//            xAxis.setDrawAxisLine(false);
+            xAxis.setDrawAxisLine(false);
             xAxis.setGranularity(1f);
-//            xAxis.setGranularityEnabled(true);
+            xAxis.setGranularityEnabled(true);
             xAxis.setCenterAxisLabels(false);
-//            xAxis.setEnabled(false);
+            xAxis.setEnabled(true);
 
             //Y axis
             YAxis yAxisRight = candleStickTimeChart.getAxisRight();

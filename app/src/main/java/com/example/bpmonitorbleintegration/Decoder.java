@@ -46,6 +46,7 @@ public class Decoder
 
                     buffer += String.valueOf(final_devid);
                     decodeListener.deviceId(final_devid);
+                    Constants.is_resultReceived = false;
                     break;
 
                 case Constants.RESULT_COMMANDID:
