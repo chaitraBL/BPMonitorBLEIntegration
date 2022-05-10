@@ -36,6 +36,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     ListView listView;
     Button manualMeasurement;
     String deviceAddress;
+    ProgressBar progressBar;
     private static final String TAG = "BluetoothLEService";
     BluetoothDevice bluetoothDevice;
     BluetoothManager bluetoothManager;
@@ -88,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         context = this;
+        progressBar = findViewById(R.id.progress_scan);
         listView = findViewById(R.id.lelist);
         listBluetoothDevice = new ArrayList<BluetoothDevice>();
         deviceList = new ArrayList<String>();
@@ -191,6 +194,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.bluetooth_searching:
+                progressBar.setVisibility(View.VISIBLE);
+
                 scanLeDevice(true);
                 return true;
 
@@ -263,6 +268,7 @@ public class MainActivity extends AppCompatActivity {
     //Scan for bluetooth devices.
     private void scanLeDevice(final boolean enable) {
         if (enable) {
+            progressBar.setVisibility(View.GONE);
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {

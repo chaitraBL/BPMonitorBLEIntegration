@@ -41,6 +41,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -74,6 +75,12 @@ public class DataTransferActivity extends AppCompatActivity{
     Decoder decoder;
     public AlertDialog dialog;
     RoomDB localDB;
+    ProgressBar progress;
+
+    public int counter = 6;
+    private CountDownTimer mCountDownTimer;
+    private boolean mTimerRunning;
+    private long mTimeLeftInMillis = 2000;
 
     private Handler myHandler = new Handler(new Handler.Callback() {
         @Override
@@ -102,6 +109,7 @@ public class DataTransferActivity extends AppCompatActivity{
         readBtn = findViewById(R.id.final_val);
         recyclerView = findViewById(R.id.recyclerview_tasks);
         batteryLevel = findViewById(R.id.battery_level);
+        progress = findViewById(R.id.progress_start);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         intentFilter = new IntentFilter(BluetoothDevice.ACTION_PAIRING_REQUEST);
@@ -174,6 +182,7 @@ public class DataTransferActivity extends AppCompatActivity{
                         }
                     }
                 });
+
                 //Send Ack - received readings.
                 builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
@@ -181,7 +190,8 @@ public class DataTransferActivity extends AppCompatActivity{
                         if (mNotifyCharacteristic != null) {
                             Constants.startValue = decoder.computeCheckSum(Constants.startValue);
 //                            Log.i(TAG, "Stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
-                            mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
+//                            mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
+                            mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
                             Constants.is_resultReceived = false;
                         }
                     }
@@ -243,6 +253,10 @@ public class DataTransferActivity extends AppCompatActivity{
         super.onStart();
         Intent getServiceIntent = new Intent(DataTransferActivity.this, BLEService.class);
         bindService(getServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+
+//        progress.setProgress(0);
+//        progress.setMax(2000);
+        progress.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -326,14 +340,19 @@ public class DataTransferActivity extends AppCompatActivity{
             }
 
             else if (Constants.ACTION_DATA_AVAILABLE.equals(action)) {
+
                 displayData(intent.getStringExtra(Constants.EXTRA_DATA));
+
                 if (Constants.is_batterValueReceived == true)
                 {
+                    progress.setVisibility(View.GONE);
                     //Showing battery level using color code.
                     showBattery();
+//            Constants.is_batterValueReceived = false;
                 }
                 else {
-                    Toast.makeText(DataTransferActivity.this,"Please Start again!!!",Toast.LENGTH_SHORT).show();
+                    startTimer();
+                    Toast.makeText(DataTransferActivity.this,"Something went wrong please connect again!!!",Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -347,22 +366,61 @@ public class DataTransferActivity extends AppCompatActivity{
     }
 
     private  void displayData(String data) {
+
+        Log.i(TAG, "received data before " + data);
         if (data != null) {
-//           Log.i(TAG, "received data " + data);
-           tv.setText(data);
+           Log.i(TAG, "received data after " + data + " " + Constants.is_readingStarted);
+
+           if (Constants.is_readingStarted) {
+               tv.setText(data);
+           }
+          else {
+              startTimer();
+              Toast.makeText(getApplicationContext(), "Please Start again!!!", Toast.LENGTH_SHORT).show();
+           }
 
 //           Log.i(TAG,"flag " + Constants.is_resultReceived);
             //To enable/disable Ok button on basis of readings.
            if (Constants.is_resultReceived == true) {
                ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+               ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
            }
            else
            {
                ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+               ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(true);
            }
         }
     }
 
+    private void startTimer() {
+        mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                mTimeLeftInMillis = millisUntilFinished;
+                counter = counter-1;
+//                txtCounter.setText(String.valueOf(counter));
+//                bgChange(counter);
+//                if(counter == 0){
+//                   mCountDownTimer.cancel();
+//                   mTimerRunning = false;
+//                   txtCounter.setText("0");
+//                   bgChange(0);
+//                }
+            }
+
+            @Override
+            public void onFinish() {
+                mCountDownTimer.cancel();
+                mTimerRunning = false;
+//                txtCounter.setText("0");
+//                bgChange(0);
+            }
+        }.start();
+        mTimerRunning = true;
+    }
+
+    // Change color on basis of battery level.
     public void showBattery(){
 //        Log.i(TAG, "Battery level " + mBluetoothLeService.batteryLevel);
         if (mBluetoothLeService.batteryLevel == Constants.HIGH_BATTERY) {
@@ -375,8 +433,7 @@ public class DataTransferActivity extends AppCompatActivity{
             batteryLevel.setBackgroundColor(Color.parseColor("#FF0000"));
             Toast.makeText(getApplicationContext(), "Battery is low, Please Change battery",Toast.LENGTH_SHORT).show();
         }
-
-        Constants.is_batterValueReceived = false;
+//        Constants.is_batterValueReceived = false;
     }
 
     // Connect and disconnect to the services.
@@ -398,7 +455,6 @@ public class DataTransferActivity extends AppCompatActivity{
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             mBluetoothLeService = null;
-//            IBinder.DeathRecipient;
         }
     };
 

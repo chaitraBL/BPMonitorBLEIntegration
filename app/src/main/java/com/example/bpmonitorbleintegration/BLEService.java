@@ -263,10 +263,12 @@ public class BLEService extends Service implements DecodeListener{
                         Constants.deviceId = new byte[]{(byte) value[1], (byte) value[2], (byte) value[3], (byte) value[4]};
                         Constants.startValue = decoder.replaceArrayVal(Constants.startValue,Constants.deviceId);
                         Constants.ack = decoder.replaceArrayVal(Constants.ack,Constants.deviceId);
+                        Constants.noAck = decoder.replaceArrayVal(Constants.noAck,Constants.deviceId);
                         Constants.checkSumError = decoder.replaceArrayVal(Constants.checkSumError,Constants.deviceId);
 //                        Log.i(TAG, "new start value " + Constants.startValue);
                         break;
                     case Constants.RAW_COMMANDID:
+                        Constants.is_readingStarted = true;
 //                        startTimer(50000);
 //                        if (mTimerRunning == false) {
 //
@@ -295,6 +297,7 @@ public class BLEService extends Service implements DecodeListener{
 //
 //                            }
 //                        }.start();
+                        Constants.is_readingStarted = true;
                         int systolic = value[8] * 256 + value[9];
                         int dystolic = value[10] * 256 + value[11];
                         int heartRateValue = value[12];
@@ -348,6 +351,7 @@ public class BLEService extends Service implements DecodeListener{
 //                        int ack = value[8];
 
                         int ack = value[8];
+                        Constants.is_ackReceived = true;
 //                        Log.i(TAG, "ack " + ack);
 //
                         break;
@@ -362,11 +366,6 @@ public class BLEService extends Service implements DecodeListener{
                         Log.i(TAG, "ack sent " + Constants.ack);
                         writeCharacteristics(characteristic,Constants.ack);
 
-                    default:
-//                        startTimer(2000);
-//                       if (mTimerRunning == false) {
-                           Toast.makeText(BLEService.this,"Please Start again!!!",Toast.LENGTH_SHORT).show();
-//                       }
                 }
 
             }
@@ -381,8 +380,8 @@ public class BLEService extends Service implements DecodeListener{
         sendBroadcast(intent);
     }
 
-    private void startTimer(int timeInMillis) {
-        mCountDownTimer = new CountDownTimer(timeInMillis, 1000) {
+    private void startTimer() {
+        mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 mTimeLeftInMillis = millisUntilFinished;

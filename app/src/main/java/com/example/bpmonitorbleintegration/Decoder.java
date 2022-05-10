@@ -34,10 +34,12 @@ public class Decoder
             // As per the command id data will be retrieved.
             switch (value[5]) {
                 case Constants.RAW_COMMANDID:
+                    Constants.is_readingStarted = true;
                     //Method 1: conversion of cuff and pulse pressure value.
                     int cuffValue = value[8] * 256 + value[9];
                     int pulseValue = value[10] * 256 + value[11];
                     decodeListener.pressureValue(cuffValue, pulseValue);
+//                    Log.i("Decoder", "raw value " + cuffValue + " " + pulseValue );
 
                     // Accessing device id.
 //                    int dev_id1 = Integer.parseInt(Integer.toHexString(ByteBuffer.wrap(new byte[]{0x00,0x00,bytes[1],bytes[2]}).getInt()));
@@ -53,28 +55,32 @@ public class Decoder
                     //Method 2: conversion of systolic and dystiolic value for byte[].
 //                    decodeListener.systolic(ByteBuffer.wrap(new byte[]{0x00,0x00,bytes[8],bytes[9]}).getInt());
 //                    decodeListener.diastolic(ByteBuffer.wrap(new byte[]{0x00,0x00,bytes[10],bytes[11]}).getInt());
-                    Constants.is_resultReceived = true;
+
                     int systolic = value[8] * 256 + value[9];
 //
                     decodeListener.systolic(systolic);
                     int dystolic = value[10] * 256 + value[11];
                     decodeListener.diastolic(dystolic);
                     int heartRateValue = value[12];
-//                    Log.i("Decoder", "Heart Rate " + heartRateValue);
+//                    Log.i("Decoder", "value " + systolic + " " + dystolic + " " + heartRateValue);
                     decodeListener.heartRate(heartRateValue);
                     int rangeValue = value[13];
 //                    Log.i("Decoder", "range  " + rangeValue);
                     decodeListener.range(rangeValue);
+                    Constants.is_resultReceived = true;
                     break;
 
                 case Constants.ERROR_COMMANDID:
-                    Constants.is_resultReceived = true;
+
                     int error = value[8];
+//                    Log.i("Decoder", "error value " + error);
                     decodeListener.errorMsg(error);
+                    Constants.is_resultReceived = true;
                     break;
 
                 case Constants.ACK_COMMANDID:
                     int ack = value[8];
+                    Constants.is_ackReceived = true;
 //                    Log.i("Decoder", "ack " + ack);
                     decodeListener.ackMsg(ack);
                     break;
