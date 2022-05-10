@@ -380,32 +380,32 @@ public class BLEService extends Service implements DecodeListener{
         sendBroadcast(intent);
     }
 
-    private void startTimer() {
-        mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                mTimeLeftInMillis = millisUntilFinished;
-                counter = counter-1;
-//                txtCounter.setText(String.valueOf(counter));
-//                bgChange(counter);
-//                if(counter == 0){
-//                   mCountDownTimer.cancel();
-//                   mTimerRunning = false;
-//                   txtCounter.setText("0");
-//                   bgChange(0);
-//                }
-            }
-
-            @Override
-            public void onFinish() {
-                mCountDownTimer.cancel();
-                mTimerRunning = false;
-//                txtCounter.setText("0");
-//                bgChange(0);
-            }
-        }.start();
-        mTimerRunning = true;
-    }
+//    private void startTimer() {
+//        mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
+//            @Override
+//            public void onTick(long millisUntilFinished) {
+//                mTimeLeftInMillis = millisUntilFinished;
+//                counter = counter-1;
+////                txtCounter.setText(String.valueOf(counter));
+////                bgChange(counter);
+////                if(counter == 0){
+////                   mCountDownTimer.cancel();
+////                   mTimerRunning = false;
+////                   txtCounter.setText("0");
+////                   bgChange(0);
+////                }
+//            }
+//
+//            @Override
+//            public void onFinish() {
+//                mCountDownTimer.cancel();
+//                mTimerRunning = false;
+////                txtCounter.setText("0");
+////                bgChange(0);
+//            }
+//        }.start();
+//        mTimerRunning = true;
+//    }
 
     // To read the data.
     public void readCharacteristic(BluetoothGattCharacteristic bluetoothGattCharacteristic) {

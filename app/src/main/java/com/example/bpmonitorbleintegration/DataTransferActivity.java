@@ -179,6 +179,7 @@ public class DataTransferActivity extends AppCompatActivity{
                             Constants.startValue = decoder.computeCheckSum(Constants.startValue);
 //                            Log.i(TAG, "Force stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
                             mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
+                            Constants.is_readingStarted = false;
                         }
                     }
                 });
@@ -193,6 +194,7 @@ public class DataTransferActivity extends AppCompatActivity{
 //                            mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
                             mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
                             Constants.is_resultReceived = false;
+                            Constants.is_readingStarted = false;
                         }
                     }
                 });
@@ -358,26 +360,23 @@ public class DataTransferActivity extends AppCompatActivity{
         }
     };
 
-    private void updateGUI(Intent intent) {
-        if (intent.getExtras() != null) {
-            long millisUntilFinished = intent.getLongExtra("countdown", 0);
-//            Log.i(TAG, "Countdown seconds remaining: " +  millisUntilFinished / 1000);
-        }
-    }
-
     private  void displayData(String data) {
 
         Log.i(TAG, "received data before " + data);
         if (data != null) {
            Log.i(TAG, "received data after " + data + " " + Constants.is_readingStarted);
 
-           if (Constants.is_readingStarted) {
+           if (Constants.is_readingStarted == true) {
                tv.setText(data);
            }
-          else {
-              startTimer();
-              Toast.makeText(getApplicationContext(), "Please Start again!!!", Toast.LENGTH_SHORT).show();
-           }
+//          else {
+////              startTimer();
+//              Toast.makeText(getApplicationContext(), "Please Start again!!!", Toast.LENGTH_SHORT).show();
+////               Constants.noAck = decoder.computeCheckSum(Constants.noAck);
+////                        Log.i(TAG, "error" + Arrays.toString(Constants.noAck));
+////               Log.i(TAG, "ack sent " + Constants.noAck);
+////               mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic,Constants.noAck);
+//           }
 
 //           Log.i(TAG,"flag " + Constants.is_resultReceived);
             //To enable/disable Ok button on basis of readings.
@@ -401,18 +400,19 @@ public class DataTransferActivity extends AppCompatActivity{
                 counter = counter-1;
 //                txtCounter.setText(String.valueOf(counter));
 //                bgChange(counter);
-//                if(counter == 0){
-//                   mCountDownTimer.cancel();
-//                   mTimerRunning = false;
+                if(counter == 0){
+                   mCountDownTimer.cancel();
+                   mTimerRunning = false;
 //                   txtCounter.setText("0");
 //                   bgChange(0);
-//                }
+                }
             }
 
             @Override
             public void onFinish() {
                 mCountDownTimer.cancel();
                 mTimerRunning = false;
+                progress.setVisibility(View.GONE);
 //                txtCounter.setText("0");
 //                bgChange(0);
             }
@@ -465,7 +465,7 @@ public class DataTransferActivity extends AppCompatActivity{
             public void run() {
                 statusText.setText(status);
 
-                if (status == "Disconnected"){
+                if (status.equals("Disconnected")){
                     //                Toast.makeText(getApplicationContext(),"Connection terminated!, please connect again",Toast.LENGTH_SHORT).show();
 //                Intent intent1 = new Intent(DataTransferActivity.this, MainActivity.class);
 //                startActivity(intent1);
@@ -485,10 +485,6 @@ public class DataTransferActivity extends AppCompatActivity{
                             })
                             .show();
                 }
-
-//                if (mConnected == false){
-//
-//                }
             }
         });
     }
