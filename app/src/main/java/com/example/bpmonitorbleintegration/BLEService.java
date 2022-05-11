@@ -352,7 +352,7 @@ public class BLEService extends Service implements DecodeListener{
 
                         int ack = value[8];
                         Constants.is_ackReceived = true;
-//                        Log.i(TAG, "ack " + ack);
+                        Log.i(TAG, "ack " + ack);
 //
                         break;
 
@@ -426,6 +426,16 @@ public class BLEService extends Service implements DecodeListener{
         mBluetoothGatt.writeCharacteristic(characteristics);
     }
 
+    //To write data to the device.
+//    public void writeCharacteristics1(BluetoothGattCharacteristic characteristics){
+//        if (mBluetoothAdapter == null || mBluetoothGatt == null) {
+//            Toast.makeText(getApplicationContext(), "BluetoothAdapter not initialised", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//        characteristics.setValue(Constants.cancelValue);
+//        mBluetoothGatt.writeCharacteristic(characteristics);
+//    }
+
     public void setCharacteristicNotification( BluetoothGattCharacteristic characteristic, boolean enabled) {
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
             Toast.makeText(getApplicationContext(), "BluetoothAdapter not initialised", Toast.LENGTH_SHORT).show();
@@ -497,6 +507,7 @@ public class BLEService extends Service implements DecodeListener{
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         stopSelf();
+        clearServicesCache();
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
@@ -508,6 +519,7 @@ public class BLEService extends Service implements DecodeListener{
     @Override
     public void onDestroy() {
         super.onDestroy();
+
     }
 
     //remove device authorization/ bond/ pairing
@@ -525,7 +537,19 @@ public class BLEService extends Service implements DecodeListener{
 //            e.printStackTrace();
 //        }
 //    }
-
+    private boolean clearServicesCache()
+    {
+        boolean result = false;
+        try {
+            Method refreshMethod = mBluetoothGatt.getClass().getMethod("refresh");
+            if(refreshMethod != null) {
+                result = (boolean) refreshMethod.invoke(mBluetoothGatt);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "ERROR: Could not invoke refresh method");
+        }
+        return result;
+    }
     public static BluetoothAdapter getBluetoothAdapter(Context context) {
         BluetoothManager mBluetoothManager = (BluetoothManager) context.getSystemService(BLUETOOTH_SERVICE);
         return mBluetoothManager.getAdapter();
