@@ -270,6 +270,7 @@ public class BLEService extends Service implements DecodeListener{
 
                     case Constants.RESULT_COMMANDID:
                         Constants.is_resultReceived = true;
+                        Constants.is_readingStarted = true;
                         int systolic = value[8] * 256 + value[9];
                         int dystolic = value[10] * 256 + value[11];
                         int heartRateValue = value[12];
@@ -281,7 +282,7 @@ public class BLEService extends Service implements DecodeListener{
 //                        Log.i(TAG, "ack " + Arrays.toString(Constants.ack));
 //                        Log.i(TAG, "ack sent " + Constants.ack);
                         writeCharacteristics(characteristic,Constants.checkSumError);
-                        Constants.is_readingStarted = false;
+
                         break;
 
                     case Constants.ERROR_COMMANDID:
