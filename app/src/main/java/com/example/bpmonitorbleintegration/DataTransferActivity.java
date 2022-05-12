@@ -65,7 +65,6 @@ public class DataTransferActivity extends AppCompatActivity{
     private BLEService mBluetoothLeService;
     private String deviceAddress;
     public BluetoothGattCharacteristic mNotifyCharacteristic;
-    private BluetoothGattServer gattServer;
     private boolean mConnected;
     BluetoothDevice bluetoothDevice;
     IntentFilter intentFilter;
@@ -74,7 +73,6 @@ public class DataTransferActivity extends AppCompatActivity{
     private String TAG = "DataTransferActivity";
     SharedPreferences pref;
 
-    CountDownTimer timer;
     Button readBtn;
     RecyclerView recyclerView;
     Decoder decoder;
@@ -121,9 +119,6 @@ public class DataTransferActivity extends AppCompatActivity{
         intentFilter = new IntentFilter(BluetoothDevice.ACTION_PAIRING_REQUEST);
         intentFilter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
         registerReceiver(broadCastReceiver, intentFilter);
-//
-//        intentFilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-//        registerReceiver(broadCastReceiver,intentFilter);
 
         //Initialising Decoder class.
         decoder = new Decoder();
@@ -157,7 +152,7 @@ public class DataTransferActivity extends AppCompatActivity{
                     @Override
                     public void onTick(long l) {
                         counter++;
-//                                    mTimeLeftInMillis =- 1000;
+
 //                        Log.i(TAG, "counter Started " + mTimeLeftInMillis);
                     }
 
@@ -204,7 +199,6 @@ public class DataTransferActivity extends AppCompatActivity{
                                             @Override
                                             public void onTick(long l) {
                                                 counter++;
-//                                    mTimeLeftInMillis =- 1000;
 //                                                Log.i(TAG, "counter Started " + startTime);
                                             }
 
@@ -357,8 +351,6 @@ public class DataTransferActivity extends AppCompatActivity{
         Intent getServiceIntent = new Intent(DataTransferActivity.this, BLEService.class);
         bindService(getServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
 
-//        progress.setProgress(0);
-//        progress.setMax(2000);
         progress.setVisibility(View.VISIBLE);
     }
 
@@ -371,10 +363,6 @@ public class DataTransferActivity extends AppCompatActivity{
 //    @Override
 //    protected void onDestroy() {
 //        super.onDestroy();
-//        unregisterReceiver(broadCastReceiver);
-//        if (gattServer != null) {
-//            gattServer.close();
-//        }
 //        deleteCache(getApplicationContext());
 //    }
 
@@ -421,22 +409,6 @@ public class DataTransferActivity extends AppCompatActivity{
                 updateConnectionState("Disconnected");
 
             }
-
-//            else if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
-//                final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,BluetoothAdapter.ERROR);
-//                switch (state) {
-//                    case BluetoothAdapter.STATE_OFF:
-//                        gattServer = null;
-//                        break;
-//                    case BluetoothAdapter.STATE_TURNING_OFF:
-//                        gattServer.close();
-//                        break;
-////                    case BluetoothAdapter.STATE_ON:
-////                        break;
-////                    case BluetoothAdapter.STATE_TURNING_ON:
-////                        break;
-//                }
-//            }
 
             else if (Constants.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 //Receive services and characteristics
