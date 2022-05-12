@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
@@ -25,6 +26,7 @@ public class ManualReadings extends AppCompatActivity {
     RecyclerView manualList;
     String TAG = "ManualReadings";
     Toolbar toolbar;
+    ProgressBar progressBar;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +43,7 @@ public class ManualReadings extends AppCompatActivity {
         heartRate = findViewById(R.id.manual_heartRate);
         save = findViewById(R.id.save_manual);
         manualList = findViewById(R.id.recyclerview_list);
+        progressBar = findViewById(R.id.progress_manual);
         manualList.setLayoutManager(new LinearLayoutManager(this));
         decoder = new Decoder();
         database = new RoomDB();
@@ -48,6 +51,7 @@ public class ManualReadings extends AppCompatActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                progressBar.setVisibility(View.VISIBLE);
                 //Method 1: Validating the edit text fields.
 //                if(TextUtils.isEmpty(strUserName)) {
 //                    etUserName.setError("Your message");
@@ -73,8 +77,10 @@ public class ManualReadings extends AppCompatActivity {
                     //Saves to local database.
                     database.saveTask("No device",Integer.parseInt(systolic.getText().toString()),Integer.parseInt(diastolic.getText().toString()),Integer.parseInt(heartRate.getText().toString()),map,ManualReadings.this);
 
+                    //Fetch local database value to recyclerview.
                     getManualTasks();
 
+                    //After saving data make textfield empty.
                     systolic.setText("");
                     diastolic.setText("");
                     heartRate.setText("");
@@ -82,6 +88,7 @@ public class ManualReadings extends AppCompatActivity {
 
             }
         });
+        progressBar.setVisibility(View.VISIBLE);
         getManualTasks();
     }
 
@@ -102,6 +109,7 @@ public class ManualReadings extends AppCompatActivity {
             @Override
             protected void onPostExecute(List<BloodPressureDB> tasks) {
                 super.onPostExecute(tasks);
+                progressBar.setVisibility(View.GONE);
                 ReadingsAdapter adapter = new ReadingsAdapter(ManualReadings.this, tasks);
                 manualList.setAdapter(adapter);
                 adapter.notifyDataSetChanged();

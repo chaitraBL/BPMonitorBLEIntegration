@@ -50,7 +50,12 @@ import com.google.android.material.tabs.TabLayout;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -70,6 +75,9 @@ public class Statistics extends AppCompatActivity{
 
     String TAG = Statistics.class.getName();
     CandleStickChart candleStickChart, candleStickTimeChart;
+    List<String> dateList = new ArrayList<>();
+    List<Integer> systolic = new ArrayList<>();
+    List<Integer> diastolic = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +89,18 @@ public class Statistics extends AppCompatActivity{
         yAxisCandleStick = new ArrayList<CandleEntry>();
         yAxisCandleStick1 = new ArrayList<CandleEntry>();
         getManualTasks();
+
+//        LocalDate today = null;
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+//            today = LocalDate.now(ZoneId.of("Europe/Istanbul"));
+//            int weekNumber = today.get(WeekFields.ISO.weekOfYear());
+//            System.out.println("Week no. " + weekNumber);
+//
+//            LocalDate[] days = today.datesUntil(today.with(TemporalAdjusters.next(DayOfWeek.MONDAY)))
+//                    .toArray(LocalDate[]::new);
+//            System.out.println(Arrays.toString(days));
+//        }
+
 
     }
 
@@ -104,11 +124,26 @@ public class Statistics extends AppCompatActivity{
 
                 plotCandleStick(tasks);
                 plotCandleStickTimeWise(tasks);
+
+//                for (int i = 0; i < tasks.size(); i++){
+//                    dateList.add(tasks.get(i).getDate());
+//                    systolic.add(tasks.get(i).getSystolic());
+//                    diastolic.add(tasks.get(i).getDystolic());
+//                    dateFormateForValue(dateList,systolic,diastolic);
+//                }
             }
         }
         GetTasks gt = new GetTasks();
         gt.execute();
     }
+
+//    public void dateFormateForValue(List<String> date, List<Integer> systolicVal, List<Integer> diastolic) {
+//        Log.d(TAG, "date " + date);
+//        Log.d(TAG, "systolic " + systolicVal);
+//        Log.d(TAG, "diastolic " + diastolic);
+//
+//
+//    }
 
     // Candle stick chart date based.
     public void plotCandleStick(List<BloodPressureDB> tasks) {
@@ -126,11 +161,11 @@ public class Statistics extends AppCompatActivity{
             }
 
             // To remove duplicates in array list.
-            List<String> nonDup;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-               nonDup = daysList.stream().distinct().collect(Collectors.toList());
-               Log.i(TAG, "Non duplicates " + nonDup);
-            }
+//            List<String> nonDup;
+//            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+//               nonDup = daysList.stream().distinct().collect(Collectors.toList());
+//               Log.i(TAG, "Non duplicates " + nonDup);
+//            }
 
             Collections.sort(yAxisCandleStick,new EntryXComparator());
 
@@ -166,9 +201,9 @@ public class Statistics extends AppCompatActivity{
             YAxis yAxisRight = candleStickChart.getAxisRight();
             yAxisRight.setEnabled(false);
             YAxis yAxisLeft = candleStickChart.getAxisLeft();
-            yAxisLeft.setLabelCount(6,true);
+            yAxisLeft.setLabelCount(6,true); // make it as 12 and check
             yAxisLeft.setDrawAxisLine(false);
-            yAxisLeft.setAxisMinimum(0);
+            yAxisLeft.setAxisMinimum(50);
             yAxisLeft.setAxisMaximum(150);
 
             if (yAxisCandleStick.size() > 1){
@@ -211,12 +246,10 @@ public class Statistics extends AppCompatActivity{
 
             int count = 0;
             for (int i = 0; i < tasks.size(); i++){
-//            for (int j = 0; j < timeList.size(); j++) {
                 if (date.equals(tasks.get(i).getDate())) {
                     yAxisCandleStick1.add(new CandleEntry(count, tasks.get(i).getSystolic(),tasks.get(i).getDystolic(),tasks.get(i).getSystolic(),tasks.get(i).getDystolic()));
                     timeList.add(tasks.get(i).getTime());
                     count++;
-//                }
                 }
             }
 
@@ -256,7 +289,7 @@ public class Statistics extends AppCompatActivity{
             YAxis yAxisLeft = candleStickTimeChart.getAxisLeft();
             yAxisLeft.setLabelCount(6,true);
             yAxisLeft.setDrawAxisLine(false);
-            yAxisLeft.setAxisMinimum(0);
+            yAxisLeft.setAxisMinimum(50);
             yAxisLeft.setAxisMaximum(150);
 
             if (yAxisCandleStick1.size() > 1){

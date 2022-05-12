@@ -15,8 +15,7 @@ public class RoomDB {
 //    public static final String TIME_FORMAT = "hh:mm aa";
     public static final String TIME_FORMAT = "hh:mm aa";
     public static final String TAG = "RawDataModel";
-    public void RoomDB() {
-
+    public RoomDB() {
     }
     //     Save to the Local Room DB.
     public void saveTask(String address, int systolic, int dystolic, int heartRate, int range, Context context) {
