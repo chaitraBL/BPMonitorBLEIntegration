@@ -16,12 +16,10 @@ public class Decoder
     String buffer = "";
     private boolean isData;
     DecodeListener decodeListener;
-    CountDownTimer timer;
     public Decoder(DecodeListener decodeListener) {
         this.decodeListener = decodeListener;
     }
     public Decoder() {
-
     }
 
     public void start() {
@@ -81,7 +79,7 @@ public class Decoder
                 case Constants.ACK_COMMANDID:
                     Constants.is_ackReceived = true;
                     int ack = value[8];
-                    Log.i("Decoder", "ack in decoder " + ack);
+//                    Log.i("Decoder", "ack in decoder " + ack);
                     decodeListener.ackMsg(ack);
                     break;
 
@@ -143,7 +141,7 @@ public class Decoder
         }
     }
 
-    //Checksum commputation for the sending values
+    //Checksum computation for the sending values to BLE device.
     public byte[] computeCheckSum(byte[] data){
         int length = data[6];
         int final_checkSum = 0;
@@ -162,7 +160,7 @@ public class Decoder
         return data;
     }
 
-    // Placing device id in the array
+    // Placing device id in the array positions.
     public byte[] replaceArrayVal(byte[] value, byte[] value1) {
         value[1] = value1[0];
         value[2] = value[1];
@@ -171,10 +169,10 @@ public class Decoder
         return value;
     }
 
-    //Calculates mean arterial pressure(MAP) value.
+    //Calculates mean arterial pressure(MAP) value manually.
     public int calculateMAP(int systa, int dista) {
         int MAP = 0;
-        MAP = (systa+2*(dista)) /3;
+        MAP = (systa + 2 * dista) / 3;
         return MAP;
     }
 }

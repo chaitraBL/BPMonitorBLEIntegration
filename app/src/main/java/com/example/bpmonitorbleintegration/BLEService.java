@@ -51,8 +51,6 @@ public class BLEService extends Service implements DecodeListener{
     private final static String TAG = BLEService.class.getSimpleName();
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothGatt mBluetoothGatt;
-    private BluetoothManager mBluuetoothManager;
-    DecodeListener decodeListener;
     private static int mConnectionState = Constants.STATE_DISCONNECTED;
 
     private final IBinder mBinder = new LocalBinder();
@@ -66,15 +64,9 @@ public class BLEService extends Service implements DecodeListener{
     public int range;
     public long pressure;
     public int batteryLevel;
-    public int counter = 6;
-    private CountDownTimer mCountDownTimer;
-    private boolean mTimerRunning;
-    private long mTimeLeftInMillis = 6000;
 
 //    Decoder mDecoder;
     Handler mHandler;
-    Intent bi = new Intent(Constants.COUNTDOWN_BR);
-    CountDownTimer cdt = null;
 
     // To connect to bluetooth device and gatt services.
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -112,7 +104,7 @@ public class BLEService extends Service implements DecodeListener{
         return true;
     }
 
-    // BluetoothGatt callback to connect, discover services etc...
+    // BluetoothGatt callback to connect, discover services, read and write the characteristics and data etc...
     private final BluetoothGattCallback bluetoothGattCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
@@ -228,6 +220,7 @@ public class BLEService extends Service implements DecodeListener{
             final byte[] data = characteristic.getValue();
 
             String msg;
+
 //            To convert data to hex value.
 //            if (data != null && data.length > 0) {
 //                final StringBuilder stringBuilder = new StringBuilder(data.length);
@@ -248,7 +241,7 @@ public class BLEService extends Service implements DecodeListener{
 //                Log.i("Decoder", "new values " + value[i]);
             }
 
-            Log.i("Decoder", "Command id " + (value[5]));
+//            Log.i("Decoder", "Command id " + (value[5]));
 
             // Check for checksum
             boolean checkSumVal = decoder.checkSumValidation(value,characteristic);
@@ -330,7 +323,7 @@ public class BLEService extends Service implements DecodeListener{
                     case Constants.ACK_COMMANDID:
                         Constants.is_ackReceived = true;
                         int ack = value[8];
-                        Log.i(TAG, "ack in bleservice " + ack);
+//                        Log.i(TAG, "ack in bleservice " + ack);
 //
                         break;
 
@@ -358,33 +351,6 @@ public class BLEService extends Service implements DecodeListener{
         sendBroadcast(intent);
     }
 
-//    private void startTimer() {
-//        mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
-//            @Override
-//            public void onTick(long millisUntilFinished) {
-//                mTimeLeftInMillis = millisUntilFinished;
-//                counter = counter-1;
-////                txtCounter.setText(String.valueOf(counter));
-////                bgChange(counter);
-////                if(counter == 0){
-////                   mCountDownTimer.cancel();
-////                   mTimerRunning = false;
-////                   txtCounter.setText("0");
-////                   bgChange(0);
-////                }
-//            }
-//
-//            @Override
-//            public void onFinish() {
-//                mCountDownTimer.cancel();
-//                mTimerRunning = false;
-////                txtCounter.setText("0");
-////                bgChange(0);
-//            }
-//        }.start();
-//        mTimerRunning = true;
-//    }
-
     // To read the data.
     public void readCharacteristic(BluetoothGattCharacteristic bluetoothGattCharacteristic) {
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
@@ -403,16 +369,6 @@ public class BLEService extends Service implements DecodeListener{
         characteristics.setValue(value);
         mBluetoothGatt.writeCharacteristic(characteristics);
     }
-
-    //To write data to the device.
-//    public void writeCharacteristics1(BluetoothGattCharacteristic characteristics){
-//        if (mBluetoothAdapter == null || mBluetoothGatt == null) {
-//            Toast.makeText(getApplicationContext(), "BluetoothAdapter not initialised", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
-//        characteristics.setValue(Constants.cancelValue);
-//        mBluetoothGatt.writeCharacteristic(characteristics);
-//    }
 
     public void setCharacteristicNotification( BluetoothGattCharacteristic characteristic, boolean enabled) {
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
@@ -437,7 +393,6 @@ public class BLEService extends Service implements DecodeListener{
 //            descriptor.setValue(BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
 //        }
 //        mBluetoothGatt.writeDescriptor(descriptor);
-
     }
 
     // To get list of gatt services from bluetooth device.
@@ -515,6 +470,8 @@ public class BLEService extends Service implements DecodeListener{
 //            e.printStackTrace();
 //        }
 //    }
+
+    // To clear gatt services cache.
     private boolean clearServicesCache()
     {
         boolean result = false;
@@ -600,7 +557,6 @@ public class BLEService extends Service implements DecodeListener{
     public void batteryMsg(int value) {
         batteryLevel = value;
 //        Log.i(TAG, "Battery level " + batteryLevel);
-
     }
 
     public class LocalBinder extends Binder {

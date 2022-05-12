@@ -153,17 +153,17 @@ public class DataTransferActivity extends AppCompatActivity{
                     mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
                 }
 //
-                mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
+                mCountDownTimer = new CountDownTimer(1000, 500) {
                     @Override
                     public void onTick(long l) {
                         counter++;
 //                                    mTimeLeftInMillis =- 1000;
-                        Log.i(TAG, "counter Started " + mTimeLeftInMillis);
+//                        Log.i(TAG, "counter Started " + mTimeLeftInMillis);
                     }
 
                     @Override
                     public void onFinish() {
-                        Log.i(TAG, "ack in start " + Constants.is_ackReceived);
+//                        Log.i(TAG, "ack in start " + Constants.is_ackReceived);
                         if (Constants.is_ackReceived == true) {
                                 Constants.is_ackReceived = false;
                             //Alert controller.
@@ -194,22 +194,21 @@ public class DataTransferActivity extends AppCompatActivity{
                                     if (mNotifyCharacteristic != null) {
                                         Constants.startValue = decoder.computeCheckSum(Constants.startValue);
 //                            Log.i(TAG, "Stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
-//                            mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
                                         mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
-                                        Constants.is_resultReceived = false;
-                                        Constants.is_readingStarted = false;
+//                                        Constants.is_resultReceived = false;
+//                                        Constants.is_readingStarted = false;
 
                                         mCountDownTimer = new CountDownTimer(startTime, 100) {
                                             @Override
                                             public void onTick(long l) {
                                                 counter++;
 //                                    mTimeLeftInMillis =- 1000;
-                                                Log.i(TAG, "counter Started " + startTime);
+//                                                Log.i(TAG, "counter Started " + startTime);
                                             }
 
                                             @Override
                                             public void onFinish() {
-                                                Log.i(TAG, "Stopped");
+//                                                Log.i(TAG, "Stopped");
                                                 if (Constants.is_ackReceived == true) {
                                                     dialog.dismiss();
                                                     mCountDownTimer.cancel();
@@ -219,7 +218,6 @@ public class DataTransferActivity extends AppCompatActivity{
                                                     dialog.show();
                                                     Constants.startValue = decoder.computeCheckSum(Constants.startValue);
 //                            Log.i(TAG, "Stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
-//                            mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
                                                     mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
                                                     start();
                                                 }
@@ -248,39 +246,29 @@ public class DataTransferActivity extends AppCompatActivity{
                                 @Override
                                 public void onClick(View view) {
                                     if (mNotifyCharacteristic != null) {
-//                            Constants.startValue = decoder.computeCheckSum(Constants.startValue);
+                            Constants.cancelValue = decoder.computeCheckSum(Constants.cancelValue);
 //                            Log.i(TAG, "Force stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
                                         mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
                                         Constants.is_readingStarted = false;
                                     }
-//                                if (Constants.is_ackReceived == true) {
-//                                    Toast.makeText(getApplicationContext(),"Ack receiveed", Toast.LENGTH_SHORT).show();
-//                                    dialog.dismiss();
-//                                }
-//                                else{
-//                                    Toast.makeText(getApplicationContext(),"Ack not receiveed", Toast.LENGTH_SHORT).show();
-//                                    dialog.show();
-//                                    mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
-//                                }
-//                                Log.i(TAG, "ack received " + Constants.is_ackReceived);
 
                                     mCountDownTimer = new CountDownTimer(startTime, 100) {
                                         @Override
                                         public void onTick(long l) {
                                             counter++;
 //                                    mTimeLeftInMillis =- 1000;
-                                            Log.i(TAG, "counter Started " + startTime);
+//                                            Log.i(TAG, "counter Started " + startTime);
                                         }
 
                                         @Override
                                         public void onFinish() {
-                                            Log.i(TAG, "Stopped");
+//                                            Log.i(TAG, "Stopped");
                                             if (Constants.is_ackReceived == true) {
                                                 dialog.dismiss();
                                                 mCountDownTimer.cancel();
                                                 Constants.is_ackReceived = false;
                                             } else {
-                                                Log.i(TAG, "Start again");
+//                                                Log.i(TAG, "Start again");
                                                 dialog.show();
                                                 mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
                                                 start();
@@ -313,7 +301,6 @@ public class DataTransferActivity extends AppCompatActivity{
                 localDB.saveTask(deviceAddress, mBluetoothLeService.systalic, mBluetoothLeService.dystolic, mBluetoothLeService.rate, mBluetoothLeService.range, DataTransferActivity.this);
             }
         });
-
     }
 
     public void deleteCache(Context context) {
@@ -376,15 +363,15 @@ public class DataTransferActivity extends AppCompatActivity{
         unbindService(mServiceConnection);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
 //        unregisterReceiver(broadCastReceiver);
 //        if (gattServer != null) {
 //            gattServer.close();
 //        }
 //        deleteCache(getApplicationContext());
-    }
+//    }
 
     //Menu item.
     @Override
@@ -395,14 +382,11 @@ public class DataTransferActivity extends AppCompatActivity{
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.read_database:
-                getTasks();
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.read_database) {
+            getTasks();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
 
     }
 
@@ -494,9 +478,9 @@ public class DataTransferActivity extends AppCompatActivity{
             mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
                 @Override
                 public void onTick(long millisUntilFinished) {
-                    mTimeLeftInMillis = millisUntilFinished;
+//                    mTimeLeftInMillis = millisUntilFinished;
                     counter = counter++;
-                    Log.i(TAG, "timer in readings " + mTimeLeftInMillis);
+//                    Log.i(TAG, "timer in readings " + mTimeLeftInMillis);
                 }
 
                 @Override
@@ -506,9 +490,8 @@ public class DataTransferActivity extends AppCompatActivity{
                     if (Constants.is_resultReceived == true || Constants.is_readingStarted == true)
                     {
                         tv.setText(data);
-                        Constants.is_resultReceived = false;
 
-                        //           Method 1: To enable/disable Ok button on basis of readings.
+                        // Method 1: To enable/disable Ok button on basis of readings.
                         if (Constants.is_resultReceived == true) {
                             ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
 //               ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
@@ -520,11 +503,13 @@ public class DataTransferActivity extends AppCompatActivity{
                         }
 
 //          Method 2:  ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(Constants.is_resultReceived == true);
+//                        Constants.is_resultReceived = false;
+//                        Constants.is_readingStarted = false;
                     }
                     else {
                         Toast.makeText(DataTransferActivity.this,"Please start again",Toast.LENGTH_SHORT).show();
 
-                        //           Method 1: To enable/disable Ok button on basis of readings.
+                        // Method 1: To enable/disable Ok button on basis of readings.
                         if (Constants.is_resultReceived == true) {
                             ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
 //               ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
@@ -557,7 +542,7 @@ public class DataTransferActivity extends AppCompatActivity{
             public void onFinish() {
                 mCountDownTimer.cancel();
                 progress.setVisibility(View.GONE);
-                if (Constants.is_batterValueReceived == true)
+                if (Constants.is_batterValueReceived)
                 {
                     progress.setVisibility(View.GONE);
                     //Showing battery level using color code.
@@ -567,7 +552,6 @@ public class DataTransferActivity extends AppCompatActivity{
                 else {
                     Toast.makeText(DataTransferActivity.this,"Something went wrong please connect again!!!",Toast.LENGTH_SHORT).show();
                 }
-//
             }
         }.start();
     }
@@ -621,9 +605,6 @@ public class DataTransferActivity extends AppCompatActivity{
                 statusText.setText(status);
 
                 if (status.equals("Disconnected")){
-                    //               Toast.makeText(getApplicationContext(),"Connection terminated!, please connect again",Toast.LENGTH_SHORT).show();
-//                Intent intent1 = new Intent(DataTransferActivity.this, MainActivity.class);
-//                startActivity(intent1);
                     new AlertDialog.Builder(DataTransferActivity.this)
                             .setTitle("Message")
                             .setMessage("Connection terminated!, please connect again")

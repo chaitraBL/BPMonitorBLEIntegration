@@ -28,7 +28,8 @@ public class Constants {
     public static byte[] ack = {0x7B,deviceId[0],deviceId[1],deviceId[2],deviceId[3],0x14,0x0A,0x00,0x0A,0x00,0x1C,0x7D};
     public static byte[] noAck = {0x7B,deviceId[0],deviceId[1],deviceId[2],deviceId[3],0x14,0x0A,0x00,0x00,0x00,0x1C,0x7D};
 //    public static byte cancelValue = 0x02;
-public static byte[] cancelValue = {0x7B,0x02,0x7D};
+//    public static byte[] cancelValue = {0x7B,0x02,0x7D};
+    public static byte[] cancelValue = {0x7B,deviceId[0],deviceId[1],deviceId[2],deviceId[3],0x10,0x0A,0x00,0x02,0x00,0x1C,0x7D};
     public static final int RAW_COMMANDID = 17;
     public static final int RESULT_COMMANDID = 18;
     public static final int ERROR_COMMANDID = 19;
