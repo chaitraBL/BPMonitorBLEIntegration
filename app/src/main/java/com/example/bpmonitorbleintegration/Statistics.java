@@ -179,6 +179,7 @@ public class Statistics extends AppCompatActivity{
             cds.setIncreasingPaintStyle(Paint.Style.STROKE);
             cds.setNeutralColor(Color.BLUE);
             cds.setValueTextColor(Color.BLACK);
+            cds.setValueTextSize(10);
             CandleData cd = new CandleData(cds);
             candleStickChart.setData(cd);
             candleStickChart.getDescription().setEnabled(false);
@@ -265,6 +266,7 @@ public class Statistics extends AppCompatActivity{
             cds.setIncreasingPaintStyle(Paint.Style.STROKE);
             cds.setNeutralColor(Color.BLUE);
             cds.setValueTextColor(Color.BLACK);
+            cds.setValueTextSize(10);
             CandleData cd = new CandleData(cds);
             candleStickTimeChart.setData(cd);
             candleStickTimeChart.getDescription().setEnabled(false);
