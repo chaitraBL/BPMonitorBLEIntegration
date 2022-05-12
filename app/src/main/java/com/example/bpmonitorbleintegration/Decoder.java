@@ -79,15 +79,15 @@ public class Decoder
                     break;
 
                 case Constants.ACK_COMMANDID:
-                    int ack = value[8];
                     Constants.is_ackReceived = true;
-//                    Log.i("Decoder", "ack " + ack);
+                    int ack = value[8];
+                    Log.i("Decoder", "ack in decoder " + ack);
                     decodeListener.ackMsg(ack);
                     break;
 
                 case Constants.BATTERY_COMMANDID:
-                    int batteryVal = value[8];
                     Constants.is_batterValueReceived = true;
+                    int batteryVal = value[8];
 //                    Log.i("Decoder", "Battery level " + batteryVal);
                     decodeListener.batteryMsg(batteryVal);
             }

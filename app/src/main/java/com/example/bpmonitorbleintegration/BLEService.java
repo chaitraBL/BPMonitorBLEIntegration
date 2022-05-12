@@ -248,7 +248,7 @@ public class BLEService extends Service implements DecodeListener{
 //                Log.i("Decoder", "new values " + value[i]);
             }
 
-//            Log.i("Decoder", "Command id " + (value[5]));
+            Log.i("Decoder", "Command id " + (value[5]));
 
             // Check for checksum
             boolean checkSumVal = decoder.checkSumValidation(value,characteristic);
@@ -269,10 +269,6 @@ public class BLEService extends Service implements DecodeListener{
                         break;
                     case Constants.RAW_COMMANDID:
                         Constants.is_readingStarted = true;
-//                        startTimer(50000);
-//                        if (mTimerRunning == false) {
-//
-//                        }
                         int cuffValue = value[8] * 256 + value[9];
                         int pulseValue = value[10] * 256 + value[11];
                         intent.putExtra(Constants.EXTRA_DATA, cuffValue + " / " + pulseValue);
@@ -280,24 +276,7 @@ public class BLEService extends Service implements DecodeListener{
                         break;
 
                     case Constants.RESULT_COMMANDID:
-
-//                        CountDownTimer yourCountDownTimer=
-//                        new CountDownTimer(50000, 1000) {
-//                            public void onFinish() {
-//                                Toast.makeText(BLEService.this, "Please start again!!!", Toast.LENGTH_SHORT).show();
-//                            }
-//                            public void onTick(long millisUntilFinished) {
-//                                // millisUntilFinished    The amount of time until finished.
-////                                if(!SendFlag)SendData( SendBuffer+"\r" );
-////                                else {Toast.makeText(ledControl.this, "sent", Toast.LENGTH_SHORT).show();this.cancel();}
-//                                int systolic = value[8] * 256 + value[9];
-//                                int dystolic = value[10] * 256 + value[11];
-//                                int heartRateValue = value[12];
-//                                intent.putExtra(Constants.EXTRA_DATA, systolic + " / " + dystolic + " / " + heartRateValue);
-//
-//                            }
-//                        }.start();
-                        Constants.is_readingStarted = true;
+                        Constants.is_resultReceived = true;
                         int systolic = value[8] * 256 + value[9];
                         int dystolic = value[10] * 256 + value[11];
                         int heartRateValue = value[12];
@@ -309,7 +288,7 @@ public class BLEService extends Service implements DecodeListener{
 //                        Log.i(TAG, "ack " + Arrays.toString(Constants.ack));
 //                        Log.i(TAG, "ack sent " + Constants.ack);
                         writeCharacteristics(characteristic,Constants.checkSumError);
-                        Constants.is_resultReceived = true;
+                        Constants.is_readingStarted = false;
                         break;
 
                     case Constants.ERROR_COMMANDID:
@@ -347,25 +326,24 @@ public class BLEService extends Service implements DecodeListener{
                         writeCharacteristics(characteristic,Constants.ack);
                         Constants.is_resultReceived = true;
                         break;
-                    case Constants.ACK_COMMANDID:
-//                        int ack = value[8];
 
-                        int ack = value[8];
+                    case Constants.ACK_COMMANDID:
                         Constants.is_ackReceived = true;
-                        Log.i(TAG, "ack " + ack);
+                        int ack = value[8];
+                        Log.i(TAG, "ack in bleservice " + ack);
 //
                         break;
 
                     case Constants.BATTERY_COMMANDID:
-                        int batteryLevel = value[8];
                         Constants.is_batterValueReceived = true;
-                        Log.i(TAG, "Battery level " + batteryLevel);
+                        int batteryLevel = value[8];
+//                        Log.i(TAG, "Battery level " + batteryLevel);
 //                        intent.putExtra(Constants.EXTRA_DATA, batteryLevel);
                         Constants.ack = decoder.computeCheckSum(Constants.ack);
 //                        Log.i(TAG, "error" + Arrays.toString(Constants.ack));
-                        Log.i(TAG, "ack sent " + Constants.ack);
+//                        Log.i(TAG, "ack sent " + Constants.ack);
                         writeCharacteristics(characteristic,Constants.ack);
-
+                        break;
                 }
 
             }

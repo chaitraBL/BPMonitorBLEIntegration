@@ -46,6 +46,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -54,6 +55,8 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 public class DataTransferActivity extends AppCompatActivity{
@@ -79,10 +82,11 @@ public class DataTransferActivity extends AppCompatActivity{
     RoomDB localDB;
     ProgressBar progress;
 
-    public int counter = 6;
+    public int counter = 0;
     private CountDownTimer mCountDownTimer;
     private boolean mTimerRunning;
     private long mTimeLeftInMillis = 2000;
+    private long startTime = 500;
 
     private Handler myHandler = new Handler(new Handler.Callback() {
         @Override
@@ -147,171 +151,154 @@ public class DataTransferActivity extends AppCompatActivity{
                     Constants.startValue = decoder.computeCheckSum(Constants.startValue);
 //                    Log.i(TAG, "Start value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
                     mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
-
-//                    if (Constants.is_ackReceived == true) {
-//                        Constants.is_ackReceived = false;
-//                        //Alert controller.
-//                        builder = new AlertDialog.Builder(DataTransferActivity.this);
-//                        builder.setTitle("Readings");
-//                        LayoutInflater layoutInflater = getLayoutInflater();
-//
-//                        //this is custom dialog
-//                        //custom_popup_dialog contains textview only
-//                        View customView = layoutInflater.inflate(R.layout.custom_popup_dialog, null);
-//                        // reference the textview of custom_popup_dialog
-//                        tv = customView.findViewById(R.id.tvpopup);
-//                        tv.setTextSize(15);
-//
-//                        //Send request to force STOP the readings.
-//                        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialogInterface, int i) {
-////                        if (mNotifyCharacteristic != null) {
-//////                            Constants.startValue = decoder.computeCheckSum(Constants.startValue);
-//////                            Log.i(TAG, "Force stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
-////                            mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
-//////                            startTimer1();
-////                            Constants.is_readingStarted = false;
-////                        }
-//
-//                            }
-//                        });
-//
-//                        //Send Ack - received readings.
-//                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialogInterface, int i) {
-//                                if (mNotifyCharacteristic != null) {
-//                                    Constants.startValue = decoder.computeCheckSum(Constants.startValue);
-////                            Log.i(TAG, "Stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
-////                            mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
-//                                    mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
-//                                    Constants.is_resultReceived = false;
-//                                    Constants.is_readingStarted = false;
-//                                }
-//                            }
-//                        });
-//
-//                        builder.setView(customView);
-//                        dialog = builder.create();
-//                        //Prevent dialog box from getting dismissed on back key pressed
-//                        dialog.setCancelable(false);
-//                        //Prevent dialog box from getting dismissed on outside touch
-//                        dialog.setCanceledOnTouchOutside(false);
-//                        //To hide Ok button until readings complete.
-//                        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-//                            @Override
-//                            public void onShow(DialogInterface dialogInterface) {
-//                                ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-//                            }
-//                        });
-//                        dialog.show();
-//                        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View view) {
-//                                if (mNotifyCharacteristic != null) {
-////                            Constants.startValue = decoder.computeCheckSum(Constants.startValue);
-////                            Log.i(TAG, "Force stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
-//                                    mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
-////                            startTimer1();
-//                                    Constants.is_readingStarted = false;
-//                                }
-//                                while (Constants.is_ackReceived == false) {
-//                                    startTimer1();
-//                                }
-//
-//                                dialog.dismiss();
-////                        Constants.is_ackReceived = false;
-//
-//                            }
-//                        });
-//
-//                    }
-//                    else {
-//                        startTimer("Please start again!!!");
-//                    }
-
                 }
-
-                Constants.is_ackReceived = false;
-                //Alert controller.
-                builder = new AlertDialog.Builder(DataTransferActivity.this);
-                builder.setTitle("Readings");
-                LayoutInflater layoutInflater = getLayoutInflater();
-
-                //this is custom dialog
-                //custom_popup_dialog contains textview only
-                View customView = layoutInflater.inflate(R.layout.custom_popup_dialog, null);
-                // reference the textview of custom_popup_dialog
-                tv = customView.findViewById(R.id.tvpopup);
-                tv.setTextSize(15);
-
-                //Send request to force STOP the readings.
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//
+                mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        if (mNotifyCharacteristic != null) {
-////                            Constants.startValue = decoder.computeCheckSum(Constants.startValue);
-////                            Log.i(TAG, "Force stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
-//                            mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
-////                            startTimer1();
-//                            Constants.is_readingStarted = false;
-//                        }
-
+                    public void onTick(long l) {
+                        counter++;
+//                                    mTimeLeftInMillis =- 1000;
+                        Log.i(TAG, "counter Started " + mTimeLeftInMillis);
                     }
-                });
 
-                //Send Ack - received readings.
-                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        if (mNotifyCharacteristic != null) {
-                            Constants.startValue = decoder.computeCheckSum(Constants.startValue);
+                    public void onFinish() {
+                        Log.i(TAG, "ack in start " + Constants.is_ackReceived);
+                        if (Constants.is_ackReceived == true) {
+                                Constants.is_ackReceived = false;
+                            //Alert controller.
+                            builder = new AlertDialog.Builder(DataTransferActivity.this);
+                            builder.setTitle("Readings");
+                            LayoutInflater layoutInflater = getLayoutInflater();
+
+                            //this is custom dialog
+                            //custom_popup_dialog contains textview only
+                            View customView = layoutInflater.inflate(R.layout.custom_popup_dialog, null);
+                            // reference the textview of custom_popup_dialog
+                            tv = customView.findViewById(R.id.tvpopup);
+                            tv.setTextSize(15);
+
+                            //Send request to force STOP the readings.
+                            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+
+                                }
+                            });
+
+                            //Send Ack - received readings.
+                            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    if (mNotifyCharacteristic != null) {
+                                        Constants.startValue = decoder.computeCheckSum(Constants.startValue);
 //                            Log.i(TAG, "Stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
 //                            mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
-                            mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
-                            Constants.is_resultReceived = false;
-                            Constants.is_readingStarted = false;
-                        }
-                    }
-                });
+                                        mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
+                                        Constants.is_resultReceived = false;
+                                        Constants.is_readingStarted = false;
 
-                builder.setView(customView);
-                dialog = builder.create();
-                //Prevent dialog box from getting dismissed on back key pressed
-                dialog.setCancelable(false);
-                //Prevent dialog box from getting dismissed on outside touch
-                dialog.setCanceledOnTouchOutside(false);
-                //To hide Ok button until readings complete.
-                dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                    @Override
-                    public void onShow(DialogInterface dialogInterface) {
-                        ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                    }
-                });
-                dialog.show();
-                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (mNotifyCharacteristic != null) {
+                                        mCountDownTimer = new CountDownTimer(startTime, 100) {
+                                            @Override
+                                            public void onTick(long l) {
+                                                counter++;
+//                                    mTimeLeftInMillis =- 1000;
+                                                Log.i(TAG, "counter Started " + startTime);
+                                            }
+
+                                            @Override
+                                            public void onFinish() {
+                                                Log.i(TAG, "Stopped");
+                                                if (Constants.is_ackReceived == true) {
+                                                    dialog.dismiss();
+                                                    mCountDownTimer.cancel();
+                                                    Constants.is_ackReceived = false;
+                                                } else {
+//                                                Log.i(TAG, "Start again");
+                                                    dialog.show();
+                                                    Constants.startValue = decoder.computeCheckSum(Constants.startValue);
+//                            Log.i(TAG, "Stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
+//                            mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
+                                                    mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
+                                                    start();
+                                                }
+
+                                            }
+                                        }.start();
+                                    }
+                                }
+                            });
+
+                            builder.setView(customView);
+                            dialog = builder.create();
+                            //Prevent dialog box from getting dismissed on back key pressed
+                            dialog.setCancelable(false);
+                            //Prevent dialog box from getting dismissed on outside touch
+                            dialog.setCanceledOnTouchOutside(false);
+                            //To hide Ok button until readings complete.
+                            dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                                @Override
+                                public void onShow(DialogInterface dialogInterface) {
+                                    ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                                }
+                            });
+                            dialog.show();
+                            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if (mNotifyCharacteristic != null) {
 //                            Constants.startValue = decoder.computeCheckSum(Constants.startValue);
 //                            Log.i(TAG, "Force stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
-                            mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
-//                            startTimer1();
-                            Constants.is_readingStarted = false;
-                        }
-                        Log.i(TAG, "ack received " + Constants.is_ackReceived);
-                        while (Constants.is_ackReceived == false) {
-                            Log.d(TAG, "Loop started");
-                            startTimer1();
-                        }
+                                        mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
+                                        Constants.is_readingStarted = false;
+                                    }
+//                                if (Constants.is_ackReceived == true) {
+//                                    Toast.makeText(getApplicationContext(),"Ack receiveed", Toast.LENGTH_SHORT).show();
+//                                    dialog.dismiss();
+//                                }
+//                                else{
+//                                    Toast.makeText(getApplicationContext(),"Ack not receiveed", Toast.LENGTH_SHORT).show();
+//                                    dialog.show();
+//                                    mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
+//                                }
+//                                Log.i(TAG, "ack received " + Constants.is_ackReceived);
 
-                        dialog.dismiss();
-//                        Constants.is_ackReceived = false;
+                                    mCountDownTimer = new CountDownTimer(startTime, 100) {
+                                        @Override
+                                        public void onTick(long l) {
+                                            counter++;
+//                                    mTimeLeftInMillis =- 1000;
+                                            Log.i(TAG, "counter Started " + startTime);
+                                        }
+
+                                        @Override
+                                        public void onFinish() {
+                                            Log.i(TAG, "Stopped");
+                                            if (Constants.is_ackReceived == true) {
+                                                dialog.dismiss();
+                                                mCountDownTimer.cancel();
+                                                Constants.is_ackReceived = false;
+                                            } else {
+                                                Log.i(TAG, "Start again");
+                                                dialog.show();
+                                                mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
+                                                start();
+                                            }
+
+                                        }
+                                    }.start();
+
+                                }
+                            });
+                            mCountDownTimer.cancel();
+//                            Constants.is_ackReceived = false;
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Please start again", Toast.LENGTH_SHORT).show();
+                        }
 
                     }
-                });
-
+                }.start();
             }
         });
 
@@ -324,10 +311,30 @@ public class DataTransferActivity extends AppCompatActivity{
                 heartRateText.setText(String.valueOf(mBluetoothLeService.rate));
                 rangeText.setText(String.valueOf(mBluetoothLeService.range));
                 localDB.saveTask(deviceAddress, mBluetoothLeService.systalic, mBluetoothLeService.dystolic, mBluetoothLeService.rate, mBluetoothLeService.range, DataTransferActivity.this);
-//                saveTask(deviceAddress, mBluetoothLeService.systalic, mBluetoothLeService.dystolic, mBluetoothLeService.rate, mBluetoothLeService.range);
             }
         });
 
+    }
+
+    public void deleteCache(Context context) {
+        try {
+            File dir = context.getCacheDir();
+            if (dir.list() != null) {
+                deleteDir2(dir);
+            }
+        } catch (Exception e) { e.printStackTrace();}
+    }
+
+    public boolean deleteDir2(File dir) {
+        if (dir.isDirectory()) {
+            for (File child : dir.listFiles()) {
+                boolean success = deleteDir2(child);
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+        return dir.delete();
     }
 
     @Override
@@ -369,14 +376,15 @@ public class DataTransferActivity extends AppCompatActivity{
         unbindService(mServiceConnection);
     }
 
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 //        unregisterReceiver(broadCastReceiver);
 //        if (gattServer != null) {
 //            gattServer.close();
 //        }
-//    }
+//        deleteCache(getApplicationContext());
+    }
 
     //Menu item.
     @Override
@@ -472,16 +480,6 @@ public class DataTransferActivity extends AppCompatActivity{
 
                 displayData(intent.getStringExtra(Constants.EXTRA_DATA));
 
-                if (Constants.is_batterValueReceived == true)
-                {
-                    progress.setVisibility(View.GONE);
-                    //Showing battery level using color code.
-                    showBattery();
-//            Constants.is_batterValueReceived = false;
-                }
-                else if (Constants.is_batterValueReceived == false) {
-                    startTimer("Something went wrong please connect again!!!");
-                }
             }
         }
     };
@@ -492,117 +490,86 @@ public class DataTransferActivity extends AppCompatActivity{
         if (data != null) {
 //           Log.i(TAG, "received data after " + data + " " + Constants.is_readingStarted);
 
-           if (Constants.is_readingStarted == true) {
-               tv.setText(data);
-           }
-//          else {
-////              startTimer();
-//              Toast.makeText(getApplicationContext(), "Please Start again!!!", Toast.LENGTH_SHORT).show();
-////               Constants.noAck = decoder.computeCheckSum(Constants.noAck);
-////                        Log.i(TAG, "error" + Arrays.toString(Constants.noAck));
-////               Log.i(TAG, "ack sent " + Constants.noAck);
-////               mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic,Constants.noAck);
-//           }
 
-//           Log.i(TAG,"flag " + Constants.is_resultReceived);
-            //To enable/disable Ok button on basis of readings.
-           if (Constants.is_resultReceived == true) {
-               ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-               ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
-           }
-           else
-           {
-               ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-               ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(true);
-           }
+            mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    mTimeLeftInMillis = millisUntilFinished;
+                    counter = counter++;
+                    Log.i(TAG, "timer in readings " + mTimeLeftInMillis);
+                }
+
+                @Override
+                public void onFinish() {
+                    mCountDownTimer.cancel();
+                    progress.setVisibility(View.GONE);
+                    if (Constants.is_resultReceived == true || Constants.is_readingStarted == true)
+                    {
+                        tv.setText(data);
+                        Constants.is_resultReceived = false;
+
+                        //           Method 1: To enable/disable Ok button on basis of readings.
+                        if (Constants.is_resultReceived == true) {
+                            ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+//               ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
+                        }
+                        else
+                        {
+                            ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+//               ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(true);
+                        }
+
+//          Method 2:  ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(Constants.is_resultReceived == true);
+                    }
+                    else {
+                        Toast.makeText(DataTransferActivity.this,"Please start again",Toast.LENGTH_SHORT).show();
+
+                        //           Method 1: To enable/disable Ok button on basis of readings.
+                        if (Constants.is_resultReceived == true) {
+                            ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+//               ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
+                        }
+                        else
+                        {
+                            ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+//               ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(true);
+                        }
+                    }
+//
+                }
+            }.start();
+        }
+        else {
+            startTimer();
         }
     }
 
-    private void startTimer(String msg) {
+    private void startTimer() {
         mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 mTimeLeftInMillis = millisUntilFinished;
-                counter = counter-1;
-//                txtCounter.setText(String.valueOf(counter));
-//                bgChange(counter);
-                if(counter == 0){
-                   mCountDownTimer.cancel();
-                   mTimerRunning = false;
-//                   txtCounter.setText("0");
-//                   bgChange(0);
-                }
+                counter = counter++;
+//                Log.i(TAG, "timer in battery " + mTimeLeftInMillis);
             }
 
             @Override
             public void onFinish() {
                 mCountDownTimer.cancel();
-                mTimerRunning = false;
                 progress.setVisibility(View.GONE);
-                Toast.makeText(DataTransferActivity.this,msg,Toast.LENGTH_SHORT).show();
-//                txtCounter.setText("0");
-//                bgChange(0);
-            }
-        }.start();
-        mTimerRunning = true;
-    }
-
-    private void startTimer1() {
-        Log.i(TAG,"Timer started...");
-        mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                mTimeLeftInMillis = millisUntilFinished;
-                counter = counter-1;
-//                txtCounter.setText(String.valueOf(counter));
-//                bgChange(counter);
-                Log.d(TAG, "Counter " + counter);
-                if(counter == 0){
-                    mCountDownTimer.cancel();
-                    mTimerRunning = false;
-//                   txtCounter.setText("0");
-//                   bgChange(0);
+                if (Constants.is_batterValueReceived == true)
+                {
+                    progress.setVisibility(View.GONE);
+                    //Showing battery level using color code.
+                    showBattery();
+//                    Constants.is_batterValueReceived = false;
                 }
-            }
-
-            @Override
-            public void onFinish() {
-                mCountDownTimer.cancel();
-                mTimerRunning = false;
-                Log.i(TAG,"Timer stopped...");
-                Log.i(TAG, "Ack " + Constants.is_ackReceived);
-
-                dialog.show();
-                mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
-//                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        if (mNotifyCharacteristic != null) {
-////                            Constants.startValue = decoder.computeCheckSum(Constants.startValue);
-////                            Log.i(TAG, "Force stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
-//                            mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
-////                            startTimer1();
-//                            Constants.is_readingStarted = false;
-//                        }
-//                        if (Constants.is_ackReceived == true) {
-//                            dialog.dismiss();
-//                            Constants.is_ackReceived = false;
-//                        }
-//                        else {
-//                            dialog.show();
-//                            Constants.noAck = decoder.computeCheckSum(Constants.noAck);
-////                            Log.i(TAG, "Stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
-////                            mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
-//                            mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.noAck);
-//                        }
-//                    }
-//                });
-
-//                txtCounter.setText("0");
-//                bgChange(0);
+                else {
+                    Toast.makeText(DataTransferActivity.this,"Something went wrong please connect again!!!",Toast.LENGTH_SHORT).show();
+                }
+//
             }
         }.start();
-        mTimerRunning = true;
     }
 
     // Change color on basis of battery level.
@@ -654,7 +621,7 @@ public class DataTransferActivity extends AppCompatActivity{
                 statusText.setText(status);
 
                 if (status.equals("Disconnected")){
-                    //                Toast.makeText(getApplicationContext(),"Connection terminated!, please connect again",Toast.LENGTH_SHORT).show();
+                    //               Toast.makeText(getApplicationContext(),"Connection terminated!, please connect again",Toast.LENGTH_SHORT).show();
 //                Intent intent1 = new Intent(DataTransferActivity.this, MainActivity.class);
 //                startActivity(intent1);
                     new AlertDialog.Builder(DataTransferActivity.this)
