@@ -113,8 +113,6 @@ public class Statistics extends AppCompatActivity{
                     plotCandleStick(tasks);
                     plotCandleStickTimeWise(tasks);
 
-
-
 //                for (int i = 0; i < tasks.size(); i++){
 //                    dateList.add(tasks.get(i).getDate());
 //                    systolic.add(tasks.get(i).getSystolic());
@@ -138,7 +136,8 @@ public class Statistics extends AppCompatActivity{
     // Candle stick chart date based.
     public void plotCandleStick(List<BloodPressureDB> tasks) {
         yAxisCandleStick.clear();
-       if(tasks.size() != 0 && tasks != null) {
+       if(tasks.size() > 0 && tasks != null) {
+
             int count = 0;
             for (int i = 0; i < tasks.size(); i++){
                 yAxisCandleStick.add(new CandleEntry(count, tasks.get(i).getSystolic(),tasks.get(i).getDystolic(),tasks.get(i).getSystolic(),tasks.get(i).getDystolic()));
@@ -188,7 +187,7 @@ public class Statistics extends AppCompatActivity{
             YAxis yAxisRight = candleStickChart.getAxisRight();
             yAxisRight.setEnabled(false);
             YAxis yAxisLeft = candleStickChart.getAxisLeft();
-            yAxisLeft.setLabelCount(6,true); // make it as 12 and check
+            yAxisLeft.setLabelCount(6,true);
             yAxisLeft.setDrawAxisLine(false);
             yAxisLeft.setAxisMinimum(50);
             yAxisLeft.setAxisMaximum(150);
@@ -225,20 +224,17 @@ public class Statistics extends AppCompatActivity{
         yAxisCandleStick1.clear();
         timeList.clear();
 //        Log.d(TAG, "Before condition");
-       if (tasks.size() != 0 && tasks != null) {
+       if (tasks.size() > 0 && tasks != null) {
 //           Log.d(TAG, "Inside time graph");
             // To get current date.
             DateFormat df1 = new SimpleDateFormat("MMM dd"); // Format date
             String date = df1.format(Calendar.getInstance().getTime());
 
-//        getTimeSet(true);
-
             int count = 0;
-            for (int i = 0; i < tasks.size(); i++){
-                if (date.equals(tasks.get(i).getDate()) && tasks.size() > 0) {
-//                    Log.d(TAG, "Inside date");
-                    yAxisCandleStick1.add(new CandleEntry(count, tasks.get(i).getSystolic(),tasks.get(i).getDystolic(),tasks.get(i).getSystolic(),tasks.get(i).getDystolic()));
-                    timeList.add(tasks.get(i).getTime());
+            for (BloodPressureDB list : tasks) {
+                if (date.equals(list.getDate())) {
+                    yAxisCandleStick1.add(new CandleEntry(count, list.getSystolic(),list.getDystolic(),list.getSystolic(),list.getDystolic()));
+                    timeList.add(list.getTime());
                     count++;
                 }
             }

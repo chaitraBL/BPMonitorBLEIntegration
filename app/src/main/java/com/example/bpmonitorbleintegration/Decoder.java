@@ -33,6 +33,7 @@ public class Decoder
             switch (value[5]) {
                 case Constants.RAW_COMMANDID:
                     Constants.is_readingStarted = true;
+                    Constants.is_resultReceived = false;
                     //Method 1: conversion of cuff and pulse pressure value.
                     int cuffValue = value[8] * 256 + value[9];
                     int pulseValue = value[10] * 256 + value[11];
@@ -46,14 +47,15 @@ public class Decoder
 
                     buffer += String.valueOf(final_devid);
                     decodeListener.deviceId(final_devid);
-                    Constants.is_resultReceived = false;
+
                     break;
 
                 case Constants.RESULT_COMMANDID:
                     //Method 2: conversion of systolic and dystiolic value for byte[].
 //                    decodeListener.systolic(ByteBuffer.wrap(new byte[]{0x00,0x00,bytes[8],bytes[9]}).getInt());
 //                    decodeListener.diastolic(ByteBuffer.wrap(new byte[]{0x00,0x00,bytes[10],bytes[11]}).getInt());
-
+                    Constants.is_resultReceived = true;
+                    Constants.is_readingStarted = true;
                     int systolic = value[8] * 256 + value[9];
 //
                     decodeListener.systolic(systolic);
@@ -65,7 +67,6 @@ public class Decoder
                     int rangeValue = value[13];
 //                    Log.i("Decoder", "range  " + rangeValue);
                     decodeListener.range(rangeValue);
-                    Constants.is_resultReceived = true;
                     break;
 
                 case Constants.ERROR_COMMANDID:
