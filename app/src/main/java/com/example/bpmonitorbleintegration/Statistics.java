@@ -113,29 +113,17 @@ public class Statistics extends AppCompatActivity{
                     plotCandleStick(tasks);
                     plotCandleStickTimeWise(tasks);
 
-//                for (int i = 0; i < tasks.size(); i++){
-//                    dateList.add(tasks.get(i).getDate());
-//                    systolic.add(tasks.get(i).getSystolic());
-//                    diastolic.add(tasks.get(i).getDystolic());
-//                    dateFormateForValue(dateList,systolic,diastolic);
-//                }
             }
         }
         GetTasks gt = new GetTasks();
         gt.execute();
     }
 
-//    public void dateFormateForValue(List<String> date, List<Integer> systolicVal, List<Integer> diastolic) {
-//        Log.d(TAG, "date " + date);
-//        Log.d(TAG, "systolic " + systolicVal);
-//        Log.d(TAG, "diastolic " + diastolic);
-//
-//
-//    }
-
     // Candle stick chart date based.
     public void plotCandleStick(List<BloodPressureDB> tasks) {
         yAxisCandleStick.clear();
+        daysList.clear();
+        candleStickChart.clear();
        if(tasks.size() > 0 && tasks != null) {
 
             int count = 0;
@@ -144,13 +132,6 @@ public class Statistics extends AppCompatActivity{
                 daysList.add(tasks.get(i).getDate());
                 count++;
             }
-
-            // To remove duplicates in array list.
-//            List<String> nonDup;
-//            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-//               nonDup = daysList.stream().distinct().collect(Collectors.toList());
-//               Log.i(TAG, "Non duplicates " + nonDup);
-//            }
 
             Collections.sort(yAxisCandleStick,new EntryXComparator());
 
@@ -168,6 +149,7 @@ public class Statistics extends AppCompatActivity{
             CandleData cd = new CandleData(cds);
             candleStickChart.setData(cd);
             candleStickChart.getDescription().setEnabled(false);
+
 
             // X axis
             XAxis xAxis = candleStickChart.getXAxis();
@@ -215,7 +197,7 @@ public class Statistics extends AppCompatActivity{
             candleStickChart.animateXY(1000,1000);
         }
        else {
-           Toast.makeText(Statistics.this, "No data available", Toast.LENGTH_SHORT).show();
+           Log.d(TAG, "Data not found");
        }
     }
 
@@ -223,6 +205,7 @@ public class Statistics extends AppCompatActivity{
     public void plotCandleStickTimeWise(List<BloodPressureDB> tasks) {
         yAxisCandleStick1.clear();
         timeList.clear();
+        candleStickTimeChart.clear();
 //        Log.d(TAG, "Before condition");
        if (tasks.size() > 0 && tasks != null) {
 //           Log.d(TAG, "Inside time graph");
@@ -304,7 +287,7 @@ public class Statistics extends AppCompatActivity{
             candleStickTimeChart.animateXY(1000,1000);
         }
        else {
-           Toast.makeText(Statistics.this, "No data available", Toast.LENGTH_SHORT).show();
+           Log.d(TAG, "Please start again");
        }
     }
 
