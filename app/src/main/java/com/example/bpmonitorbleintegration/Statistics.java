@@ -110,13 +110,10 @@ public class Statistics extends AppCompatActivity{
             protected void onPostExecute(List<BloodPressureDB> tasks) {
                 super.onPostExecute(tasks);
 
-                if (tasks.isEmpty()) {
-                   Log.d(TAG,"No data found");
-                }
-                else{
                     plotCandleStick(tasks);
                     plotCandleStickTimeWise(tasks);
-                }
+
+
 
 //                for (int i = 0; i < tasks.size(); i++){
 //                    dateList.add(tasks.get(i).getDate());
@@ -141,11 +138,7 @@ public class Statistics extends AppCompatActivity{
     // Candle stick chart date based.
     public void plotCandleStick(List<BloodPressureDB> tasks) {
         yAxisCandleStick.clear();
-        daysList.clear();
-        if (tasks.isEmpty()) {
-            Toast.makeText(Statistics.this, "No data available", Toast.LENGTH_SHORT).show();
-        }
-        else {
+       if(tasks.size() != 0 && tasks != null) {
             int count = 0;
             for (int i = 0; i < tasks.size(); i++){
                 yAxisCandleStick.add(new CandleEntry(count, tasks.get(i).getSystolic(),tasks.get(i).getDystolic(),tasks.get(i).getSystolic(),tasks.get(i).getDystolic()));
@@ -222,16 +215,18 @@ public class Statistics extends AppCompatActivity{
             candleStickChart.notifyDataSetChanged();
             candleStickChart.animateXY(1000,1000);
         }
+       else {
+           Toast.makeText(Statistics.this, "No data available", Toast.LENGTH_SHORT).show();
+       }
     }
 
     // Candle stick chart time based.
     public void plotCandleStickTimeWise(List<BloodPressureDB> tasks) {
         yAxisCandleStick1.clear();
         timeList.clear();
-        if (tasks.isEmpty()) {
-            Toast.makeText(Statistics.this, "No data available", Toast.LENGTH_SHORT).show();
-        }
-        else {
+//        Log.d(TAG, "Before condition");
+       if (tasks.size() != 0 && tasks != null) {
+//           Log.d(TAG, "Inside time graph");
             // To get current date.
             DateFormat df1 = new SimpleDateFormat("MMM dd"); // Format date
             String date = df1.format(Calendar.getInstance().getTime());
@@ -240,13 +235,15 @@ public class Statistics extends AppCompatActivity{
 
             int count = 0;
             for (int i = 0; i < tasks.size(); i++){
-                if (date.equals(tasks.get(i).getDate())) {
+                if (date.equals(tasks.get(i).getDate()) && tasks.size() > 0) {
+//                    Log.d(TAG, "Inside date");
                     yAxisCandleStick1.add(new CandleEntry(count, tasks.get(i).getSystolic(),tasks.get(i).getDystolic(),tasks.get(i).getSystolic(),tasks.get(i).getDystolic()));
                     timeList.add(tasks.get(i).getTime());
                     count++;
                 }
             }
 
+//           Log.d(TAG, "outside date");
             Collections.sort(yAxisCandleStick1,new EntryXComparator());
 
             CandleDataSet cds = new CandleDataSet(yAxisCandleStick1, "");
@@ -310,6 +307,9 @@ public class Statistics extends AppCompatActivity{
             candleStickTimeChart.notifyDataSetChanged();
             candleStickTimeChart.animateXY(1000,1000);
         }
+       else {
+           Toast.makeText(Statistics.this, "No data available", Toast.LENGTH_SHORT).show();
+       }
     }
 
     // To get the list of time intervals for an hour.

@@ -322,6 +322,7 @@ public class DataTransferActivity extends AppCompatActivity{
                             @Override
                             public void run() {
                                 if (Constants.is_ackReceived == false){
+                                    mCountDownTimer.cancel();
                                     Toast.makeText(getApplicationContext(), "Please start again", Toast.LENGTH_SHORT).show();
                                 }
                             }
@@ -388,6 +389,7 @@ public class DataTransferActivity extends AppCompatActivity{
         super.onPause();
         //Disconnect through services.
         unregisterReceiver(broadCastReceiver);
+        dialog.dismiss();
     }
 
     @Override
@@ -429,7 +431,6 @@ public class DataTransferActivity extends AppCompatActivity{
             return true;
         }
         return super.onOptionsItemSelected(item);
-
     }
 
 // To add actions to intent filter.
@@ -455,7 +456,6 @@ public class DataTransferActivity extends AppCompatActivity{
             else if (Constants.ACTION_GATT_DISCONNECTED.equals(action)) {
                 mConnected = false;
                 updateConnectionState("Disconnected");
-
             }
 
             else if (Constants.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
@@ -494,9 +494,9 @@ public class DataTransferActivity extends AppCompatActivity{
 
     private  void displayData(String data) {
 
-        Log.i(TAG, "received data before " + data);
+//        Log.i(TAG, "received data before " + data);
         if (data != null) {
-           Log.i(TAG, "reading started and result received " + Constants.is_readingStarted + " " + Constants.is_resultReceived);
+//           Log.i(TAG, "reading started and result received " + Constants.is_readingStarted + " " + Constants.is_resultReceived);
             mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
                 @Override
                 public void onTick(long millisUntilFinished) {
@@ -538,6 +538,7 @@ public class DataTransferActivity extends AppCompatActivity{
                         @Override
                         public void run() {
                             if (Constants.is_readingStarted == false){
+                                mCountDownTimer.cancel();
                                 Toast.makeText(DataTransferActivity.this,"Please start again",Toast.LENGTH_SHORT).show();
                                 ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
 //                                dialog.dismiss();
@@ -579,6 +580,7 @@ public class DataTransferActivity extends AppCompatActivity{
                     @Override
                     public void run() {
                         if (Constants.is_batterValueReceived == false){
+                            mCountDownTimer.cancel();
                             Toast.makeText(DataTransferActivity.this,"Something went wrong please connect again!!!",Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -621,8 +623,8 @@ public class DataTransferActivity extends AppCompatActivity{
                 mBluetoothLeService.connect(deviceAddress);
                 mBluetoothLeService.setHandler(myHandler);
             }
-
         }
+
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             mBluetoothLeService = null;
