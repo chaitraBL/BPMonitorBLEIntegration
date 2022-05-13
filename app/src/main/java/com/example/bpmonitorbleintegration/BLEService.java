@@ -240,7 +240,6 @@ public class BLEService extends Service implements DecodeListener{
                 value[i] = (int) (data[i] & 0xff);
 //                Log.i("Decoder", "new values " + value[i]);
             }
-
 //            Log.i("Decoder", "Command id " + (value[5]));
 
             // Check for checksum
@@ -262,10 +261,11 @@ public class BLEService extends Service implements DecodeListener{
                         break;
                     case Constants.RAW_COMMANDID:
                         Constants.is_readingStarted = true;
+                        Constants.is_resultReceived = false;
                         int cuffValue = value[8] * 256 + value[9];
                         int pulseValue = value[10] * 256 + value[11];
                         intent.putExtra(Constants.EXTRA_DATA, cuffValue + " / " + pulseValue);
-                        Constants.is_resultReceived = false;
+
                         break;
 
                     case Constants.RESULT_COMMANDID:

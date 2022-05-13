@@ -110,8 +110,13 @@ public class Statistics extends AppCompatActivity{
             protected void onPostExecute(List<BloodPressureDB> tasks) {
                 super.onPostExecute(tasks);
 
-                plotCandleStick(tasks);
-                plotCandleStickTimeWise(tasks);
+                if (tasks.isEmpty()) {
+                   Log.d(TAG,"No data found");
+                }
+                else{
+                    plotCandleStick(tasks);
+                    plotCandleStickTimeWise(tasks);
+                }
 
 //                for (int i = 0; i < tasks.size(); i++){
 //                    dateList.add(tasks.get(i).getDate());
