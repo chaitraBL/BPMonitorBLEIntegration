@@ -79,14 +79,10 @@ public class Statistics2 extends AppCompatActivity {
         timeList.clear();
         candleStick.clear();
 
-        if (tasks.size() > 0 && tasks != null) {
-            // To get current date.
-            DateFormat df1 = new SimpleDateFormat("MMM dd"); // Format date
-            String date = df1.format(Calendar.getInstance().getTime());
-
+        if (tasks != null && tasks.size() > 0) {
             int count = 0;
             for (BloodPressureDB list : tasks) {
-                if ("May 15".equals(list.getDate())) {
+                if (xVal.equals(list.getDate())) {
                     yVal.add(new CandleEntry(count, list.getSystolic(),list.getDystolic(),list.getSystolic(),list.getDystolic()));
                     timeList.add(list.getTime());
                     count++;
@@ -95,7 +91,7 @@ public class Statistics2 extends AppCompatActivity {
 
             Collections.sort(yVal,new EntryXComparator());
 
-            CandleDataSet cds = new CandleDataSet(yVal, "");
+            CandleDataSet cds = new CandleDataSet(yVal, xVal);
             cds.setColor(Color.rgb(80, 80, 80));
             cds.setShadowColor(Color.DKGRAY);
             cds.setBarSpace(1f);
@@ -116,13 +112,15 @@ public class Statistics2 extends AppCompatActivity {
             xAxis.setLabelCount(timeList.size());
             xAxis.setValueFormatter(new IndexAxisValueFormatter(timeList));
             xAxis.setAvoidFirstLastClipping(true);
-//            xAxis.setLabelRotationAngle(-45);
+            xAxis.setLabelRotationAngle(-45);
             xAxis.setDrawGridLines(false);
             xAxis.setDrawAxisLine(false);
             xAxis.setGranularity(1f);
             xAxis.setGranularityEnabled(true);
             xAxis.setCenterAxisLabels(false);
             xAxis.setEnabled(true);
+            CustomMarkerView mv = new CustomMarkerView(Statistics2.this, R.layout.marker_view);
+            candleStick.setMarkerView(mv);
 
             //Y axis
             YAxis yAxisRight = candleStick.getAxisRight();
