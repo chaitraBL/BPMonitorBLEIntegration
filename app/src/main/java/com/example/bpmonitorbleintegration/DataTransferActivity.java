@@ -169,7 +169,7 @@ public class DataTransferActivity extends AppCompatActivity{
                                     public void run() {
                                         if (Constants.is_ackReceived == true) {
                                             mCountDownTimer.cancel();
-                                                Constants.is_ackReceived = false;
+//                                                Constants.is_ackReceived = false;
 
                                                 //Alert controller to start readings.
                                                 builder = new AlertDialog.Builder(DataTransferActivity.this);
@@ -309,7 +309,7 @@ public class DataTransferActivity extends AppCompatActivity{
                                                     }
                                                 });
 //                                                mCountDownTimer.cancel();
-                                                Constants.is_ackReceived = false;
+//                                                Constants.is_ackReceived = false;
                                         }
                                     }
                                 });
@@ -556,6 +556,7 @@ public class DataTransferActivity extends AppCompatActivity{
                             if (Constants.is_readingStarted == false){
                                 mCountDownTimer.cancel();
                                 Toast.makeText(DataTransferActivity.this,"Please start again",Toast.LENGTH_SHORT).show();
+                                ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
                                 ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
 //                                dialog.dismiss();
                             }

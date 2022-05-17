@@ -57,6 +57,8 @@ public class Statistics extends AppCompatActivity {
     Button timeButton, dayButton, allButton;
     ViewPager viewPager;
 
+    BPModel model;
+
     private boolean isTimeEnabled = false;
 
     @Override
@@ -222,6 +224,8 @@ public class Statistics extends AppCompatActivity {
         List<String> datesInDB = new ArrayList<>();
         Date date1 = null;
         List<Integer> finalSysta = new ArrayList<>();
+        List<Integer> averageSysta = new ArrayList<>();
+        List<BloodPressureDB> filteredArray = new ArrayList<>();
 
         for (BloodPressureDB task : tasks) {
             datesInDB.add(task.getDate());
@@ -237,38 +241,34 @@ public class Statistics extends AppCompatActivity {
             }
             SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMM dd");
             String newDates = DATE_FORMAT.format(date1);
+            finalDate.add(newDates);
 
             Log.d(TAG, "compareAndGetValues: newDates " + newDates);
-            for (int i = 0; i < tasks.size(); i++) {
+            for (int i = 0; i <= tasks.size(); i++) {
                 if (newDates.equals(tasks.get(i).getDate())) {
-                    Log.d(TAG, "compareAndGetValues: systa" + tasks.get(i).getSystolic());
+                    Log.d(TAG, "compareAndGetValues: systa " + tasks.get(i).getSystolic());
                     List<Integer> systolicDate = new ArrayList<>();
                     systolicDate.add(tasks.get(i).getSystolic());
                     Log.d(TAG, "compareAndGetValues: systolicDate " + systolicDate);
-                    finalSysta.add(systolicDate.get(1));
+                    for (int j = 0; j < systolicDate.size(); j++) {
+                        int sum = 0;
+                        int average = 0;
+                        sum += systolicDate.get(j);
+                        average = sum / systolicDate.size();
+                        Log.i(TAG, "compareAndGetValues: average " + average + " " + sum);
+                        Toast.makeText(getApplicationContext(), "compareAndGetValues: average " + average + " " + sum, Toast.LENGTH_SHORT).show();
+                        finalSysta.add(average);
+                        Log.d(TAG, "compareAndGetValues: final date inside loop " + finalSysta);
+                        Toast.makeText(getApplicationContext(), "compareAndGetValues: final date inside loop  + finalSysta", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
-            Log.d(TAG, "compareAndGetValues: finalSysta " + finalSysta);
-//            finalDate.add(newDates);
-//            Log.d(TAG, "compareAndGetValues: final date " + finalDate);
+
+            finalDate.add(newDates);
         }
+        Log.d(TAG, "compareAndGetValues: final date " + finalDate);
 
     }
-
-//    public static List<Date> getDaysBetweenDates(Date startdate, Date enddate)
-//    {
-//        List<Date> dates = new ArrayList<Date>();
-//        Calendar calendar = new GregorianCalendar();
-//        calendar.setTime(startdate);
-//
-//        while (calendar.getTime().before(enddate))
-//        {
-//            Date result = calendar.getTime();
-//            dates.add(result);
-//            calendar.add(Calendar.DATE, 1);
-//        }
-//        return dates;
-//    }
 
     //To retrieve data from Room DB.
     private void getManualTasks() {
@@ -291,19 +291,18 @@ public class Statistics extends AppCompatActivity {
                     pressureList.add(list);
                 }
 
-//                String s = "2022-05-09";
-//                String e = "2022-05-15";
-//                List<LocalDate> totalDates = new ArrayList<>();
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                    LocalDate start = LocalDate.parse(s);
-//                    LocalDate end = LocalDate.parse(e);
-//                    while (!start.isAfter(end)) {
-//                        totalDates.add(start);
-//                        start = start.plusDays(1);
-//                    }
-//                    Log.d(TAG, "onCreate: totaldates " + totalDates);
-//                    compareAndGetValues(pressureList, totalDates);
-//                }
+                String s = "2022-05-08";
+                String e = "2022-05-17";
+                List<LocalDate> totalDates = new ArrayList<>();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    LocalDate start = LocalDate.parse(s);
+                    LocalDate end = LocalDate.parse(e);
+                    while (!start.isAfter(end)) {
+                        totalDates.add(start);
+                        start = start.plusDays(1);
+                    }
+                    compareAndGetValues(pressureList, totalDates);
+                }
                 plotCandleStick1(tasks);
 
             }
@@ -509,10 +508,13 @@ public class Statistics extends AppCompatActivity {
 
             int count = 0;
             for (BloodPressureDB list : tasks) {
-                if ("May 15".equals(list.getDate())) {
+                if (date.equals(list.getDate())) {
                     yAxisCandleStick1.add(new CandleEntry(count, list.getSystolic(),list.getDystolic(),list.getSystolic(),list.getDystolic()));
                     timeList.add(list.getTime());
                     count++;
+                }
+                else{
+                    Log.i(TAG, "No date");
                 }
             }
 
@@ -613,8 +615,6 @@ public class Statistics extends AppCompatActivity {
                 newList = daysList.stream().distinct().collect(Collectors.toList());
             }
 
-            Log.i(TAG, "plotCandleStick1: new list " + newList);
-
             Collections.sort(yAxisCandle,new EntryXComparator());
 
             CandleDataSet cds = new CandleDataSet(yAxisCandle, "");
@@ -684,183 +684,5 @@ public class Statistics extends AppCompatActivity {
             Log.d(TAG, "Data not found");
         }
     }
-
-
-    private void average_of_dates(List<BloodPressureDB> list, List<String> dates) {
-
-        int systa = 0;
-        int diasta = 0;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            newList = dates.stream().distinct().collect(Collectors.toList());
-        }
-        Log.d(TAG, "average_of_dates: " + newList);
-        if (list != null && list.size() > 0) {
-            for (int j = 0; j < list.size(); j++) {
-//           for (int i = 0; i < newList.size(); i++) {
-                if (list.get(j).getDate().equals("May 9")) {
-                    Log.d(TAG, "average_of_dates: before cal systa" + list.get(j).getSystolic() + " diasta " + list.get(j).getDystolic() + " date " + list.get(j).getDate() + " size " + list.size());
-                    systolicVal.add(list.get(j).getSystolic());
-                    diastolicVal.add(list.get(j).getDystolic());
-//                    computedSystaAndDiasta(systolicVal,diastolicVal);
-                    Log.d(TAG, "average_of_dates: array of val " + systolicVal + " " + diastolicVal + " Size " + systolicVal.size() + " " + diastolicVal.size());
-
-//                   for (int i = 0; i < systolicVal.size(); i++) {
-//                       systa += list.get(j).getSystolic() / list.size();
-//                       systolicVal.add(systa);
-//                       Log.d(TAG, "average_of_dates: systolic " + systa + " Array " + systolicVal);
-//                   }
-//
-//                   for (j = 0; j < diastolicVal.size(); j++) {
-//                       diasta += list.get(j).getDystolic() / list.size();
-//                       diastolicVal.add(diasta);
-//                       Log.d(TAG, "average_of_dates: diastolic " + diasta + " Array " + diastolicVal);
-//                   }
-
-                }
-
-//               if ("May 10".equals(list.get(j).getDate())) {
-//                   Log.d(TAG, "average_of_dates: before cal systa" + list.get(j).getSystolic() + " diasta " + list.get(j).getDystolic() + " date " + list.get(j).getDate() + " size " + list.size());
-//                   systolicVal.add(list.get(j).getSystolic());
-//                   diastolicVal.add(list.get(j).getDystolic());
-//                   Log.d(TAG, "average_of_dates: array of val " + systolicVal + " " + diastolicVal + " Size " + systolicVal.size() + " " + diastolicVal.size());
-//
-////                   for (i = 0; i < systolicVal.size(); i++) {
-////                       systa += systolicVal.get(i) / systolicVal.size();
-////                       systolicVal.add(systa);
-////                       Log.d(TAG, "average_of_dates: systolic " + systa + " Array " + systolicVal);
-////                   }
-////
-////                   for (j = 0; j < diastolicVal.size(); j++) {
-////                       diasta += diastolicVal.get(j) / diastolicVal.size();
-////                       diastolicVal.add(diasta);
-////                       Log.d(TAG, "average_of_dates: diastolic " + diasta + " Array " + diastolicVal);
-////                   }
-//               }
-//
-//               if ("May 11".equals(list.get(j).getDate())) {
-//                   Log.d(TAG, "average_of_dates: before cal systa" + list.get(j).getSystolic() + " diasta " + list.get(j).getDystolic() + " date " + list.get(j).getDate() + " size " + list.size());
-//                   systolicVal.add(list.get(j).getSystolic());
-//                   diastolicVal.add(list.get(j).getDystolic());
-//                   Log.d(TAG, "average_of_dates: array of val " + systolicVal + " " + diastolicVal + " Size " + systolicVal.size() + " " + diastolicVal.size());
-//
-////                   for (i = 0; i < systolicVal.size(); i++) {
-////                       systa += systolicVal.get(i) / systolicVal.size();
-////                       systolicVal.add(systa);
-////                       Log.d(TAG, "average_of_dates: systolic " + systa + " Array " + systolicVal);
-////                   }
-////
-////                   for (j = 0; j < diastolicVal.size(); j++) {
-////                       diasta += diastolicVal.get(j) / diastolicVal.size();
-////                       diastolicVal.add(diasta);
-////                       Log.d(TAG, "average_of_dates: diastolic " + diasta + " Array " + diastolicVal);
-////                   }
-//               }
-//
-//               if ("May 13".equals(list.get(j).getDate())) {
-//                   Log.d(TAG, "average_of_dates: before cal systa" + list.get(j).getSystolic() + " diasta " + list.get(j).getDystolic() + " date " + list.get(j).getDate() + " size " + list.size());
-//                   systolicVal.add(list.get(j).getSystolic());
-//                   diastolicVal.add(list.get(j).getDystolic());
-//                   Log.d(TAG, "average_of_dates: array of val " + systolicVal + " " + diastolicVal + " Size " + systolicVal.size() + " " + diastolicVal.size());
-//
-////                   for (i = 0; i < systolicVal.size(); i++) {
-////                       systa += systolicVal.get(i) / systolicVal.size();
-////                       systolicVal.add(systa);
-////                       Log.d(TAG, "average_of_dates: systolic " + systa + " Array " + systolicVal);
-////                   }
-////
-////                   for (j = 0; j < diastolicVal.size(); j++) {
-////                       diasta += diastolicVal.get(j) / diastolicVal.size();
-////                       diastolicVal.add(diasta);
-////                       Log.d(TAG, "average_of_dates: diastolic " + diasta + " Array " + diastolicVal);
-////                   }
-//               }
-//
-//               if ("May 14".equals(list.get(j).getDate())) {
-//                   Log.d(TAG, "average_of_dates: before cal systa" + list.get(j).getSystolic() + " diasta " + list.get(j).getDystolic() + " date " + list.get(j).getDate() + " size " + list.size());
-//                   systolicVal.add(list.get(j).getSystolic());
-//                   diastolicVal.add(list.get(j).getDystolic());
-//                   Log.d(TAG, "average_of_dates: array of val " + systolicVal + " " + diastolicVal + " Size " + systolicVal.size() + " " + diastolicVal.size());
-//
-////                   for (i = 0; i < systolicVal.size(); i++) {
-////                       systa += systolicVal.get(i) / systolicVal.size();
-////                       systolicVal.add(systa);
-////                       Log.d(TAG, "average_of_dates: systolic " + systa + " Array " + systolicVal);
-////                   }
-////
-////                   for (j = 0; j < diastolicVal.size(); j++) {
-////                       diasta += diastolicVal.get(j) / diastolicVal.size();
-////                       diastolicVal.add(diasta);
-////                       Log.d(TAG, "average_of_dates: diastolic " + diasta + " Array " + diastolicVal);
-////                   }
-//               }
-//
-//               if ("May 15".equals(list.get(j).getDate())) {
-//                   Log.d(TAG, "average_of_dates: before cal systa" + list.get(j).getSystolic() + " diasta " + list.get(j).getDystolic() + " date " + list.get(j).getDate() + " size " + list.size());
-//                   systolicVal.add(list.get(j).getSystolic());
-//                   diastolicVal.add(list.get(j).getDystolic());
-//                   Log.d(TAG, "average_of_dates: array of val " + systolicVal + " " + diastolicVal + " Size " + systolicVal.size() + " " + diastolicVal.size());
-//
-////                   for (i = 0; i < systolicVal.size(); i++) {
-////                       systa += systolicVal.get(i) / systolicVal.size();
-////                       systolicVal.add(systa);
-////                       Log.d(TAG, "average_of_dates: systolic " + systa + " Array " + systolicVal);
-////                   }
-////
-////                   for (j = 0; j < diastolicVal.size(); j++) {
-////                       diasta += diastolicVal.get(j) / diastolicVal.size();
-////                       diastolicVal.add(diasta);
-////                       Log.d(TAG, "average_of_dates: diastolic " + diasta + " Array " + diastolicVal);
-////                   }
-//               }
-//           }
-            }
-        }
-//        return newList;
-    }
-
-    private void computedSystaAndDiasta(List<Integer> systolic, List<Integer> diastolic){
-        int systa = 0;
-        int diasta = 0;
-        for (int i = 0; i <= systolic.size() ; i++) {
-            systa += systolic.get(i);
-            Log.d(TAG, "computedSystaAndDiasta: systa " + systa);
-        }
-
-        for (int j = 0; j < diastolic.size(); j++) {
-            diasta += diastolic.get(j);
-            Log.d(TAG, "computedSystaAndDiasta: diasta " + diasta);
-        }
-    }
-
-    // To get the list of time intervals for an hour.
-    private void getTimeSet(boolean isCurrentDay) {
-        ArrayList results = new ArrayList<String>();
-        String timeResult = null;
-        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
-        Calendar calendar = new GregorianCalendar();
-        calendar.set(Calendar.HOUR_OF_DAY, 0);// what should be the default?
-        if(!isCurrentDay)
-            calendar.set(Calendar.HOUR_OF_DAY, 24);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        for (int i = 0; i < 24; i++) {
-            String  day1 = sdf.format(calendar.getTime());
-//            Log.i(TAG, "day1 " + day1);
-            timeResult = day1;
-//            timeList.add(timeResult);
-
-            // add 15 minutes to the current time; the hour adjusts automatically!
-            calendar.add(Calendar.MINUTE, 60);
-
-            String day2 = sdf.format(calendar.getTime());
-
-//            String day = day1 + " - " + day2;
-            String day = day1;
-            results.add(i, day);
-        }
-//        return timeResult;
-    }
-
-
 }
 
