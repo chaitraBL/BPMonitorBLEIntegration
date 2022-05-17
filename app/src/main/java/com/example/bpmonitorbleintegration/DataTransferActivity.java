@@ -87,7 +87,7 @@ public class DataTransferActivity extends AppCompatActivity{
     private CountDownTimer mCountDownTimer;
     private boolean mTimerRunning;
     private long mTimeLeftInMillis = 2000;
-    private long startTime = 500;
+    private long startTime = 200;
     View customView;
 
     private Handler myHandler = new Handler(new Handler.Callback() {
@@ -156,7 +156,7 @@ public class DataTransferActivity extends AppCompatActivity{
                     @Override
                     public void onTick(long l) {
                         counter++;
-                        mCountDownTimer = new CountDownTimer(200,100) {
+                        mCountDownTimer = new CountDownTimer(startTime,100) {
                             @Override
                             public void onTick(long l) {
                                 counter++;
@@ -250,13 +250,15 @@ public class DataTransferActivity extends AppCompatActivity{
                                                 //Prevent dialog box from getting dismissed on outside touch
                                                 dialog.setCanceledOnTouchOutside(false);
                                                 //To hide Ok button until readings complete.
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
                                                 dialog.setOnShowListener(new DialogInterface.OnShowListener() {
                                                     @Override
                                                     public void onShow(DialogInterface dialogInterface) {
                                                         ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                                                     }
                                                 });
-                                                dialog.show();
+                                            }
+                                            dialog.show();
 
                                                 //Send request to force STOP the readings WRT: timer.
                                                 dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
@@ -280,7 +282,7 @@ public class DataTransferActivity extends AppCompatActivity{
                                                                         if (Constants.is_ackReceived == true) {
                                                                             mCountDownTimer.cancel();
                                                                             dialog.dismiss();
-                                                                            Constants.is_readingStarted = false;
+//                                                                            Constants.is_readingStarted = false;
 //                                                                            Constants.is_ackReceived = false;
                                                                         }
                                                                     }
@@ -306,8 +308,8 @@ public class DataTransferActivity extends AppCompatActivity{
                                                         }.start();
                                                     }
                                                 });
-                                                mCountDownTimer.cancel();
-//                                                Constants.is_ackReceived = false;
+//                                                mCountDownTimer.cancel();
+                                                Constants.is_ackReceived = false;
                                         }
                                     }
                                 });
@@ -341,7 +343,22 @@ public class DataTransferActivity extends AppCompatActivity{
                 diastolicText.setText(String.valueOf(mBluetoothLeService.dystolic));
                 heartRateText.setText(String.valueOf(mBluetoothLeService.rate));
                 rangeText.setText(String.valueOf(mBluetoothLeService.range));
-                localDB.saveTask(deviceAddress, mBluetoothLeService.systalic, mBluetoothLeService.dystolic, mBluetoothLeService.rate, mBluetoothLeService.range, DataTransferActivity.this);
+
+                if (systolicText.getText().toString().equals(" ")) {
+                    Toast.makeText(getApplicationContext(),"Please enter systolic value",Toast.LENGTH_SHORT).show();
+                }
+                else if (diastolicText.getText().toString().equals(" ")) {
+                    Toast.makeText(getApplicationContext(),"Please enter diastolic value",Toast.LENGTH_SHORT).show();
+                }
+                else if (heartRateText.getText().toString().equals(" ")) {
+                    Toast.makeText(getApplicationContext(),"Please enter heart rate value",Toast.LENGTH_SHORT).show();
+                }
+                else if (rangeText.getText().toString().equals(" ")) {
+                    Toast.makeText(getApplicationContext(),"Please enter MAP value",Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    localDB.saveTask(deviceAddress, mBluetoothLeService.systalic, mBluetoothLeService.dystolic, mBluetoothLeService.rate, mBluetoothLeService.range, DataTransferActivity.this);
+                }
                 progress.setVisibility(View.GONE);
             }
         });
@@ -506,7 +523,6 @@ public class DataTransferActivity extends AppCompatActivity{
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-//                            mCountDownTimer.cancel();
                             progress.setVisibility(View.GONE);
                             if (Constants.is_readingStarted == true)
                             {
@@ -631,7 +647,7 @@ public class DataTransferActivity extends AppCompatActivity{
         }
     };
 
-    //Updating connection status through text field.
+    //Updating connection status through text field, if disconnected status navigating to mainActivity through alert dialog.
     private void updateConnectionState(final String status) {
         runOnUiThread(new Runnable() {
             @Override

@@ -34,6 +34,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BPMonitorBLEIntegration">
         <activity
+            android:name=".Statistics2"
+            android:exported="false" />
+        <activity
             android:name=".Statistics"
             android:exported="false" />
         <activity
