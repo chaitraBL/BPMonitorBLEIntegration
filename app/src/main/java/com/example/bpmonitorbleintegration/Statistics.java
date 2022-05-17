@@ -1,5 +1,6 @@
 package com.example.bpmonitorbleintegration;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.AsyncTask;
@@ -115,16 +116,11 @@ public class Statistics extends AppCompatActivity {
             @Override
             public void onValueSelected(Entry e, Highlight h) {
 
-                String xAxisLabel = candleStickChart.getXAxis().getValueFormatter().getFormattedValue(e.getX(), candleStickTimeChart.getXAxis());
-//                ArrayList<String> xLabels = new ArrayList<>();
-
                 String xAxisVal = newList.get((int) e.getX());
-                Log.d(TAG, "onValueSelected: xAxisLabel " + xAxisLabel + " " + xAxisVal) ;
-                Toast.makeText(getApplicationContext(),"onValueSelected: xAxisLabel " + xAxisLabel + " " + xAxisVal, Toast.LENGTH_SHORT).show();
 
-
-
-//                startActivity(new Intent(Statistics.this,Statistics2.class));
+                Intent intent = new Intent(Statistics.this,Statistics2.class);
+                intent.putExtra("xAxisVal", xAxisVal);
+                startActivity(intent);
             }
 
             @Override
