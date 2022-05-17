@@ -87,7 +87,7 @@ public class DataTransferActivity extends AppCompatActivity{
     private CountDownTimer mCountDownTimer;
     private boolean mTimerRunning;
     private long mTimeLeftInMillis = 2000;
-    private long startTime = 200;
+    private long startTime = 100;
     View customView;
 
     private Handler myHandler = new Handler(new Handler.Callback() {
@@ -202,7 +202,7 @@ public class DataTransferActivity extends AppCompatActivity{
 //                            Log.i(TAG, "Stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
                                                             mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
 
-                                                            mCountDownTimer = new CountDownTimer(startTime, 100) {
+                                                            mCountDownTimer = new CountDownTimer(startTime, 50) {
                                                                 @Override
                                                                 public void onTick(long l) {
                                                                     counter++;

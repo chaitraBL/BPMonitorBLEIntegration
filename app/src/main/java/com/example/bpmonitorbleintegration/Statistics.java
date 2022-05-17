@@ -219,13 +219,14 @@ public class Statistics extends AppCompatActivity {
 
     }
 
-    public void compareAndGetValues(List<BloodPressureDB> tasks, List<LocalDate> dates) {
+    public void compareAndGetValues(List<BloodPressureDB> tasks) {
         List<String> finalDate = new ArrayList<>();
         List<String> datesInDB = new ArrayList<>();
         Date date1 = null;
         List<Integer> finalSysta = new ArrayList<>();
         List<Integer> averageSysta = new ArrayList<>();
         List<BloodPressureDB> filteredArray = new ArrayList<>();
+        List<Integer> systolicDate = new ArrayList<>();
 
         for (BloodPressureDB task : tasks) {
             datesInDB.add(task.getDate());
@@ -234,40 +235,70 @@ public class Statistics extends AppCompatActivity {
             newList = datesInDB.stream().distinct().collect(Collectors.toList());
         }
 
-        for (LocalDate date : dates) {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                ZoneId defaultZoneId = ZoneId.systemDefault();
-                date1 = Date.from(date.atStartOfDay(defaultZoneId).toInstant());
-            }
-            SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMM dd");
-            String newDates = DATE_FORMAT.format(date1);
-            finalDate.add(newDates);
 
-            Log.d(TAG, "compareAndGetValues: newDates " + newDates);
-            for (int i = 0; i <= tasks.size(); i++) {
-                if (newDates.equals(tasks.get(i).getDate())) {
-                    Log.d(TAG, "compareAndGetValues: systa " + tasks.get(i).getSystolic());
-                    List<Integer> systolicDate = new ArrayList<>();
-                    systolicDate.add(tasks.get(i).getSystolic());
-                    Log.d(TAG, "compareAndGetValues: systolicDate " + systolicDate);
-                    for (int j = 0; j < systolicDate.size(); j++) {
-                        int sum = 0;
-                        int average = 0;
-                        sum += systolicDate.get(j);
-                        average = sum / systolicDate.size();
-                        Log.i(TAG, "compareAndGetValues: average " + average + " " + sum);
-                        Toast.makeText(getApplicationContext(), "compareAndGetValues: average " + average + " " + sum, Toast.LENGTH_SHORT).show();
-                        finalSysta.add(average);
-                        Log.d(TAG, "compareAndGetValues: final date inside loop " + finalSysta);
-                        Toast.makeText(getApplicationContext(), "compareAndGetValues: final date inside loop  + finalSysta", Toast.LENGTH_SHORT).show();
+        String s = "2022-05-08";
+        String e = "2022-05-17";
+        List<LocalDate> totalDates = new ArrayList<>();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            LocalDate start = LocalDate.parse(s);
+            LocalDate end = LocalDate.parse(e);
+            while (!start.isAfter(end)) {
+                totalDates.add(start);
+                start = start.plusDays(1);
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    ZoneId defaultZoneId = ZoneId.systemDefault();
+                    date1 = Date.from(start.atStartOfDay(defaultZoneId).toInstant());
+                }
+                SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMM dd");
+                String newDates = DATE_FORMAT.format(date1);
+                Log.d(TAG, "compareAndGetValues: newDates " + newDates);
+                for (BloodPressureDB task : tasks) {
+                    if (newDates.equals(task.getDate())) {
+                        systolicDate.add(task.getSystolic());
+                        Log.d(TAG, "compareAndGetValues: systa " + systolicDate);
                     }
                 }
             }
-
-            finalDate.add(newDates);
         }
-        Log.d(TAG, "compareAndGetValues: final date " + finalDate);
 
+//        for (LocalDate date : dates) {
+//            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+//                ZoneId defaultZoneId = ZoneId.systemDefault();
+//                date1 = Date.from(date.atStartOfDay(defaultZoneId).toInstant());
+//            }
+//            SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMM dd");
+//            String newDates = DATE_FORMAT.format(date1);
+//            finalDate.add(newDates);
+//
+//            Log.d(TAG, "compareAndGetValues: newDates " + newDates);
+//            for (BloodPressureDB task : tasks) {
+//                if ("May 10".equals(task.getDate())) {
+//                    Log.d(TAG, "compareAndGetValues: systa " + task.getSystolic());
+//                }
+//            }
+//            for (int i = 0; i < tasks.size(); i++) {
+//                if (newDates.equals(tasks.get(i).getDate())) {
+//                    Log.d(TAG, "compareAndGetValues: systa " + tasks.get(i).getSystolic());
+//
+//                    systolicDate.add(tasks.get(i).getSystolic());
+//                    Log.d(TAG, "compareAndGetValues: systolicDate " + systolicDate);
+//
+//                    for (int j = 0; j < systolicDate.size(); j++) {
+//                        int sum = 0;
+//                        int average = 0;
+//                        sum += systolicDate.get(j);
+//                        average = sum / systolicDate.size();
+//                        Log.i(TAG, "compareAndGetValues: average " + average + " " + sum);
+//                        Toast.makeText(getApplicationContext(), "compareAndGetValues: average " + average + " " + sum, Toast.LENGTH_SHORT).show();
+//                        finalSysta.add(average);
+//                        Log.d(TAG, "compareAndGetValues: final date inside loop " + finalSysta);
+//                        Toast.makeText(getApplicationContext(), "compareAndGetValues: final date inside loop  + finalSysta", Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//
+//            }
+//        }
+//        Log.d(TAG, "compareAndGetValues: final date " + finalDate);
     }
 
     //To retrieve data from Room DB.
@@ -290,19 +321,20 @@ public class Statistics extends AppCompatActivity {
                 for (BloodPressureDB list : tasks) {
                     pressureList.add(list);
                 }
-
-                String s = "2022-05-08";
-                String e = "2022-05-17";
-                List<LocalDate> totalDates = new ArrayList<>();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    LocalDate start = LocalDate.parse(s);
-                    LocalDate end = LocalDate.parse(e);
-                    while (!start.isAfter(end)) {
-                        totalDates.add(start);
-                        start = start.plusDays(1);
-                    }
-                    compareAndGetValues(pressureList, totalDates);
-                }
+//
+//                String s = "2022-05-08";
+//                String e = "2022-05-17";
+//                List<LocalDate> totalDates = new ArrayList<>();
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                    LocalDate start = LocalDate.parse(s);
+//                    LocalDate end = LocalDate.parse(e);
+//                    while (!start.isAfter(end)) {
+//                        totalDates.add(start);
+//                        start = start.plusDays(1);
+//                    }
+//
+//                }
+                compareAndGetValues(tasks);
                 plotCandleStick1(tasks);
 
             }
@@ -315,17 +347,10 @@ public class Statistics extends AppCompatActivity {
     public void plotAverageCandleStick(List<BloodPressureDB> task) {
         yAxisCandleStick2.clear();
         candleStickChart.clear();
-//
-        if(task != null && task.size() > 0) {
-//
-            ArrayList<Integer> systolicList = new ArrayList<Integer>(Arrays.asList(131, 124, 113, 126, 122, 130));
-            ArrayList<Integer> diastolicList = new ArrayList<Integer>(Arrays.asList(91, 95, 89, 92, 92, 91));
 
+        if(task != null && task.size() > 0) {
             for (int i = 0; i < task.size(); i++){
                 dateList.add(task.get(i).getDate());
-
-//                daysList.add(tasks.get(i).getDate());
-//                heartRate.add(tasks.get(i).getHeartRate());
             }
 
             yAxisCandleStick2.add(new CandleEntry(0, 131,91,131,91));
@@ -645,9 +670,9 @@ public class Statistics extends AppCompatActivity {
             xAxis.setGranularityEnabled(true);
             xAxis.setCenterAxisLabels(false);
             xAxis.setEnabled(true);
-            CustomMarkerView mv = new CustomMarkerView(Statistics.this, R.layout.marker_view);
-//            mv.setChartView(candleStickChart);
-            candleStickTimeChart.setMarkerView(mv);
+//            CustomMarkerView mv = new CustomMarkerView(Statistics.this, R.layout.marker_view);
+////            mv.setChartView(candleStickChart);
+//            candleStickTimeChart.setMarkerView(mv);
 
             //Y axis
             YAxis yAxisRight = candleStickTimeChart.getAxisRight();
