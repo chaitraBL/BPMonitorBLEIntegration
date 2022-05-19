@@ -22,6 +22,9 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+<!--        <item name="android:statusBarColor" tools:targetApi="l">@color/blue_200</item>-->
+        <item tools:targetApi="m" name="android:windowLightStatusBar"> true </item>
+        <item name="android:navigationBarColor">@color/blue_200</item>
         <!-- Customize your theme here. -->
         <item name="colorAccent">@color/colorAccent</item>
     </style>

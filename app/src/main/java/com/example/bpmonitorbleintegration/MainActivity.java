@@ -104,6 +104,8 @@ public class MainActivity extends AppCompatActivity {
         checkPermissions(MainActivity.this, this);
         mHandler = new Handler();
 
+        getSupportActionBar().setTitle("Connect Device");
+
 
         bluetoothManager =
                 (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
@@ -198,10 +200,6 @@ public class MainActivity extends AppCompatActivity {
 
                 scanLeDevice(true);
                 return true;
-
-            case R.id.graph:
-                Intent intent = new Intent(MainActivity.this, Statistics.class);
-                startActivity(intent);
 
             default:
                 return super.onOptionsItemSelected(item);

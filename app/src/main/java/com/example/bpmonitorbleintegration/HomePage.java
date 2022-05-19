@@ -6,35 +6,57 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
+import com.github.mikephil.charting.charts.CandleStickChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.CandleData;
+import com.github.mikephil.charting.data.CandleDataSet;
+import com.github.mikephil.charting.data.CandleEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.utils.EntryXComparator;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 public class HomePage extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
-    TextView bloodpressureText, pulseText, nameText, addressText;
-   RecyclerView currentReading;
+    TextView bloodpressureText, pulseText, nameText, addressText, systaVal, diastaVal;
+//   RecyclerView currentReading;
     List<String> readingList;
     ArrayAdapter adapter;
     private String TAG = HomePage.class.getName();
     List<BloodPressureDB> newTask = new ArrayList<>();
     BottomNavigationView bottomNavigationView;
+    ArrayList<CandleEntry> yVal = new ArrayList<>();
+    CandleStickChart candleStick;
+    ArrayList<String> timeList = new ArrayList<>();
+    ImageButton analyticBtn;
+    ProgressBar progressBar1, progressBar2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +66,23 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
         addressText = findViewById(R.id.profile_address);
         bloodpressureText = findViewById(R.id.blood_pressure);
         pulseText = findViewById(R.id.pulse);
-        currentReading = findViewById(R.id.reading_list);
-        currentReading.setLayoutManager(new LinearLayoutManager(this));
+//        currentReading = findViewById(R.id.reading_list);
+//        currentReading.setLayoutManager(new LinearLayoutManager(this));
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        candleStick = findViewById(R.id.reading_list);
+        analyticBtn = findViewById(R.id.next_btn);
+        progressBar1 = findViewById(R.id.pb_systa);
+        progressBar2 = findViewById(R.id.pb_diasta);
 
+        LinearLayout linearLayout = findViewById(R.id.linear_bp);
+        linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(HomePage.this, MainActivity.class));
+            }
+        });
+
+        analyticBtn.setBackgroundDrawable(null);
         bottomNavigationView.setOnNavigationItemSelectedListener(HomePage.this);
         bottomNavigationView.setSelectedItemId(R.id.home);
 
@@ -55,12 +90,19 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
         SecondFragment secondFragment = new SecondFragment();
         ThirdFragment thirdFragment = new ThirdFragment();
 
-        getSupportActionBar().setTitle("Home");
+        getSupportActionBar().setTitle("DashBoard");
 
         nameText.setText("Welcome  Chaitra");
         addressText.setText("Bangalore");
 
         getManualTasks();
+
+        analyticBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(HomePage.this, Statistics.class));
+            }
+        });
     }
 //
 //    //Menu item.
@@ -91,10 +133,10 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
 //                startActivity(new Intent(HomePage.this, MainActivity.class));
                 break;
             case R.id.analytics:
-                startActivity(new Intent(HomePage.this, Statistics.class));
+//                startActivity(new Intent(HomePage.this, LogActivity.class));
                 break;
             case R.id.device_connect:
-                startActivity(new Intent(HomePage.this, MainActivity.class));
+                startActivity(new Intent(HomePage.this, LogActivity.class));
                 break;
         }
         return true;
@@ -123,18 +165,21 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                     DateFormat df1 = new SimpleDateFormat("MMM dd"); // Format date
                     String date = df1.format(Calendar.getInstance().getTime());
 
-
                     BloodPressureDB list = tasks.get(tasks.size() - 1);
 
                     bloodpressureText.setText(list.getSystolic() + "/" + list.getDystolic() + "mmHg");
                     pulseText.setText(list.getHeartRate() + "bpm");
 
-                for (int i = 0; i < tasks.size(); i++) {
+                    progressBar1.setProgress(list.getSystolic());
+                    progressBar2.setProgress(list.getDystolic());
+
+                    for (int i = 0; i < tasks.size(); i++) {
                     if (date.equals(tasks.get(i).getDate())) {
                         newTask.add(tasks.get(i));
-                        ReadingsAdapter adapter = new ReadingsAdapter(HomePage.this, newTask);
-                        currentReading.setAdapter(adapter);
-                        adapter.notifyDataSetChanged();
+                        plotCandleStickTimeWise(newTask);
+//                        ReadingsAdapter adapter = new ReadingsAdapter(HomePage.this, newTask);
+//                        currentReading.setAdapter(adapter);
+//                        adapter.notifyDataSetChanged();
                     }
                 }
                 }
@@ -147,5 +192,94 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
         gt.execute();
     }
 
+    // Candle stick chart time based.
+    public void plotCandleStickTimeWise(List<BloodPressureDB> tasks) {
+        yVal.clear();
+        timeList.clear();
+        candleStick.clear();
+
+        if (tasks != null && tasks.size() > 0) {
+            int count = 0;
+
+            for (BloodPressureDB list : tasks) {
+//                if (date.equals(list.getDate())) {
+                    yVal.add(new CandleEntry(count, list.getSystolic(),list.getDystolic(),list.getSystolic(),list.getDystolic()));
+                    timeList.add(list.getTime());
+                    count++;
+//                }
+//                else {
+//                    Log.d(TAG, "Date not match");
+//                }
+            }
+
+            Collections.sort(yVal,new EntryXComparator());
+
+            CandleDataSet cds = new CandleDataSet(yVal, "");
+            cds.setColor(Color.rgb(80, 80, 80));
+            cds.setShadowColor(Color.DKGRAY);
+            cds.setBarSpace(1f);
+            cds.setDecreasingColor(Color.parseColor("#151B54"));
+            cds.setDecreasingPaintStyle(Paint.Style.FILL);
+            cds.setIncreasingColor(Color.parseColor("#151B54"));
+            cds.setIncreasingPaintStyle(Paint.Style.STROKE);
+            cds.setNeutralColor(Color.BLUE);
+            cds.setValueTextColor(Color.BLACK);
+            cds.setValueTextSize(10);
+            CandleData cd = new CandleData(cds);
+            candleStick.setData(cd);
+            candleStick.getDescription().setEnabled(false);
+
+            //X axis
+            XAxis xAxis = candleStick.getXAxis();
+            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+            xAxis.setLabelCount(timeList.size());
+            xAxis.setValueFormatter(new IndexAxisValueFormatter(timeList));
+            xAxis.setAvoidFirstLastClipping(true);
+            xAxis.setLabelRotationAngle(-45);
+            xAxis.setDrawGridLines(false);
+            xAxis.setDrawAxisLine(false);
+            xAxis.setGranularity(1f);
+            xAxis.setGranularityEnabled(true);
+            xAxis.setCenterAxisLabels(false);
+            xAxis.setEnabled(true);
+            CustomMarkerView mv = new CustomMarkerView(HomePage.this, R.layout.marker_view);
+            candleStick.setMarkerView(mv);
+
+            //Y axis
+            YAxis yAxisRight = candleStick.getAxisRight();
+            yAxisRight.setEnabled(false);
+            YAxis yAxisLeft = candleStick.getAxisLeft();
+            yAxisLeft.setLabelCount(6,true);
+            yAxisLeft.setDrawAxisLine(false);
+            yAxisLeft.setAxisMinimum(50);
+            yAxisLeft.setAxisMaximum(200);
+
+            if (yVal.size() > 1){
+                Entry lastEntry = yVal.get(yVal.size()-1);
+                Highlight highlight = new Highlight(lastEntry.getX(), lastEntry.getY(), 0);
+                highlight.setDataIndex(0);
+                candleStick.highlightValue(highlight);
+                candleStick.moveViewToX(timeList.size()-1);
+            }
+            else
+            {
+                Log.i(TAG, "No data found!!!");
+            }
+
+            if (yVal.size() >= 6) {
+                candleStick.setVisibleXRangeMaximum(6);
+            }
+            else
+            {
+                candleStick.invalidate();
+            }
+            candleStick.invalidate();
+            candleStick.notifyDataSetChanged();
+            candleStick.animateXY(1000,1000);
+        }
+        else {
+            Log.d(TAG, "Data not found");
+        }
+    }
 
 }

@@ -34,6 +34,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BPMonitorBLEIntegration">
         <activity
+            android:name=".LogActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="false" />
         <activity

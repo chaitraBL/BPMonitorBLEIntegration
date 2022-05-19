@@ -7,8 +7,8 @@
         android:title="Search devices"
         app:showAsAction="always"/>
 
-    <item android:id="@+id/graph"
-        android:title="Graph"
-        app:showAsAction="always"
-        android:icon="@drawable/ic_baseline_show_chart_24"/>
+<!--    <item android:id="@+id/graph"-->
+<!--        android:title="Graph"-->
+<!--        app:showAsAction="always"-->
+<!--        android:icon="@drawable/ic_baseline_show_chart_24"/>-->
 </menu>

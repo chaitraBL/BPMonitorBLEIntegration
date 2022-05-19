@@ -128,6 +128,8 @@ public class DataTransferActivity extends AppCompatActivity{
         decoder = new Decoder();
         localDB = new RoomDB();
 
+        getSupportActionBar().setTitle("Readings");
+
         pref = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Connect to the device through BLE.

@@ -80,6 +80,7 @@ public class Statistics extends AppCompatActivity {
         yAxisCandleStick2 = new ArrayList<CandleEntry>();
         yAxisCandle = new ArrayList<CandleEntry>();
         database = new RoomDB();
+        getSupportActionBar().setTitle("Analytics");
 
         getManualTasks();
 
@@ -342,7 +343,7 @@ public class Statistics extends AppCompatActivity {
 //
 //                }
 //                compareAndGetValues(tasks);
-                currentAverageValue(tasks);
+//                currentAverageValue(tasks);
                 plotCandleStick1(tasks);
 
             }
@@ -730,7 +731,7 @@ public class Statistics extends AppCompatActivity {
             DateFormat df1 = new SimpleDateFormat("MMM dd"); // Format date
             String date = df1.format(Calendar.getInstance().getTime());
             for (BloodPressureDB list : task) {
-                if ("May 10".equals(list.getDate())) {
+                if (date.equals(list.getDate())) {
                     currentTask.add(list);
                 }
             }

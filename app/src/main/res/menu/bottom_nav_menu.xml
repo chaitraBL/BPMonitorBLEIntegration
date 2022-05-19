@@ -11,15 +11,15 @@
 
     <item
         android:id="@+id/analytics"
-        android:title="Analytics"
+        android:title="Profile"
         android:icon="@drawable/ic_baseline_show_chart_24"
         android:enabled="true"
         app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/device_connect"
-        android:title="Connect Device"
-        android:icon="@drawable/ic_baseline_bluetooth_24"
+        android:title="Logs"
+        android:icon="@drawable/ic_baseline_view_list_24"
         android:enabled="true"
         app:showAsAction="ifRoom"/>
 
