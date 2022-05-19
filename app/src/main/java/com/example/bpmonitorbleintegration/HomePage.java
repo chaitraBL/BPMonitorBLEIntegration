@@ -16,6 +16,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -23,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class HomePage extends AppCompatActivity {
+public class HomePage extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     TextView bloodpressureText, pulseText, nameText, addressText;
    RecyclerView currentReading;
@@ -31,6 +34,7 @@ public class HomePage extends AppCompatActivity {
     ArrayAdapter adapter;
     private String TAG = HomePage.class.getName();
     List<BloodPressureDB> newTask = new ArrayList<>();
+    BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,31 +46,58 @@ public class HomePage extends AppCompatActivity {
         pulseText = findViewById(R.id.pulse);
         currentReading = findViewById(R.id.reading_list);
         currentReading.setLayoutManager(new LinearLayoutManager(this));
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(HomePage.this);
+        bottomNavigationView.setSelectedItemId(R.id.home);
+
+        FirstFragment firstFragment = new FirstFragment();
+        SecondFragment secondFragment = new SecondFragment();
+        ThirdFragment thirdFragment = new ThirdFragment();
+
+        getSupportActionBar().setTitle("Home");
 
         nameText.setText("Welcome  Chaitra");
         addressText.setText("Bangalore");
+
         getManualTasks();
     }
+//
+//    //Menu item.
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.home_menu_file, menu);
+//        return super.onCreateOptionsMenu(menu);
+//
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+//        switch (item.getItemId()) {
+//            case R.id.device_connect:
+//                startActivity(new Intent(HomePage.this, MainActivity.class));
+//                return true;
+//
+//            default:
+//                return super.onOptionsItemSelected(item);
+//        }
+//
+//    }
 
-    //Menu item.
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.home_menu_file, menu);
-        return super.onCreateOptionsMenu(menu);
-
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.home:
+//                startActivity(new Intent(HomePage.this, MainActivity.class));
+                break;
+            case R.id.analytics:
+                startActivity(new Intent(HomePage.this, Statistics.class));
+                break;
             case R.id.device_connect:
                 startActivity(new Intent(HomePage.this, MainActivity.class));
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
+                break;
         }
-
+        return true;
     }
 
     //To retrieve data from Room DB.
@@ -115,4 +146,6 @@ public class HomePage extends AppCompatActivity {
         GetTasks gt = new GetTasks();
         gt.execute();
     }
+
+
 }

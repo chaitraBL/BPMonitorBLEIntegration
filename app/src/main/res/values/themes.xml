@@ -25,4 +25,14 @@
         <!-- Customize your theme here. -->
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
+        <!-- Base application theme. -->
+        <style name="AppTheme1" parent="Theme.MaterialComponents.Light.DarkActionBar">
+            <!-- Customize your theme here. -->
+            <item name="colorPrimary">@color/purple_500</item>
+            <item name="colorPrimaryDark">@color/purple_700</item>
+            <item name="colorAccent">@color/colorAccent</item>
+        </style>
+
+
 </resources>
