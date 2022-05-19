@@ -34,6 +34,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BPMonitorBLEIntegration">
         <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+        <activity
             android:name=".Statistics2"
             android:exported="false" />
         <activity
@@ -46,7 +49,7 @@
             android:name=".DataTransferActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".HomePage"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

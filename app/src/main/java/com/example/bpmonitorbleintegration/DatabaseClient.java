@@ -10,6 +10,7 @@ public class DatabaseClient {
 
     //our app database object
     private AppDatabase appDatabase;
+    private AppDatabase1 appDatabase1;
 
     private DatabaseClient(Context mCtx) {
         this.mCtx = mCtx;
@@ -28,5 +29,9 @@ public class DatabaseClient {
 
     public AppDatabase getAppDatabase() {
         return appDatabase;
+    }
+
+    public AppDatabase1 getAppDatabase1(){
+        return appDatabase1;
     }
 }

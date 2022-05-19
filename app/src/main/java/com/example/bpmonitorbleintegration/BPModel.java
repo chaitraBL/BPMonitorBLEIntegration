@@ -9,6 +9,16 @@ public class BPModel {
     int heartRate;
     int map;
 
+    public BPModel(String name, String date, String time, int systa, int diasta, int heartRate, int map) {
+        this.name = name;
+        this.date = date;
+        this.time = time;
+        this.systa = systa;
+        this.diasta = diasta;
+        this.heartRate = heartRate;
+        this.map = map;
+    }
+
     public String getName() {
         return name;
     }

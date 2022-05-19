@@ -1,6 +1,7 @@
 package com.example.bpmonitorbleintegration;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.AsyncTask;
@@ -56,8 +57,10 @@ public class Statistics extends AppCompatActivity {
     List<BloodPressureDB> pressureList = new ArrayList<>();
     Button timeButton, dayButton, allButton;
     ViewPager viewPager;
+    List<BloodPressureDB> average = new ArrayList<>();
 
     BPModel model;
+    RoomDB database;
 
     private boolean isTimeEnabled = false;
 
@@ -76,6 +79,7 @@ public class Statistics extends AppCompatActivity {
         yAxisCandleStick1 = new ArrayList<CandleEntry>();
         yAxisCandleStick2 = new ArrayList<CandleEntry>();
         yAxisCandle = new ArrayList<CandleEntry>();
+        database = new RoomDB();
 
         getManualTasks();
 
@@ -256,6 +260,9 @@ public class Statistics extends AppCompatActivity {
                     if (newDates.equals(task.getDate())) {
                         systolicDate.add(task.getSystolic());
                         Log.d(TAG, "compareAndGetValues: systa " + systolicDate);
+                        int sum = 0;
+                        int average = 0;
+
                     }
                 }
             }
@@ -334,7 +341,8 @@ public class Statistics extends AppCompatActivity {
 //                    }
 //
 //                }
-                compareAndGetValues(tasks);
+//                compareAndGetValues(tasks);
+                currentAverageValue(tasks);
                 plotCandleStick1(tasks);
 
             }
@@ -709,5 +717,73 @@ public class Statistics extends AppCompatActivity {
             Log.d(TAG, "Data not found");
         }
     }
+
+    public void currentAverageValue(List<BloodPressureDB> task) {
+        List<BloodPressureDB> currentTask = new ArrayList<>();
+        int systaSum = 0, diastaSum = 0, averageSys = 0, averageDia = 0;
+        SharedPreferences sharedPreferences = getSharedPreferences("BloodPressure", MODE_PRIVATE);
+        List<Integer> sysAvg = new ArrayList<>();
+        List<Integer> diaAvg = new ArrayList<>();
+
+        if (task.size() > 0) {
+            // To get current date.
+            DateFormat df1 = new SimpleDateFormat("MMM dd"); // Format date
+            String date = df1.format(Calendar.getInstance().getTime());
+            for (BloodPressureDB list : task) {
+                if ("May 10".equals(list.getDate())) {
+                    currentTask.add(list);
+                }
+            }
+            int count = 0;
+            for (int i = 0; i < currentTask.size(); i++) {
+
+                systaSum += currentTask.get(i).getSystolic();
+                diastaSum += currentTask.get(i).getDystolic();
+
+//                model = new BPModel(currentTask.get(i).getName(), currentTask.get(i).getDate(), currentTask.get(i).getTime(), averageSys, averageDia, currentTask.get(i).getHeartRate(), currentTask.get(i).getRange());
+//                model.setDate(currentTask.get(i).getDate());
+//                model.setTime(currentTask.get(i).getTime());
+//                model.setName(currentTask.get(i).getName());
+//                model.setSysta(averageSys);
+//                model.setDiasta(averageDia);
+//                model.setMap(currentTask.get(i).getRange());
+//                model.setHeartRate(currentTask.get(i).getHeartRate());
+                count++;
+            }
+
+            averageSys = systaSum / currentTask.size();
+            averageDia = diastaSum / currentTask.size();
+            sysAvg.add(averageSys);
+            diaAvg.add(averageDia);
+            average.add(currentTask.get(0));
+
+//            SharedPreferences.Editor editor = sharedPreferences.edit();
+//            editor.putInt("SystolicAvg", averageSys);
+//            editor.putInt("DiastolicAvg",averageDia);
+//            editor.putInt("Systolic",currentTask.get(0).getSystolic());
+//            editor.putInt("Diastolic", currentTask.get(0).getDystolic());
+//            editor.commit();
+
+//            show();
+
+//            Toast.makeText(getApplicationContext(), "systolic " + model.getSysta() + " diastolic " + model.getDiasta(), Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+//    public void show() {
+//        SharedPreferences sharedPreferences = getSharedPreferences("BloodPressure", MODE_PRIVATE);
+//        if (sharedPreferences.contains("SystolicAvg")) {
+//            Toast.makeText(getApplicationContext(), "SystolicAvg " + sharedPreferences.getInt("SystolicAvg",0), Toast.LENGTH_SHORT).show();
+//        }
+//        if (sharedPreferences.contains("DiastolicAvg")) {
+//            Toast.makeText(getApplicationContext(), "DiastolicAvg " + sharedPreferences.getInt("DiastolicAvg",0), Toast.LENGTH_SHORT).show();
+//        }
+//        if (sharedPreferences.contains("Systolic")) {
+//            Toast.makeText(getApplicationContext(), "Systolic " + sharedPreferences.getInt("Systolic",0), Toast.LENGTH_SHORT).show();
+//        }
+//        if (sharedPreferences.contains("Diastolic")) {
+//            Toast.makeText(getApplicationContext(), "Diastolic " + sharedPreferences.getInt("Diastolic",0), Toast.LENGTH_SHORT).show();
+//        }
 }
 

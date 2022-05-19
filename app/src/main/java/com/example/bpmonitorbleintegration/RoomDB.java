@@ -65,4 +65,38 @@ public class RoomDB {
         SaveTask st = new SaveTask();
         st.execute();
     }
+
+    //     Save to the Local Room DB.
+    public void saveAverageTask(String address, int systolic, int diastolic, String date, Context context) {
+        final String sAddress = address.trim();
+
+//        Log.i(TAG, "date " + date)
+
+        class SaveTask extends AsyncTask<Void, Void, Void> {
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+
+                AverageBPDB reading = new AverageBPDB();
+                reading.setName(sAddress);
+                reading.setDate(date);
+                reading.setDystolic(diastolic);
+                reading.setSystolic(systolic);
+
+                DatabaseClient.getInstance(context).getAppDatabase1().averageReadingsDoa().insert(reading);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void unused) {
+                super.onPostExecute(unused);
+//                finish();
+//                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                Toast.makeText(context,"Saved",Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        SaveTask st = new SaveTask();
+        st.execute();
+    }
 }
