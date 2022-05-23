@@ -35,7 +35,7 @@ public class ReadingsAdapter extends RecyclerView.Adapter<ReadingsAdapter.Readin
         holder.textViewSysta.setText(String.valueOf(t.getSystolic()));
         holder.textViewDiasta.setText(String.valueOf(t.getDystolic()));
         holder.textViewRate.setText(String.valueOf(t.getHeartRate()));
-        holder.textViewRange.setText(String.valueOf(t.getRange()));
+//        holder.textViewRange.setText(String.valueOf(t.getRange()));
     }
 
     @Override
@@ -55,7 +55,7 @@ public class ReadingsAdapter extends RecyclerView.Adapter<ReadingsAdapter.Readin
             textViewSysta = itemView.findViewById(R.id.systalic);
             textViewDiasta = itemView.findViewById(R.id.dystalic);
             textViewRate = itemView.findViewById(R.id.heartRate);
-            textViewRange = itemView.findViewById(R.id.map);
+//            textViewRange = itemView.findViewById(R.id.map);
 
             itemView.setOnClickListener(this);
         }

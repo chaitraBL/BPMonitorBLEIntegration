@@ -167,8 +167,8 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
 
                     BloodPressureDB list = tasks.get(tasks.size() - 1);
 
-                    bloodpressureText.setText(list.getSystolic() + "/" + list.getDystolic() + "mmHg");
-                    pulseText.setText(list.getHeartRate() + "bpm");
+                    bloodpressureText.setText(list.getSystolic() + " / " + list.getDystolic() + " mmHg");
+                    pulseText.setText(list.getHeartRate() + " bpm");
 
                     progressBar1.setProgress(list.getSystolic());
                     progressBar2.setProgress(list.getDystolic());
