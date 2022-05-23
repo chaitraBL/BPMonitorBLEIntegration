@@ -167,6 +167,7 @@ public class Statistics extends AppCompatActivity {
         timeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                List<BloodPressureDB> newTask = new ArrayList<>();
                 if (timeButton.isClickable()) {
                     dayButton.setBackground(null);
                     allButton.setBackground(null);
@@ -174,7 +175,14 @@ public class Statistics extends AppCompatActivity {
                     timeButton.setBackgroundColor(Color.parseColor("#FFA500"));
                     timeButton.setTextColor(Color.BLACK);
                     timeButton.setClickable(true);
-                    plotCandleStickTimeWise(pressureList);
+                    DateFormat df1 = new SimpleDateFormat("MMM dd"); // Format date
+                    String date = df1.format(Calendar.getInstance().getTime());
+                    for (int i = 0; i < pressureList.size(); i++) {
+                        if (date.equals(pressureList.get(i).getDate())) {
+                            newTask.add(pressureList.get(i));
+                            plotCandleStickTimeWise(newTask);
+                        }
+                    }
                     candleStickChart.invalidate();
                     candleStickChart.notifyDataSetChanged();
 
@@ -542,14 +550,14 @@ public class Statistics extends AppCompatActivity {
 
             int count = 0;
             for (BloodPressureDB list : tasks) {
-                if (date.equals(list.getDate())) {
+//                if (date.equals(list.getDate())) {
                     yAxisCandleStick1.add(new CandleEntry(count, list.getSystolic(),list.getDystolic(),list.getSystolic(),list.getDystolic()));
                     timeList.add(list.getTime());
                     count++;
-                }
-                else{
-                    Log.i(TAG, "No date");
-                }
+//                }
+//                else{
+//                    Log.i(TAG, "No date");
+//                }
             }
 
             Collections.sort(yAxisCandleStick1,new EntryXComparator());

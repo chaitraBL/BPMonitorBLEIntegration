@@ -12,7 +12,7 @@
     <item
         android:id="@+id/analytics"
         android:title="Profile"
-        android:icon="@drawable/ic_baseline_show_chart_24"
+        android:icon="@drawable/ic_baseline_person_24"
         android:enabled="true"
         app:showAsAction="ifRoom"/>
 

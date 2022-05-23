@@ -73,6 +73,10 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
         analyticBtn = findViewById(R.id.next_btn);
         progressBar1 = findViewById(R.id.pb_systa);
         progressBar2 = findViewById(R.id.pb_diasta);
+        bottomNavigationView.setOnNavigationItemSelectedListener(HomePage.this);
+        bottomNavigationView.setSelectedItemId(R.id.home);
+
+        analyticBtn.setBackgroundDrawable(null);
 
         LinearLayout linearLayout = findViewById(R.id.linear_bp);
         linearLayout.setOnClickListener(new View.OnClickListener() {
@@ -81,10 +85,6 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                 startActivity(new Intent(HomePage.this, MainActivity.class));
             }
         });
-
-        analyticBtn.setBackgroundDrawable(null);
-        bottomNavigationView.setOnNavigationItemSelectedListener(HomePage.this);
-        bottomNavigationView.setSelectedItemId(R.id.home);
 
         FirstFragment firstFragment = new FirstFragment();
         SecondFragment secondFragment = new SecondFragment();
@@ -104,27 +104,27 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             }
         });
     }
-//
-//    //Menu item.
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.home_menu_file, menu);
-//        return super.onCreateOptionsMenu(menu);
-//
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-//        switch (item.getItemId()) {
-//            case R.id.device_connect:
+
+    //Menu item.
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.home_menu_file, menu);
+        return super.onCreateOptionsMenu(menu);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.device_connect:
 //                startActivity(new Intent(HomePage.this, MainActivity.class));
-//                return true;
-//
-//            default:
-//                return super.onOptionsItemSelected(item);
-//        }
-//
-//    }
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -177,9 +177,6 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                     if (date.equals(tasks.get(i).getDate())) {
                         newTask.add(tasks.get(i));
                         plotCandleStickTimeWise(newTask);
-//                        ReadingsAdapter adapter = new ReadingsAdapter(HomePage.this, newTask);
-//                        currentReading.setAdapter(adapter);
-//                        adapter.notifyDataSetChanged();
                     }
                 }
                 }
@@ -202,14 +199,9 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             int count = 0;
 
             for (BloodPressureDB list : tasks) {
-//                if (date.equals(list.getDate())) {
                     yVal.add(new CandleEntry(count, list.getSystolic(),list.getDystolic(),list.getSystolic(),list.getDystolic()));
                     timeList.add(list.getTime());
                     count++;
-//                }
-//                else {
-//                    Log.d(TAG, "Date not match");
-//                }
             }
 
             Collections.sort(yVal,new EntryXComparator());
@@ -276,9 +268,6 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             candleStick.invalidate();
             candleStick.notifyDataSetChanged();
             candleStick.animateXY(1000,1000);
-        }
-        else {
-            Log.d(TAG, "Data not found");
         }
     }
 

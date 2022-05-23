@@ -1,12 +1,17 @@
 package com.example.bpmonitorbleintegration;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -14,10 +19,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class LogActivity extends AppCompatActivity {
+public class LogActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     private final String TAG = LogActivity.class.getName();
     List<BloodPressureDB> newTask = new ArrayList<>();
+    BottomNavigationView logBottomNavigationView;
 
     RecyclerView logRecycleView;
     @Override
@@ -27,10 +33,29 @@ public class LogActivity extends AppCompatActivity {
 
         getSupportActionBar().setTitle("Logs");
         logRecycleView = findViewById(R.id.log_list);
+        logBottomNavigationView = findViewById(R.id.log_bottomNavigationView);
+
+        logBottomNavigationView.setOnNavigationItemSelectedListener(LogActivity.this);
+        logBottomNavigationView.setSelectedItemId(R.id.device_connect);
 
         logRecycleView.setLayoutManager(new LinearLayoutManager(this));
 
         getManualTasks();
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.home:
+                startActivity(new Intent(LogActivity.this, HomePage.class));
+                break;
+            case R.id.device_connect:
+                break;
+            case R.id.analytics:
+                break;
+        }
+        return true;
     }
 
     //To retrieve data from Room DB.
@@ -55,23 +80,11 @@ public class LogActivity extends AppCompatActivity {
 
                     DateFormat df1 = new SimpleDateFormat("MMM dd"); // Format date
                     String date = df1.format(Calendar.getInstance().getTime());
-//
-//                    BloodPressureDB list = tasks.get(tasks.size() - 1);
-//
-//                    bloodpressureText.setText(list.getSystolic() + " / " + list.getDystolic() + " mmHg");
-//                    pulseText.setText(list.getHeartRate() + " bpm");
-//
-//                    progressBar1.setProgress(list.getSystolic());
-//                    progressBar2.setProgress(list.getDystolic());
 
-//                    for (int i = 0; i < tasks.size(); i++) {
-//                        if (date.equals(tasks.get(i).getDate())) {
-//                            newTask.add(tasks.get(i));
                         ReadingsAdapter adapter = new ReadingsAdapter(LogActivity.this, tasks);
                         logRecycleView.setAdapter(adapter);
                         adapter.notifyDataSetChanged();
-//                        }
-//                    }
+
                 }
                 else {
                     Log.i(TAG, "onPostExecute: No data");
