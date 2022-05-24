@@ -2,6 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/one"
-        android:title="Type-1"/>
+        android:title="@string/type_1"/>
 
 </menu>

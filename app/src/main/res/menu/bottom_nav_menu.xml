@@ -4,21 +4,21 @@
 
     <item
         android:id="@+id/home"
-        android:title="Home"
+        android:title="@string/home"
         android:icon="@drawable/ic_baseline_home_24"
         android:enabled="true"
         app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/analytics"
-        android:title="Profile"
+        android:title="@string/profile"
         android:icon="@drawable/ic_baseline_person_24"
         android:enabled="true"
         app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/device_connect"
-        android:title="Logs"
+        android:title="@string/logs"
         android:icon="@drawable/ic_baseline_view_list_24"
         android:enabled="true"
         app:showAsAction="ifRoom"/>

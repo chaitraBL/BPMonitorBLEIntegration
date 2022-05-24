@@ -8,10 +8,13 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
@@ -58,6 +61,7 @@ public class Statistics extends AppCompatActivity {
     Button timeButton, dayButton, allButton;
     ViewPager viewPager;
     List<BloodPressureDB> average = new ArrayList<>();
+    List<BloodPressureDB> newTask = new ArrayList<>();
 
     BPModel model;
     RoomDB database;
@@ -80,7 +84,11 @@ public class Statistics extends AppCompatActivity {
         yAxisCandleStick2 = new ArrayList<CandleEntry>();
         yAxisCandle = new ArrayList<CandleEntry>();
         database = new RoomDB();
-        getSupportActionBar().setTitle("Analytics");
+
+        ActionBar actioBar = getSupportActionBar();
+        actioBar.setTitle("Analytics");
+        actioBar.setHomeAsUpIndicator(R.drawable.ic_baseline_keyboard_arrow_left_24);
+        actioBar.setDisplayHomeAsUpEnabled(true);
 
         getManualTasks();
 
@@ -167,7 +175,8 @@ public class Statistics extends AppCompatActivity {
         timeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                List<BloodPressureDB> newTask = new ArrayList<>();
+
+                newTask.clear();
                 if (timeButton.isClickable()) {
                     dayButton.setBackground(null);
                     allButton.setBackground(null);
@@ -181,13 +190,11 @@ public class Statistics extends AppCompatActivity {
                         if (date.equals(pressureList.get(i).getDate())) {
                             newTask.add(pressureList.get(i));
                             plotCandleStickTimeWise(newTask);
+                            candleStickChart.invalidate();
+                            candleStickChart.notifyDataSetChanged();
                         }
                     }
-                    candleStickChart.invalidate();
-                    candleStickChart.notifyDataSetChanged();
-
                 }
-
             }
         });
 
@@ -230,6 +237,16 @@ public class Statistics extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void compareAndGetValues(List<BloodPressureDB> tasks) {
@@ -352,6 +369,17 @@ public class Statistics extends AppCompatActivity {
 //                }
 //                compareAndGetValues(tasks);
 //                currentAverageValue(tasks);
+
+                newTask.clear();
+                DateFormat df1 = new SimpleDateFormat("MMM dd"); // Format date
+                String date = df1.format(Calendar.getInstance().getTime());
+                for (int i = 0; i < tasks.size(); i++) {
+                    if (date.equals(tasks.get(i).getDate())) {
+                        newTask.add(tasks.get(i));
+                        plotCandleStickTimeWise(newTask);
+                    }
+                }
+
                 plotCandleStick1(tasks);
 
             }
@@ -374,8 +402,8 @@ public class Statistics extends AppCompatActivity {
             yAxisCandleStick2.add(new CandleEntry(1, 124,95,124,95));
             yAxisCandleStick2.add(new CandleEntry(2, 113,89,113,89));
             yAxisCandleStick2.add(new CandleEntry(3, 126,92,126,92));
-            yAxisCandleStick2.add(new CandleEntry(4, 122,92,122,92));
-            yAxisCandleStick2.add(new CandleEntry(5, 130,91,130,91));
+//            yAxisCandleStick2.add(new CandleEntry(4, 122,92,122,92));
+//            yAxisCandleStick2.add(new CandleEntry(5, 130,91,130,91));
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 newList = dateList.stream().distinct().collect(Collectors.toList());
@@ -404,7 +432,7 @@ public class Statistics extends AppCompatActivity {
             xAxis.setLabelCount(newList.size());
             xAxis.setValueFormatter(new IndexAxisValueFormatter(newList));
             xAxis.setAvoidFirstLastClipping(true);
-//            xAxis.setLabelRotationAngle(-45);
+            xAxis.setLabelRotationAngle(-45);
             xAxis.setDrawGridLines(false);
             xAxis.setDrawAxisLine(false);
             xAxis.setGranularity(1f);
@@ -583,7 +611,7 @@ public class Statistics extends AppCompatActivity {
             xAxis.setLabelCount(timeList.size());
             xAxis.setValueFormatter(new IndexAxisValueFormatter(timeList));
             xAxis.setAvoidFirstLastClipping(true);
-//            xAxis.setLabelRotationAngle(-45);
+            xAxis.setLabelRotationAngle(-45);
             xAxis.setDrawGridLines(false);
             xAxis.setDrawAxisLine(false);
             xAxis.setGranularity(1f);
@@ -648,8 +676,8 @@ public class Statistics extends AppCompatActivity {
             yAxisCandle.add(new CandleEntry(1,115,98,115,98));
             yAxisCandle.add(new CandleEntry(2,118,85,118,85));
             yAxisCandle.add(new CandleEntry(3,105,95,105,95));
-            yAxisCandle.add(new CandleEntry(4,116,90,116,90));
-            yAxisCandle.add(new CandleEntry(5,122,90,122,90));
+//            yAxisCandle.add(new CandleEntry(4,116,90,116,90));
+//            yAxisCandle.add(new CandleEntry(5,122,90,122,90));
 //            count++;
 //            }
 
@@ -680,7 +708,7 @@ public class Statistics extends AppCompatActivity {
             xAxis.setLabelCount(newList.size());
             xAxis.setValueFormatter(new IndexAxisValueFormatter(newList));
             xAxis.setAvoidFirstLastClipping(true);
-//            xAxis.setLabelRotationAngle(-45);
+            xAxis.setLabelRotationAngle(-45);
             xAxis.setDrawGridLines(false);
             xAxis.setDrawAxisLine(false);
             xAxis.setGranularity(1f);

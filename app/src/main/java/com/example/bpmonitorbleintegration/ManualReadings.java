@@ -1,5 +1,7 @@
 package com.example.bpmonitorbleintegration;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -7,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -47,6 +50,11 @@ public class ManualReadings extends AppCompatActivity {
         manualList.setLayoutManager(new LinearLayoutManager(this));
         decoder = new Decoder();
         database = new RoomDB();
+
+        ActionBar actioBar = getSupportActionBar();
+        actioBar.setTitle("Manual Readings");
+        actioBar.setHomeAsUpIndicator(R.drawable.ic_baseline_keyboard_arrow_left_24);
+        actioBar.setDisplayHomeAsUpEnabled(true);
 
         save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,6 +98,15 @@ public class ManualReadings extends AppCompatActivity {
         });
         progressBar.setVisibility(View.VISIBLE);
         getManualTasks();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            this.finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     //To retrieve data from Room DB.

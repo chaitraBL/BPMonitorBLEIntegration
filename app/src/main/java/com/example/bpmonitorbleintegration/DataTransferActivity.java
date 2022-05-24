@@ -449,6 +449,33 @@ public class DataTransferActivity extends AppCompatActivity{
             getTasks();
             return true;
         }
+
+        else if (item.getItemId() == R.id.disable_bluetooth) {
+            dialog = new AlertDialog.Builder(DataTransferActivity.this)
+                    .setTitle("Message")
+                    .setMessage("Are you sure, disable bluetooth")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            BluetoothAdapter bAdapter = BluetoothAdapter.getDefaultAdapter();
+                            bAdapter.disable();
+                            mBluetoothLeService.disconnect();
+                            mBluetoothLeService.close();
+                            //Navigating to next activity on tap of ok button.
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                Intent intent = new Intent(DataTransferActivity.this, HomePage.class);
+                                startActivity(intent);
+                            }
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialog.dismiss();
+                        }
+                    }).show();
+        }
         return super.onOptionsItemSelected(item);
     }
 

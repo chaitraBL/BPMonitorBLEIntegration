@@ -1,5 +1,7 @@
 package com.example.bpmonitorbleintegration;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -8,6 +10,7 @@ import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 
 import com.github.mikephil.charting.charts.CandleStickChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -39,12 +42,25 @@ public class Statistics2 extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics2);
+        ActionBar actioBar = getSupportActionBar();
+        actioBar.setTitle("Analytics");
+        actioBar.setHomeAsUpIndicator(R.drawable.ic_baseline_keyboard_arrow_left_24);
+        actioBar.setDisplayHomeAsUpEnabled(true);
         xVal = getIntent().getStringExtra("xAxisVal");
         Log.i(TAG, "onCreate: xVal " + xVal);
 
         candleStick = findViewById(R.id.candleStickTime);
 
         getManualTasks();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            this.finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     //To retrieve data from Room DB.

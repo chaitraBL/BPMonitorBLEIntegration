@@ -2,4 +2,37 @@
     <string name="app_name">BPMonitorBLEIntegration</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="_60_bpm">60 bpm</string>
+    <string name="lowest">Lowest:</string>
+    <string name="heart_rate">Heart Rate</string>
+    <string name="diastolic">Diastolic</string>
+    <string name="systolic">Systolic</string>
+    <string name="blood_pressure">Blood Pressure</string>
+    <string name="address">Address</string>
+    <string name="name">Name</string>
+    <string name="highest">Highest:</string>
+    <string name="analytics">Analytics</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="sys">Sys</string>
+    <string name="dya">Dia</string>
+    <string name="rate">Rate</string>
+    <string name="disable_bluetooth">Disable bluetooth</string>
+    <string name="manual_measurement">Manual Measurement</string>
+    <string name="range_120_80">Range: 120 / 80</string>
+    <string name="read">Read</string>
+    <string name="status">Status</string>
+    <string name="battery">Battery</string>
+    <string name="map">MAP</string>
+    <string name="systolc">Systolic :</string>
+    <string name="dyastolic">Diastolic :</string>
+    <string name="heart_rate1">Heart Rate :</string>
+    <string name="save">Save</string>
+    <string name="all">All</string>
+    <string name="logs">Logs</string>
+    <string name="profile">Profile</string>
+    <string name="home">Home</string>
+    <string name="notification">Notification</string>
+    <string name="search_devices">Search devices</string>
+    <string name="type_1">Type-1</string>
 </resources>

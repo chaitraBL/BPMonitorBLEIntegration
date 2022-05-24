@@ -38,7 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/systa_read"
-        android:text="Systolc :"
+        android:text="@string/systolc"
         android:layout_marginStart="10dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="10dp"
@@ -55,7 +55,7 @@
         android:layout_marginBottom="10dp"
         android:layout_toEndOf="@+id/systa_read"
         android:textSize="12sp"
-        android:inputType="number"/>
+        android:inputType="number" />
 <!--    android:layout_below="@+id/measurement_toolbar"-->
 
     <TextView
@@ -68,7 +68,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:text="Diastolic :" />
+        android:text="@string/dyastolic" />
 
     <EditText
         android:layout_width="match_parent"
@@ -83,7 +83,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Heart Rate :"
+        android:text="@string/heart_rate1"
         android:layout_below="@+id/diasta_read"
         android:layout_margin="10dp"
         android:id="@+id/heartRate_read"/>
@@ -108,7 +108,7 @@
         android:layout_marginTop="30dp"
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="8dp"
-        android:text="Save"/>
+        android:text="@string/save"/>
 <!--        android:backgroundTint="@android:color/transparent"/>-->
 
     <LinearLayout
@@ -125,7 +125,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Date"
+            android:text="@string/date"
             android:textSize="12sp"
             android:layout_weight="0.17"
             android:gravity="center"
@@ -135,7 +135,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/manual_time"
-            android:text="Time"
+            android:text="@string/time"
             android:textSize="12sp"
             android:layout_weight="0.17"
             android:gravity="center"
@@ -144,7 +144,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Systa"
+            android:text="@string/sys"
             android:textSize="12sp"
             android:layout_weight="0.17"
             android:gravity="center"
@@ -153,7 +153,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Diasta"
+            android:text="@string/dya"
             android:textSize="12sp"
             android:layout_weight="0.17"
             android:gravity="center"
@@ -162,20 +162,20 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Rate"
+            android:text="@string/rate"
             android:textSize="12sp"
             android:layout_weight="0.17"
             android:gravity="center"
             android:textStyle="bold"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="MAP"
-            android:textSize="12sp"
-            android:layout_weight="0.17"
-            android:gravity="center"
-            android:textStyle="bold"/>
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="MAP"-->
+<!--            android:textSize="12sp"-->
+<!--            android:layout_weight="0.17"-->
+<!--            android:gravity="center"-->
+<!--            android:textStyle="bold"/>-->
 
     </LinearLayout>
 
@@ -198,9 +198,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="5dp"
+            android:background="#ECEFF1"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="5dp"
-            android:layout_marginBottom="10dp"></androidx.recyclerview.widget.RecyclerView>
+            android:layout_marginBottom="10dp">
+
+        </androidx.recyclerview.widget.RecyclerView>
     </RelativeLayout>
 
 </RelativeLayout>

@@ -1,6 +1,7 @@
 package com.example.bpmonitorbleintegration;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,7 +32,10 @@ public class LogActivity extends AppCompatActivity implements BottomNavigationVi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log);
 
-        getSupportActionBar().setTitle("Logs");
+        ActionBar actioBar = getSupportActionBar();
+        actioBar.setTitle("Logs");
+//        actioBar.setHomeAsUpIndicator(R.drawable.ic_baseline_keyboard_arrow_left_24);
+//        actioBar.setDisplayHomeAsUpEnabled(true);
         logRecycleView = findViewById(R.id.log_list);
         logBottomNavigationView = findViewById(R.id.log_bottomNavigationView);
 

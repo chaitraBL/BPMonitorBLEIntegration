@@ -2,6 +2,7 @@ package com.example.bpmonitorbleintegration;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -104,7 +105,10 @@ public class MainActivity extends AppCompatActivity {
         checkPermissions(MainActivity.this, this);
         mHandler = new Handler();
 
-        getSupportActionBar().setTitle("Connect Device");
+        ActionBar actioBar = getSupportActionBar();
+        actioBar.setTitle("Connect Device");
+        actioBar.setHomeAsUpIndicator(R.drawable.ic_baseline_keyboard_arrow_left_24);
+        actioBar.setDisplayHomeAsUpEnabled(true);
 
 
         bluetoothManager =
@@ -120,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 
     // List of bluetooth scan devices.
     AdapterView.OnItemClickListener scanResultOnItemClickListener = new AdapterView.OnItemClickListener() {
@@ -199,6 +204,10 @@ public class MainActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.VISIBLE);
 
                 scanLeDevice(true);
+                return true;
+
+            case android.R.id.home:
+                this.finish();
                 return true;
 
             default:

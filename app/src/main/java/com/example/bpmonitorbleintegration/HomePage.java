@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -42,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class HomePage extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -58,6 +60,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
     ImageButton analyticBtn;
     ProgressBar progressBar1, progressBar2;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,7 +93,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
         SecondFragment secondFragment = new SecondFragment();
         ThirdFragment thirdFragment = new ThirdFragment();
 
-        getSupportActionBar().setTitle("DashBoard");
+        Objects.requireNonNull(getSupportActionBar()).setTitle("DashBoard");
 
         nameText.setText("Welcome  Chaitra");
         addressText.setText("Bangalore");
@@ -113,19 +116,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
 
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.device_connect:
-//                startActivity(new Intent(HomePage.this, MainActivity.class));
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-
-    }
-
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -156,13 +147,14 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                 return taskList;
             }
 
+            @SuppressLint("SetTextI18n")
             @Override
             protected void onPostExecute(List<BloodPressureDB> tasks) {
                 super.onPostExecute(tasks);
-                
+                newTask.clear();
+                candleStick.clear();
                 if (tasks.size() > 0) {
-
-                    DateFormat df1 = new SimpleDateFormat("MMM dd"); // Format date
+                    @SuppressLint("SimpleDateFormat") DateFormat df1 = new SimpleDateFormat("MMM dd"); // Format date
                     String date = df1.format(Calendar.getInstance().getTime());
 
                     BloodPressureDB list = tasks.get(tasks.size() - 1);
@@ -174,9 +166,11 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                     progressBar2.setProgress(list.getDystolic());
 
                     for (int i = 0; i < tasks.size(); i++) {
-                    if (date.equals(tasks.get(i).getDate())) {
+                    if ("May 23".equals(tasks.get(i).getDate())) {
                         newTask.add(tasks.get(i));
                         plotCandleStickTimeWise(newTask);
+                        candleStick.invalidate();
+                        candleStick.notifyDataSetChanged();
                     }
                 }
                 }
@@ -270,5 +264,4 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             candleStick.animateXY(1000,1000);
         }
     }
-
 }

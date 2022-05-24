@@ -309,7 +309,8 @@ public class BLEService extends Service implements DecodeListener{
                                 intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
                                 break;
                             default:
-                                msg = " ";
+//                                msg = " ";
+                                msg = "Cuff replacement!!!";
                                 intent.putExtra(Constants.EXTRA_DATA, msg);
 //                                intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
                                 break;
