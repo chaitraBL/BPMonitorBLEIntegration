@@ -48,13 +48,14 @@
                 android:id="@+id/profile_name"
                 android:layout_weight="0.3"
                 android:textSize="15sp"
-                android:textColor="@color/black"
+                android:textColor="?android:textColorPrimary"
                 android:textStyle="bold"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/profile_address"
+                android:textColor="?android:textColorPrimary"
                 android:layout_marginTop="5dp"
                 android:layout_weight="0.3"
                 android:textSize="13sp"/>
@@ -102,7 +103,7 @@
                 android:layout_marginTop="3dp"
                 android:layout_marginBottom="3dp"
                 android:text="@string/blood_pressure"
-                android:textColor="#FFFFFF"
+                android:textColor="?android:textColorPrimary"
                 android:textSize="13sp"
                 android:textStyle="bold" />
 
@@ -113,9 +114,9 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="3dp"
                 android:layout_marginBottom="3dp"
-                android:textColor="#FFFFFF"
+                android:textColor="?android:textColorPrimary"
                 android:textSize="12sp" />
-            <!--                android:textColor="@color/black"/>-->
+            <!--     android:textColor="#FFFFFF"            android:textColor="@color/black"/>-->
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -151,7 +152,7 @@
                     android:layout_marginStart="3dp"
                     android:layout_marginTop="5dp"
                     android:text="@string/systolic"
-                    android:textColor="#FFFFFF"
+                    android:textColor="?android:textColorPrimary"
                     android:textSize="10sp"
                     tools:ignore="SmallSp" />
 
@@ -192,7 +193,7 @@
                     android:layout_marginStart="3dp"
                     android:layout_marginTop="5dp"
                     android:text="@string/diastolic"
-                    android:textColor="#FFFFFF"
+                    android:textColor="?android:textColorPrimary"
                     android:textSize="10sp"
                     tools:ignore="SmallSp" />
 
@@ -207,7 +208,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#FFFFFF"
+                    android:textColor="?android:textColorPrimary"
                     android:layout_marginStart="5dp"
                     android:text="@string/range_120_80"
                     android:textSize="10sp"
@@ -276,6 +277,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/lowest"
                     android:textSize="10sp"
+                    android:textColor="@color/black"
                     tools:ignore="SmallSp" />
 
                 <TextView
@@ -285,6 +287,7 @@
                     android:layout_marginRight="30dp"
                     android:text="@string/_60_bpm"
                     android:textSize="10sp"
+                    android:textColor="@color/black"
                     tools:ignore="SmallSp" />
 
             </LinearLayout>
@@ -302,6 +305,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/highest"
                     android:textSize="10sp"
+                    android:textColor="@color/black"
                     tools:ignore="SmallSp" />
 
                 <TextView
@@ -311,6 +315,7 @@
                     android:layout_marginEnd="20dp"
                     android:text="100 bpm"
                     android:textSize="10sp"
+                    android:textColor="@color/black"
                     tools:ignore="HardcodedText,SmallSp" />
 
             </LinearLayout>
@@ -324,7 +329,7 @@
         android:layout_height="wrap_content"
         android:text="@string/analytics"
         android:id="@+id/analytics_home"
-        android:textColor="#151B54"
+        android:textColor="?android:textColorPrimary"
         android:textStyle="bold"
         android:layout_marginStart="20dp"
         android:layout_below="@id/linear_layout2"/>
@@ -345,7 +350,7 @@
         android:layout_height="230dp"
         android:layout_below="@+id/analytics_home"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"/>
 
@@ -354,7 +359,7 @@
         style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:layout_below="@+id/reading_list"
         android:layout_alignParentBottom="true"
         android:background="@color/white"

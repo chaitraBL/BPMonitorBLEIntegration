@@ -20,6 +20,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/date"
                     android:textSize="12sp"
+                    android:textColor="?android:textColorPrimary"
                     android:layout_weight="0.17"
                     android:gravity="center"
                     android:padding="5dp"/>
@@ -31,6 +32,7 @@
                     android:textSize="12sp"
                     android:text="@string/time"
                     android:layout_weight="0.17"
+                    android:textColor="?android:textColorPrimary"
                     android:gravity="center"
                     android:padding="5dp"/>
                 <!--                    android:layout_marginRight="3dp"/>-->
@@ -41,6 +43,7 @@
                     android:textSize="12sp"
                     android:text="@string/sys"
                     android:layout_weight="0.17"
+                    android:textColor="?android:textColorPrimary"
                     android:gravity="center"
                     android:padding="5dp"/>
                 <!--                    android:layout_marginRight="3dp"/>-->
@@ -51,6 +54,7 @@
                     android:text="@string/dya"
                     android:textSize="12sp"
                     android:layout_weight="0.17"
+                    android:textColor="?android:textColorPrimary"
                     android:gravity="center"
                     android:padding="5dp"/>
                 <!--                    android:layout_marginRight="3dp"/>-->
@@ -61,6 +65,7 @@
                     android:text="@string/rate"
                     android:textSize="12sp"
                     android:layout_weight="0.17"
+                    android:textColor="?android:textColorPrimary"
                     android:gravity="center"
                     android:padding="5dp"/>
                 <!--                    android:layout_marginRight="3dp"/>-->
@@ -74,10 +79,10 @@
             android:layout_height="550dp"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
-            android:background="#ECEFF1"
+            android:background="@drawable/bg_transparent"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="10dp">
-
+<!--                #ECEFF1-->
         </androidx.recyclerview.widget.RecyclerView>
 
         <com.google.android.material.bottomnavigation.BottomNavigationView

@@ -5,6 +5,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.AsyncTask;
@@ -116,7 +117,16 @@ public class Statistics2 extends AppCompatActivity {
             cds.setIncreasingColor(Color.parseColor("#151B54"));
             cds.setIncreasingPaintStyle(Paint.Style.STROKE);
             cds.setNeutralColor(Color.BLUE);
-            cds.setValueTextColor(Color.BLACK);
+//            cds.setValueTextColor(Color.BLACK);
+            // Set color as per the mode - Dark mode/Light mode.
+            switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+                case Configuration.UI_MODE_NIGHT_YES:
+                    cds.setValueTextColor(Color.WHITE);
+                    break;
+                case Configuration.UI_MODE_NIGHT_NO:
+                    cds.setValueTextColor(Color.BLACK);
+                    break;
+            }
             cds.setValueTextSize(10);
             CandleData cd = new CandleData(cds);
             candleStick.setData(cd);
@@ -146,6 +156,20 @@ public class Statistics2 extends AppCompatActivity {
             yAxisLeft.setDrawAxisLine(false);
             yAxisLeft.setAxisMinimum(50);
             yAxisLeft.setAxisMaximum(200);
+
+            // Set color as per the mode - Dark mode/Light mode.
+            switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+                case Configuration.UI_MODE_NIGHT_YES:
+                    xAxis.setTextColor(Color.WHITE);
+                    yAxisLeft.setTextColor(Color.WHITE);
+                    yAxisRight.setTextColor(Color.WHITE);
+                    break;
+                case Configuration.UI_MODE_NIGHT_NO:
+                    xAxis.setTextColor(Color.BLACK);
+                    yAxisLeft.setTextColor(Color.BLACK);
+                    yAxisRight.setTextColor(Color.BLACK);
+                    break;
+            }
 
             if (yVal.size() > 1){
                 Entry lastEntry = yVal.get(yVal.size()-1);

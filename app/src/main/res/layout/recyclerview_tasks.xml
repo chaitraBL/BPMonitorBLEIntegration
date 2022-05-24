@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:cardElevation="0dp"
+        android:background="#ECEFF1"
         app:cardPreventCornerOverlap="true"
         app:cardUseCompatPadding="true">
 <!--        cardElevation can be used to 1dp/0dp-->
@@ -27,10 +28,11 @@
                 android:textSize="12sp"
                 android:layout_weight="0.17"
                 android:gravity="center"
+                android:textColor="?android:textColorPrimary"
                 android:layout_marginBottom="1dp"
-                android:background="#FFFFFF"
                 android:padding="5dp"/>
             <!--                    android:layout_marginRight="5dp"/>-->
+<!--            android:background="#FFFFFF"-->
 
             <TextView
                 android:layout_width="wrap_content"
@@ -39,10 +41,11 @@
                 android:textSize="12sp"
                 android:layout_weight="0.17"
                 android:gravity="center"
+                android:textColor="?android:textColorPrimary"
                 android:layout_marginBottom="1dp"
-                android:background="#FFFFFF"
+
                 android:padding="5dp"/>
-            <!--                    android:layout_marginRight="3dp"/>-->
+            <!--                    android:layout_marginRight="3dp"/> android:background="#FFFFFF"-->
 
             <TextView
                 android:layout_width="wrap_content"
@@ -51,10 +54,10 @@
                 android:textSize="12sp"
                 android:layout_weight="0.17"
                 android:gravity="center"
+                android:textColor="?android:textColorPrimary"
                 android:layout_marginBottom="1dp"
-                android:background="#FFFFFF"
                 android:padding="5dp"/>
-            <!--                    android:layout_marginRight="3dp"/>-->
+            <!--       android:background="#FFFFFF"              android:layout_marginRight="3dp"/>-->
 
             <TextView
                 android:layout_width="wrap_content"
@@ -63,10 +66,10 @@
                 android:textSize="12sp"
                 android:layout_weight="0.17"
                 android:gravity="center"
+                android:textColor="?android:textColorPrimary"
                 android:layout_marginBottom="1dp"
-                android:background="#FFFFFF"
                 android:padding="5dp"/>
-            <!--                    android:layout_marginRight="3dp"/>-->
+            <!--    android:background="#FFFFFF"                 android:layout_marginRight="3dp"/>-->
 
             <TextView
                 android:layout_width="wrap_content"
@@ -74,11 +77,11 @@
                 android:id="@+id/heartRate"
                 android:textSize="12sp"
                 android:layout_weight="0.17"
+                android:textColor="?android:textColorPrimary"
                 android:gravity="center"
                 android:layout_marginBottom="1dp"
-                android:background="#FFFFFF"
                 android:padding="5dp"/>
-            <!--                    android:layout_marginRight="3dp"/>-->
+            <!--         android:background="#FFFFFF"            android:layout_marginRight="3dp"/>-->
 
 <!--            <TextView-->
 <!--                android:layout_width="wrap_content"-->

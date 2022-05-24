@@ -2,6 +2,7 @@ package com.example.bpmonitorbleintegration;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.AsyncTask;
@@ -132,7 +133,6 @@ public class Statistics extends AppCompatActivity {
             public void onValueSelected(Entry e, Highlight h) {
 
                 String xAxisVal = newList.get((int) e.getX());
-
                 Intent intent = new Intent(Statistics.this,Statistics2.class);
                 intent.putExtra("xAxisVal", xAxisVal);
                 startActivity(intent);
@@ -163,7 +163,7 @@ public class Statistics extends AppCompatActivity {
 
         if (timeButton.isClickable()) {
             timeButton.setBackgroundColor(Color.parseColor("#FFA500"));
-            timeButton.setTextColor(Color.BLACK);
+//            timeButton.setTextColor(Color.BLACK);
             plotCandleStickTimeWise(pressureList);
             candleStickChart.invalidate();
             candleStickChart.notifyDataSetChanged();
@@ -182,7 +182,7 @@ public class Statistics extends AppCompatActivity {
                     allButton.setBackground(null);
                     isTimeEnabled = true;
                     timeButton.setBackgroundColor(Color.parseColor("#FFA500"));
-                    timeButton.setTextColor(Color.BLACK);
+//                    timeButton.setTextColor(Color.BLACK);
                     timeButton.setClickable(true);
                     DateFormat df1 = new SimpleDateFormat("MMM dd"); // Format date
                     String date = df1.format(Calendar.getInstance().getTime());
@@ -206,7 +206,7 @@ public class Statistics extends AppCompatActivity {
                     allButton.setBackground(null);
                     isTimeEnabled = false;
                     dayButton.setBackgroundColor(Color.parseColor("#FFA500"));
-                    dayButton.setTextColor(Color.BLACK);
+//                    dayButton.setTextColor(Color.BLACK);
                     dayButton.setClickable(true);
                     plotAverageCandleStick(pressureList);
                     candleStickChart.invalidate();
@@ -226,7 +226,7 @@ public class Statistics extends AppCompatActivity {
                     timeButton.setBackground(null);
                     isTimeEnabled = false;
                     allButton.setBackgroundColor(Color.parseColor("#FFA500"));
-                    allButton.setTextColor(Color.BLACK);
+//                    allButton.setTextColor(Color.BLACK);
                     allButton.setClickable(true);
                     plotCandleStick(pressureList);
                     candleStickChart.invalidate();
@@ -420,7 +420,16 @@ public class Statistics extends AppCompatActivity {
             cds.setIncreasingColor(Color.parseColor("#333355"));
             cds.setIncreasingPaintStyle(Paint.Style.STROKE);
             cds.setNeutralColor(Color.BLUE);
-            cds.setValueTextColor(Color.BLACK);
+//            cds.setValueTextColor(Color.BLACK);
+            // Set color as per the mode - Dark mode/Light mode.
+            switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+                case Configuration.UI_MODE_NIGHT_YES:
+                    cds.setValueTextColor(Color.WHITE);
+                    break;
+                case Configuration.UI_MODE_NIGHT_NO:
+                    cds.setValueTextColor(Color.BLACK);
+                    break;
+            }
             cds.setValueTextSize(10);
             CandleData cd = new CandleData(cds);
             candleStickChart.setData(cd);
@@ -451,6 +460,20 @@ public class Statistics extends AppCompatActivity {
             yAxisLeft.setDrawAxisLine(false);
             yAxisLeft.setAxisMinimum(50);
             yAxisLeft.setAxisMaximum(200);
+
+            // Set color as per the mode - Dark mode/Light mode.
+            switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+                case Configuration.UI_MODE_NIGHT_YES:
+                    xAxis.setTextColor(Color.WHITE);
+                    yAxisLeft.setTextColor(Color.WHITE);
+                    yAxisRight.setTextColor(Color.WHITE);
+                    break;
+                case Configuration.UI_MODE_NIGHT_NO:
+                    xAxis.setTextColor(Color.BLACK);
+                    yAxisLeft.setTextColor(Color.BLACK);
+                    yAxisRight.setTextColor(Color.BLACK);
+                    break;
+            }
 
             if (yAxisCandleStick2.size() > 1){
                 Entry lastEntry = yAxisCandleStick2.get(yAxisCandleStick2.size()-1);
@@ -506,7 +529,16 @@ public class Statistics extends AppCompatActivity {
             cds.setIncreasingColor(Color.parseColor("#FFA500"));
             cds.setIncreasingPaintStyle(Paint.Style.STROKE);
             cds.setNeutralColor(Color.BLUE);
-            cds.setValueTextColor(Color.BLACK);
+//            cds.setValueTextColor(Color.BLACK);
+           // Set color as per the mode - Dark mode/Light mode.
+           switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+               case Configuration.UI_MODE_NIGHT_YES:
+                   cds.setValueTextColor(Color.WHITE);
+                   break;
+               case Configuration.UI_MODE_NIGHT_NO:
+                   cds.setValueTextColor(Color.BLACK);
+                   break;
+           }
             cds.setValueTextSize(10);
             CandleData cd = new CandleData(cds);
             candleStickChart.setData(cd);
@@ -537,6 +569,20 @@ public class Statistics extends AppCompatActivity {
             yAxisLeft.setDrawAxisLine(false);
             yAxisLeft.setAxisMinimum(50);
             yAxisLeft.setAxisMaximum(200);
+
+           // Set color as per the mode - Dark mode/Light mode.
+           switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+               case Configuration.UI_MODE_NIGHT_YES:
+                   xAxis.setTextColor(Color.WHITE);
+                   yAxisLeft.setTextColor(Color.WHITE);
+                   yAxisRight.setTextColor(Color.WHITE);
+                   break;
+               case Configuration.UI_MODE_NIGHT_NO:
+                   xAxis.setTextColor(Color.BLACK);
+                   yAxisLeft.setTextColor(Color.BLACK);
+                   yAxisRight.setTextColor(Color.BLACK);
+                   break;
+           }
 
             if (yAxisCandleStick.size() > 1){
                 Entry lastEntry = yAxisCandleStick.get(yAxisCandleStick.size()-1);
@@ -599,8 +645,17 @@ public class Statistics extends AppCompatActivity {
             cds.setIncreasingColor(Color.parseColor("#151B54"));
             cds.setIncreasingPaintStyle(Paint.Style.STROKE);
             cds.setNeutralColor(Color.BLUE);
-            cds.setValueTextColor(Color.BLACK);
+//            cds.setValueTextColor(Color.BLACK);
             cds.setValueTextSize(10);
+           // Set color as per the mode - Dark mode/Light mode.
+           switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+               case Configuration.UI_MODE_NIGHT_YES:
+                   cds.setValueTextColor(Color.WHITE);
+                   break;
+               case Configuration.UI_MODE_NIGHT_NO:
+                   cds.setValueTextColor(Color.BLACK);
+                   break;
+           }
             CandleData cd = new CandleData(cds);
            candleStickChart.setData(cd);
            candleStickChart.getDescription().setEnabled(false);
@@ -627,6 +682,20 @@ public class Statistics extends AppCompatActivity {
             yAxisLeft.setDrawAxisLine(false);
             yAxisLeft.setAxisMinimum(50);
             yAxisLeft.setAxisMaximum(200);
+
+           // Set color as per the mode - Dark mode/Light mode.
+           switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+               case Configuration.UI_MODE_NIGHT_YES:
+                   xAxis.setTextColor(Color.WHITE);
+                   yAxisLeft.setTextColor(Color.WHITE);
+                   yAxisRight.setTextColor(Color.WHITE);
+                   break;
+               case Configuration.UI_MODE_NIGHT_NO:
+                   xAxis.setTextColor(Color.BLACK);
+                   yAxisLeft.setTextColor(Color.BLACK);
+                   yAxisRight.setTextColor(Color.BLACK);
+                   break;
+           }
 
             if (yAxisCandleStick1.size() > 1){
                 Entry lastEntry = yAxisCandleStick1.get(yAxisCandleStick1.size()-1);
@@ -696,8 +765,17 @@ public class Statistics extends AppCompatActivity {
             cds.setIncreasingColor(Color.parseColor("#FFA500"));
             cds.setIncreasingPaintStyle(Paint.Style.STROKE);
             cds.setNeutralColor(Color.BLUE);
-            cds.setValueTextColor(Color.BLACK);
+//            cds.setValueTextColor(Color.BLACK);
             cds.setValueTextSize(10);
+            // Set color as per the mode - Dark mode/Light mode.
+            switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+                case Configuration.UI_MODE_NIGHT_YES:
+                    cds.setValueTextColor(Color.WHITE);
+                    break;
+                case Configuration.UI_MODE_NIGHT_NO:
+                    cds.setValueTextColor(Color.BLACK);
+                    break;
+            }
             CandleData cd = new CandleData(cds);
             candleStickTimeChart.setData(cd);
             candleStickTimeChart.getDescription().setEnabled(false);
@@ -727,6 +805,20 @@ public class Statistics extends AppCompatActivity {
             yAxisLeft.setDrawAxisLine(false);
             yAxisLeft.setAxisMinimum(50);
             yAxisLeft.setAxisMaximum(200);
+
+            // Set color as per the mode - Dark mode/Light mode.
+            switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+                case Configuration.UI_MODE_NIGHT_YES:
+                    xAxis.setTextColor(Color.WHITE);
+                    yAxisLeft.setTextColor(Color.WHITE);
+                    yAxisRight.setTextColor(Color.WHITE);
+                    break;
+                case Configuration.UI_MODE_NIGHT_NO:
+                    xAxis.setTextColor(Color.BLACK);
+                    yAxisLeft.setTextColor(Color.BLACK);
+                    yAxisRight.setTextColor(Color.BLACK);
+                    break;
+            }
 
             if (yAxisCandle.size() > 1){
                 Entry lastEntry = yAxisCandle.get(yAxisCandle.size()-1);

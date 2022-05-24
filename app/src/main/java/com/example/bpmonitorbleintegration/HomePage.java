@@ -4,11 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.sqlite.db.SupportSQLiteOpenHelper;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -93,7 +96,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
         SecondFragment secondFragment = new SecondFragment();
         ThirdFragment thirdFragment = new ThirdFragment();
 
-        Objects.requireNonNull(getSupportActionBar()).setTitle("DashBoard");
+        getSupportActionBar().setTitle("DashBoard");
 
         nameText.setText("Welcome  Chaitra");
         addressText.setText("Bangalore");
@@ -204,12 +207,21 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             cds.setColor(Color.rgb(80, 80, 80));
             cds.setShadowColor(Color.DKGRAY);
             cds.setBarSpace(1f);
-            cds.setDecreasingColor(Color.parseColor("#151B54"));
+            cds.setDecreasingColor(Color.parseColor("#FFA500"));
             cds.setDecreasingPaintStyle(Paint.Style.FILL);
-            cds.setIncreasingColor(Color.parseColor("#151B54"));
+            cds.setIncreasingColor(Color.parseColor("#FFA500"));
             cds.setIncreasingPaintStyle(Paint.Style.STROKE);
             cds.setNeutralColor(Color.BLUE);
-            cds.setValueTextColor(Color.BLACK);
+//            setTheme(R.style.Theme.BPMonitorBLEIntegration);
+            // Set color as per the mode - Dark mode/Light mode.
+            switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+                case Configuration.UI_MODE_NIGHT_YES:
+                    cds.setValueTextColor(Color.WHITE);
+                    break;
+                case Configuration.UI_MODE_NIGHT_NO:
+                    cds.setValueTextColor(Color.BLACK);
+                    break;
+            }
             cds.setValueTextSize(10);
             CandleData cd = new CandleData(cds);
             candleStick.setData(cd);
@@ -239,6 +251,20 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             yAxisLeft.setDrawAxisLine(false);
             yAxisLeft.setAxisMinimum(50);
             yAxisLeft.setAxisMaximum(200);
+
+            // Set color as per the mode - Dark mode/Light mode.
+            switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+                case Configuration.UI_MODE_NIGHT_YES:
+                    xAxis.setTextColor(Color.WHITE);
+                    yAxisLeft.setTextColor(Color.WHITE);
+                    yAxisRight.setTextColor(Color.WHITE);
+                    break;
+                case Configuration.UI_MODE_NIGHT_NO:
+                    xAxis.setTextColor(Color.BLACK);
+                    yAxisLeft.setTextColor(Color.BLACK);
+                    yAxisRight.setTextColor(Color.BLACK);
+                    break;
+            }
 
             if (yVal.size() > 1){
                 Entry lastEntry = yVal.get(yVal.size()-1);

@@ -6,26 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ManualReadings">
 
-<!--    <androidx.appcompat.widget.Toolbar-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:id="@+id/measurement_toolbar"-->
-<!--        android:background="@color/purple_700"-->
-<!--        android:theme="@style/AppTheme">-->
-
-<!--&lt;!&ndash;        <RelativeLayout&ndash;&gt;-->
-<!--&lt;!&ndash;            android:layout_width="match_parent"&ndash;&gt;-->
-<!--&lt;!&ndash;            android:layout_height="wrap_content">&ndash;&gt;-->
-
-<!--            <TextView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Manual Measurement"-->
-<!--                android:textSize="18sp"-->
-<!--                android:textStyle="bold"></TextView>-->
-<!--&lt;!&ndash;        </RelativeLayout>&ndash;&gt;-->
-<!--    </androidx.appcompat.widget.Toolbar>-->
-
     <ProgressBar
         android:id="@+id/progress_manual"
         android:layout_width="25dp"
@@ -34,74 +14,103 @@
         android:layout_centerInParent="true"
         android:visibility="gone" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/systa_read"
-        android:text="@string/systolc"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"/>
-<!--    android:layout_below="@+id/measurement_toolbar"-->
-
-    <EditText
-        android:id="@+id/manual_systa"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_toEndOf="@+id/systa_read"
-        android:textSize="12sp"
-        android:inputType="number" />
-<!--    android:layout_below="@+id/measurement_toolbar"-->
+        android:orientation="vertical"
+        android:id="@+id/linearLayout"
+        android:layout_marginTop="30dp">
 
-    <TextView
-        android:id="@+id/diasta_read"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/systa_read"
-        android:layout_margin="10dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="@string/dyastolic" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-    <EditText
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/systa_read"
+                android:text="@string/systolc"
+                android:layout_marginStart="10dp"
+                android:textColor="?android:textColorPrimary"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"/>
+            <!--    android:layout_below="@+id/measurement_toolbar"-->
+
+            <EditText
+                android:id="@+id/manual_systa"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:textColor="?android:textColorPrimary"
+                android:layout_marginBottom="10dp"
+                android:textSize="12sp"
+                android:inputType="number" />
+            <!--    android:layout_below="@+id/measurement_toolbar"-->
+
+        </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/manual_diasta"
-        android:layout_margin="10dp"
-        android:layout_toEndOf="@+id/diasta_read"
-        android:layout_below="@+id/systa_read"
-        android:textSize="12sp"
-        android:inputType="number"/>
+        android:orientation="horizontal">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/heart_rate1"
-        android:layout_below="@+id/diasta_read"
-        android:layout_margin="10dp"
-        android:id="@+id/heartRate_read"/>
-    <EditText
+        <TextView
+            android:id="@+id/diasta_read"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_marginStart="8dp"
+            android:textColor="?android:textColorPrimary"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/dyastolic" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/manual_diasta"
+            android:layout_margin="10dp"
+            android:textColor="?android:textColorPrimary"
+            android:textSize="12sp"
+            android:inputType="number"/>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/manual_heartRate"
-        android:layout_margin="10dp"
-        android:layout_toEndOf="@+id/heartRate_read"
-        android:layout_below="@+id/diasta_read"
-        android:textSize="12sp"
-        android:inputType="number"/>
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/heart_rate1"
+            android:textColor="?android:textColorPrimary"
+            android:layout_margin="10dp"
+            android:id="@+id/heartRate_read"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/manual_heartRate"
+            android:layout_margin="10dp"
+            android:textColor="?android:textColorPrimary"
+            android:textSize="12sp"
+            android:inputType="number"/>
+
+    </LinearLayout>
+
+    </LinearLayout>
+
 
     <Button
         android:id="@+id/save_manual"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/manual_heartRate"
+        android:layout_below="@+id/linearLayout"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="30dp"
@@ -111,99 +120,99 @@
         android:text="@string/save"/>
 <!--        android:backgroundTint="@android:color/transparent"/>-->
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="1"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_below="@+id/save_manual"
-        android:id="@+id/ll_list">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/date"
-            android:textSize="12sp"
-            android:layout_weight="0.17"
-            android:gravity="center"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/manual_time"
-            android:text="@string/time"
-            android:textSize="12sp"
-            android:layout_weight="0.17"
-            android:gravity="center"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sys"
-            android:textSize="12sp"
-            android:layout_weight="0.17"
-            android:gravity="center"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/dya"
-            android:textSize="12sp"
-            android:layout_weight="0.17"
-            android:gravity="center"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/rate"
-            android:textSize="12sp"
-            android:layout_weight="0.17"
-            android:gravity="center"
-            android:textStyle="bold"/>
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:weightSum="1"-->
+<!--        android:layout_marginTop="5dp"-->
+<!--        android:layout_marginLeft="5dp"-->
+<!--        android:layout_marginRight="5dp"-->
+<!--        android:layout_below="@+id/save_manual"-->
+<!--        android:id="@+id/ll_list">-->
 
 <!--        <TextView-->
 <!--            android:layout_width="wrap_content"-->
 <!--            android:layout_height="wrap_content"-->
-<!--            android:text="MAP"-->
+<!--            android:text="@string/date"-->
 <!--            android:textSize="12sp"-->
 <!--            android:layout_weight="0.17"-->
 <!--            android:gravity="center"-->
 <!--            android:textStyle="bold"/>-->
 
-    </LinearLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/ll_list">
 <!--        <TextView-->
-<!--            android:layout_width="match_parent"-->
+<!--            android:layout_width="wrap_content"-->
 <!--            android:layout_height="wrap_content"-->
-<!--            android:layout_centerInParent="true"-->
-<!--            android:id="@+id/txt_no_data_found"-->
+<!--            android:id="@+id/manual_time"-->
+<!--            android:text="@string/time"-->
+<!--            android:textSize="12sp"-->
+<!--            android:layout_weight="0.17"-->
 <!--            android:gravity="center"-->
-<!--            android:textSize="18sp"-->
-<!--            android:text="No Data Found"-->
-<!--            android:visibility="invisible"></TextView>-->
+<!--            android:textStyle="bold"/>-->
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerview_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="5dp"
-            android:background="#ECEFF1"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="10dp">
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/sys"-->
+<!--            android:textSize="12sp"-->
+<!--            android:layout_weight="0.17"-->
+<!--            android:gravity="center"-->
+<!--            android:textStyle="bold"/>-->
 
-        </androidx.recyclerview.widget.RecyclerView>
-    </RelativeLayout>
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/dya"-->
+<!--            android:textSize="12sp"-->
+<!--            android:layout_weight="0.17"-->
+<!--            android:gravity="center"-->
+<!--            android:textStyle="bold"/>-->
+
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/rate"-->
+<!--            android:textSize="12sp"-->
+<!--            android:layout_weight="0.17"-->
+<!--            android:gravity="center"-->
+<!--            android:textStyle="bold"/>-->
+
+<!--&lt;!&ndash;        <TextView&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_width="wrap_content"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_height="wrap_content"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:text="MAP"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:textSize="12sp"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_weight="0.17"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:gravity="center"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:textStyle="bold"/>&ndash;&gt;-->
+
+<!--    </LinearLayout>-->
+
+<!--    <RelativeLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_below="@+id/ll_list">-->
+<!--&lt;!&ndash;        <TextView&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_width="match_parent"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_height="wrap_content"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_centerInParent="true"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:id="@+id/txt_no_data_found"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:gravity="center"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:textSize="18sp"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:text="No Data Found"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:visibility="invisible"></TextView>&ndash;&gt;-->
+
+<!--        <androidx.recyclerview.widget.RecyclerView-->
+<!--            android:id="@+id/recyclerview_list"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_marginStart="5dp"-->
+<!--            android:background="#ECEFF1"-->
+<!--            android:layout_marginTop="10dp"-->
+<!--            android:layout_marginEnd="5dp"-->
+<!--            android:layout_marginBottom="10dp">-->
+
+<!--        </androidx.recyclerview.widget.RecyclerView>-->
+<!--    </RelativeLayout>-->
 
 </RelativeLayout>

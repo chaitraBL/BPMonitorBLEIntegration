@@ -26,9 +26,8 @@ public class ManualReadings extends AppCompatActivity {
     Decoder decoder;
     RoomDB database;
     int map = 0;
-    RecyclerView manualList;
-    String TAG = "ManualReadings";
-    Toolbar toolbar;
+//    RecyclerView manualList;
+    String TAG = ManualReadings.class.getName();
     ProgressBar progressBar;
     
     @Override
@@ -36,18 +35,13 @@ public class ManualReadings extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manual_readings);
 
-//        toolbar = findViewById(R.id.measurement_toolbar);
-//        setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setDisplayShowHomeEnabled(true);
-
         systolic = findViewById(R.id.manual_systa);
         diastolic = findViewById(R.id.manual_diasta);
         heartRate = findViewById(R.id.manual_heartRate);
         save = findViewById(R.id.save_manual);
-        manualList = findViewById(R.id.recyclerview_list);
+//        manualList = findViewById(R.id.recyclerview_list);
         progressBar = findViewById(R.id.progress_manual);
-        manualList.setLayoutManager(new LinearLayoutManager(this));
+//        manualList.setLayoutManager(new LinearLayoutManager(this));
         decoder = new Decoder();
         database = new RoomDB();
 
@@ -86,8 +80,9 @@ public class ManualReadings extends AppCompatActivity {
                     database.saveTask("No device",Integer.parseInt(systolic.getText().toString()),Integer.parseInt(diastolic.getText().toString()),Integer.parseInt(heartRate.getText().toString()),map,ManualReadings.this);
 
                     //Fetch local database value to recyclerview.
-                    getManualTasks();
+//                    getManualTasks();
 
+                    progressBar.setVisibility(View.VISIBLE);
                     //After saving data make textfield empty.
                     systolic.setText("");
                     diastolic.setText("");
@@ -96,8 +91,8 @@ public class ManualReadings extends AppCompatActivity {
 
             }
         });
-        progressBar.setVisibility(View.VISIBLE);
-        getManualTasks();
+
+//        getManualTasks();
     }
 
     @Override
@@ -109,30 +104,30 @@ public class ManualReadings extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    //To retrieve data from Room DB.
-    private void getManualTasks() {
-        class GetTasks extends AsyncTask<Void, Void, List<BloodPressureDB>> {
-
-            @Override
-            protected List<BloodPressureDB> doInBackground(Void... voids) {
-                List<BloodPressureDB> taskList = DatabaseClient
-                        .getInstance(getApplicationContext())
-                        .getAppDatabase()
-                        .bpReadingsDao()
-                        .getAll();
-                return taskList;
-            }
-
-            @Override
-            protected void onPostExecute(List<BloodPressureDB> tasks) {
-                super.onPostExecute(tasks);
-                progressBar.setVisibility(View.GONE);
-                ReadingsAdapter adapter = new ReadingsAdapter(ManualReadings.this, tasks);
-                manualList.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
-            }
-        }
-        GetTasks gt = new GetTasks();
-        gt.execute();
-    }
+//    //To retrieve data from Room DB.
+//    private void getManualTasks() {
+//        class GetTasks extends AsyncTask<Void, Void, List<BloodPressureDB>> {
+//
+//            @Override
+//            protected List<BloodPressureDB> doInBackground(Void... voids) {
+//                List<BloodPressureDB> taskList = DatabaseClient
+//                        .getInstance(getApplicationContext())
+//                        .getAppDatabase()
+//                        .bpReadingsDao()
+//                        .getAll();
+//                return taskList;
+//            }
+//
+//            @Override
+//            protected void onPostExecute(List<BloodPressureDB> tasks) {
+//                super.onPostExecute(tasks);
+//                progressBar.setVisibility(View.GONE);
+//                ReadingsAdapter adapter = new ReadingsAdapter(ManualReadings.this, tasks);
+//                manualList.setAdapter(adapter);
+//                adapter.notifyDataSetChanged();
+//            }
+//        }
+//        GetTasks gt = new GetTasks();
+//        gt.execute();
+//    }
 }
