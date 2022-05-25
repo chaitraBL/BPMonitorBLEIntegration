@@ -200,9 +200,9 @@ public class DataTransferActivity extends AppCompatActivity{
                                                     @Override
                                                     public void onClick(DialogInterface dialogInterface, int i) {
                                                         if (mNotifyCharacteristic != null) {
-                                                            Constants.startValue = decoder.computeCheckSum(Constants.startValue);
+                                                            Constants.cancelValue = decoder.computeCheckSum(Constants.cancelValue);
 //                            Log.i(TAG, "Stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
-                                                            mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
+                                                            mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
 
                                                             mCountDownTimer = new CountDownTimer(startTime, 50) {
                                                                 @Override
@@ -232,9 +232,9 @@ public class DataTransferActivity extends AppCompatActivity{
                                                                             if (Constants.is_ackReceived == false){
 //                                                Log.i(TAG, "Start again");
                                                                                 dialog.show();
-                                                                                Constants.startValue = decoder.computeCheckSum(Constants.startValue);
+                                                                                Constants.cancelValue = decoder.computeCheckSum(Constants.cancelValue);
 //                            Log.i(TAG, "Stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
-                                                                                mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
+                                                                                mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
                                                                                 start();
                                                                             }
                                                                         }
