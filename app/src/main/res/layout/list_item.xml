@@ -8,6 +8,7 @@
         android:id="@+id/textView"
         android:layout_width="fill_parent"
         android:textColor="?android:textColorPrimary"
+        android:fontFamily="@font/arial"
         android:layout_height="wrap_content"/>
 
 </LinearLayout>

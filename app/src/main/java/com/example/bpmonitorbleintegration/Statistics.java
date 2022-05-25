@@ -91,7 +91,7 @@ public class Statistics extends AppCompatActivity {
         actioBar.setTitle("Analytics");
         actioBar.setHomeAsUpIndicator(R.drawable.ic_baseline_keyboard_arrow_left_24);
         actioBar.setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#333355")));
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#151B54")));
 
         getManualTasks();
 

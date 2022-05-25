@@ -6,11 +6,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -25,8 +34,11 @@ public class LogActivity extends AppCompatActivity implements BottomNavigationVi
     private final String TAG = LogActivity.class.getName();
     List<BloodPressureDB> newTask = new ArrayList<>();
     BottomNavigationView logBottomNavigationView;
+    EditText startDate, endDate;
 
     RecyclerView logRecycleView;
+    Button selectBtn;
+    DatePickerDialog picker;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,10 +46,15 @@ public class LogActivity extends AppCompatActivity implements BottomNavigationVi
 
         ActionBar actioBar = getSupportActionBar();
         actioBar.setTitle("Logs");
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#151B54")));
+
 //        actioBar.setHomeAsUpIndicator(R.drawable.ic_baseline_keyboard_arrow_left_24);
 //        actioBar.setDisplayHomeAsUpEnabled(true);
         logRecycleView = findViewById(R.id.log_list);
         logBottomNavigationView = findViewById(R.id.log_bottomNavigationView);
+        startDate = findViewById(R.id.start_date);
+        endDate = findViewById(R.id.end_date);
+        selectBtn = findViewById(R.id.select);
 
         logBottomNavigationView.setOnNavigationItemSelectedListener(LogActivity.this);
         logBottomNavigationView.setSelectedItemId(R.id.device_connect);
@@ -45,6 +62,47 @@ public class LogActivity extends AppCompatActivity implements BottomNavigationVi
         logRecycleView.setLayoutManager(new LinearLayoutManager(this));
 
         getManualTasks();
+
+        startDate.setInputType(InputType.TYPE_NULL);
+        startDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Calendar cldr = Calendar.getInstance();
+                int day = cldr.get(Calendar.DAY_OF_MONTH);
+                int month = cldr.get(Calendar.MONTH);
+                int year = cldr.get(Calendar.YEAR);
+                // date picker dialog
+                picker = new DatePickerDialog(LogActivity.this,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                startDate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                            }
+                        }, year, month, day);
+                picker.show();
+            }
+        });
+
+        endDate.setInputType(InputType.TYPE_NULL);
+        endDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Calendar cldr = Calendar.getInstance();
+                int day = cldr.get(Calendar.DAY_OF_MONTH);
+                int month = cldr.get(Calendar.MONTH);
+                int year = cldr.get(Calendar.YEAR);
+                // date picker dialog
+                picker = new DatePickerDialog(LogActivity.this,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @SuppressLint("SetTextI18n")
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                endDate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                            }
+                        }, year, month, day);
+                picker.show();
+            }
+        });
     }
 
     @Override

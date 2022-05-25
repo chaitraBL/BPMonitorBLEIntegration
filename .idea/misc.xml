@@ -10,8 +10,12 @@
         <entry key="app/src/main/res/drawable/ic_baseline_account_circle_24.xml" value="0.5061538461538462" />
         <entry key="app/src/main/res/drawable/ic_baseline_arrow_forward_ios_24.xml" value="0.4740740740740741" />
         <entry key="app/src/main/res/drawable/navigation_item_color.xml" value="0.37395833333333334" />
+        <entry key="app/src/main/res/font-v26/arial_font.xml" value="0.3932291666666667" />
+        <entry key="app/src/main/res/font-v26/helvetica.xml" value="0.46111111111111114" />
+        <entry key="app/src/main/res/font/arial_font.xml" value="0.46111111111111114" />
+        <entry key="app/src/main/res/font/helvetica.xml" value="0.46111111111111114" />
         <entry key="app/src/main/res/layout/activity_data_transfer.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/activity_home_page.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_home_page.xml" value="0.5" />
         <entry key="app/src/main/res/layout/activity_log.xml" value="0.3578125" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.5" />
         <entry key="app/src/main/res/layout/activity_manual_readings.xml" value="0.33" />

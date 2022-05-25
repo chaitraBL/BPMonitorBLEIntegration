@@ -8,12 +8,13 @@
         android:id="@+id/tvContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text=""
-        android:textSize="12sp"
-        android:textColor="@android:color/white"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
 
+        android:text=""
+        android:textSize="10sp"
+        android:textColor="@android:color/white"
+
+        android:singleLine="false"
+        android:fontFamily="@font/arial"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+<!--    android:layout_centerHorizontal="true"  android:ellipsize="end" -->
 </RelativeLayout>

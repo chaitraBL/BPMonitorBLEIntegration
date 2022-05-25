@@ -48,6 +48,7 @@
                 android:id="@+id/profile_name"
                 android:layout_weight="0.3"
                 android:textSize="15sp"
+                android:fontFamily="@font/arial"
                 android:textColor="?android:textColorPrimary"
                 android:textStyle="bold"/>
 
@@ -57,6 +58,7 @@
                 android:id="@+id/profile_address"
                 android:textColor="?android:textColorPrimary"
                 android:layout_marginTop="5dp"
+                android:fontFamily="@font/arial"
                 android:layout_weight="0.3"
                 android:textSize="13sp"/>
 <!--                android:textColor="@color/black"/>-->
@@ -87,25 +89,33 @@
             android:elevation="2dp"
             android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="3dp"
-                android:src="@mipmap/bloodpressure_foreground"
-                app:tint="#FFFFFF" />
-
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="3dp"
-                android:layout_marginBottom="3dp"
-                android:text="@string/blood_pressure"
-                android:textColor="?android:textColorPrimary"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="3dp"
+                    android:src="@mipmap/bloodpressure_foreground"
+                    app:tint="#D2535252" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="7dp"
+                    android:layout_marginBottom="3dp"
+                    android:text="@string/blood_pressure"
+                    android:textColor="#393636"
+                    android:textSize="13sp"
+                    android:fontFamily="@font/arial"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/blood_pressure"
@@ -114,8 +124,9 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="3dp"
                 android:layout_marginBottom="3dp"
-                android:textColor="?android:textColorPrimary"
-                android:textSize="12sp" />
+                android:fontFamily="@font/arial"
+                android:textColor="#131313"
+                android:textSize="15sp" />
             <!--     android:textColor="#FFFFFF"            android:textColor="@color/black"/>-->
 
             <LinearLayout
@@ -132,7 +143,7 @@
                     android:layout_marginStart="5dp"
                     android:layout_marginTop="5dp"
                     android:indeterminate="false"
-                    android:progressTint="#8E44AD"
+                    android:progressTint="#550178"
                     android:max="200" />
                 <!--                <com.google.android.material.slider.Slider-->
                 <!--                    android:layout_width="90dp"-->
@@ -152,7 +163,8 @@
                     android:layout_marginStart="3dp"
                     android:layout_marginTop="5dp"
                     android:text="@string/systolic"
-                    android:textColor="?android:textColorPrimary"
+                    android:fontFamily="@font/arial"
+                    android:textColor="@color/black"
                     android:textSize="10sp"
                     tools:ignore="SmallSp" />
 
@@ -173,7 +185,7 @@
                     android:layout_marginTop="5dp"
                     android:indeterminate="false"
                     android:max="200"
-                    android:progressTint="#2980B9"/>
+                    android:progressTint="#02416A"/>
 
                 <!--                <com.google.android.material.slider.Slider-->
                 <!--                    android:layout_width="90dp"-->
@@ -193,7 +205,8 @@
                     android:layout_marginStart="3dp"
                     android:layout_marginTop="5dp"
                     android:text="@string/diastolic"
-                    android:textColor="?android:textColorPrimary"
+                    android:fontFamily="@font/arial"
+                    android:textColor="@color/black"
                     android:textSize="10sp"
                     tools:ignore="SmallSp" />
 
@@ -203,14 +216,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:layout_marginTop="30dp">
+                android:layout_marginTop="50dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="?android:textColorPrimary"
+                    android:textColor="@color/black"
                     android:layout_marginStart="5dp"
                     android:text="@string/range_120_80"
+                    android:fontFamily="@font/arial"
                     android:textSize="10sp"
                     tools:ignore="SmallSp" />
 
@@ -220,7 +234,7 @@
                     android:layout_height="20dp"
                     android:layout_marginStart="35dp"
                     android:src="@drawable/ic_baseline_arrow_forward_24"
-                    app:tint="#FFFFFF" />
+                    app:tint="@color/black" />
 
             </LinearLayout>
 
@@ -234,25 +248,33 @@
             android:elevation="1dp"
             android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="3dp"
-                android:src="@mipmap/heartrate_foreground"
-                app:tint="#7E7E7E" />
-
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="3dp"
-                android:layout_marginBottom="3dp"
-                android:text="@string/heart_rate"
-                android:textColor="#7E7E7E"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="3dp"
+                    android:src="@mipmap/heartrate_foreground"
+                    app:tint="#7E7E7E" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="7dp"
+                    android:layout_marginBottom="3dp"
+                    android:text="@string/heart_rate"
+                    android:fontFamily="@font/arial"
+                    android:textColor="#7E7E7E"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/pulse"
@@ -261,8 +283,9 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="3dp"
                 android:layout_marginBottom="3dp"
+                android:fontFamily="@font/arial"
                 android:textColor="@color/black"
-                android:textSize="12sp" />
+                android:textSize="15sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -278,6 +301,7 @@
                     android:text="@string/lowest"
                     android:textSize="10sp"
                     android:textColor="@color/black"
+                    android:fontFamily="@font/arial"
                     tools:ignore="SmallSp" />
 
                 <TextView
@@ -288,6 +312,7 @@
                     android:text="@string/_60_bpm"
                     android:textSize="10sp"
                     android:textColor="@color/black"
+                    android:fontFamily="@font/arial"
                     tools:ignore="SmallSp" />
 
             </LinearLayout>
@@ -306,6 +331,7 @@
                     android:text="@string/highest"
                     android:textSize="10sp"
                     android:textColor="@color/black"
+                    android:fontFamily="@font/arial"
                     tools:ignore="SmallSp" />
 
                 <TextView
@@ -313,6 +339,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="26dp"
                     android:layout_marginEnd="20dp"
+                    android:fontFamily="@font/arial"
                     android:text="100 bpm"
                     android:textSize="10sp"
                     android:textColor="@color/black"
@@ -330,6 +357,7 @@
         android:text="@string/analytics"
         android:id="@+id/analytics_home"
         android:textColor="?android:textColorPrimary"
+        android:fontFamily="@font/arial"
         android:textStyle="bold"
         android:layout_marginStart="20dp"
         android:layout_below="@id/linear_layout2"/>

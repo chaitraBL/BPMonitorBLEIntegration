@@ -34,7 +34,7 @@ public class CustomMarkerView extends MarkerView {
         super.refreshContent(e, highlight);
         if (e instanceof CandleEntry) {
             CandleEntry ce = (CandleEntry) e;
-            markerText.setText("Systolic: " + Utils.formatNumber(ce.getHigh(), 0, true) + " Diastolic: " + Utils.formatNumber(ce.getLow(),0,true));
+            markerText.setText("Systolic: " + Utils.formatNumber(ce.getHigh(), 0, true) + "\n" + " Diastolic: " + Utils.formatNumber(ce.getLow(),0,true));
         }
         else{
             markerText.setText("" + Utils.formatNumber(e.getY(),0,true));
@@ -44,7 +44,7 @@ public class CustomMarkerView extends MarkerView {
 
     @Override
     public float getX() {
-        return -(getWidth());
+        return -(getWidth()/2);
     }
 
     @Override

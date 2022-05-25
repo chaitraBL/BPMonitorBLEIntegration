@@ -97,6 +97,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
         ThirdFragment thirdFragment = new ThirdFragment();
 
         getSupportActionBar().setTitle("DashBoard");
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#151B54")));
 
         nameText.setText("Welcome  Chaitra");
         addressText.setText("Bangalore");
@@ -239,6 +240,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             xAxis.setGranularity(1f);
             xAxis.setGranularityEnabled(true);
             xAxis.setCenterAxisLabels(false);
+            xAxis.setTextSize(8);
             xAxis.setEnabled(true);
             CustomMarkerView mv = new CustomMarkerView(HomePage.this, R.layout.marker_view);
             candleStick.setMarkerView(mv);
@@ -249,6 +251,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             YAxis yAxisLeft = candleStick.getAxisLeft();
             yAxisLeft.setLabelCount(6,true);
             yAxisLeft.setDrawAxisLine(false);
+            yAxisLeft.setTextSize(8);
             yAxisLeft.setAxisMinimum(50);
             yAxisLeft.setAxisMaximum(200);
 
