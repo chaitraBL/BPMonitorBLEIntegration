@@ -120,18 +120,29 @@
 
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/log_list"
-            android:layout_below="@+id/logLinear_layout"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="500dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:background="@drawable/bg_transparent"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="10dp">
-<!--                #ECEFF1-->
-        </androidx.recyclerview.widget.RecyclerView>
+            android:id="@+id/list_layout"
+            android:layout_below="@+id/lig_linear"
+            android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:id="@+id/txt_no_data_found"
+                    android:gravity="center"
+                    android:textSize="18sp"
+                    android:text="@string/no_data_found"
+                    android:visibility="invisible"/>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/log_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="500dp"
+                    android:background="@drawable/bg_transparent1">
+                        <!--                #ECEFF1-->
+                </androidx.recyclerview.widget.RecyclerView>
+        </RelativeLayout>
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/log_bottomNavigationView"
@@ -139,7 +150,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:layout_below="@+id/log_list"
+            android:layout_below="@+id/list_layout"
             android:layout_alignParentBottom="true"
             android:background="@color/white"
             app:itemIconTint="@drawable/navigation_item_color"

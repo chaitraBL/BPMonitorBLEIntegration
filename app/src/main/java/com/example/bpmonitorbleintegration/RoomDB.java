@@ -31,7 +31,7 @@ public class RoomDB {
         String Timein12hourFormat = TimeFormat.format(ATime.getTime());
 //        Log.i(TAG, "Time " + time);
 
-        DateFormat df1 = new SimpleDateFormat("MMM dd"); // Format date
+        DateFormat df1 = new SimpleDateFormat("dd-MM-yyyy"); // Format date
         String date = df1.format(Calendar.getInstance().getTime());
 //        Log.i(TAG, "date " + date)
 

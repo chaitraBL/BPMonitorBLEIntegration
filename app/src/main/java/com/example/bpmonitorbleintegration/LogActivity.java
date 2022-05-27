@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -45,6 +46,7 @@ public class LogActivity extends AppCompatActivity implements BottomNavigationVi
     RecyclerView logRecycleView;
     Button selectBtn;
     DatePickerDialog picker;
+    TextView no_data_found;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +64,7 @@ public class LogActivity extends AppCompatActivity implements BottomNavigationVi
         endDate = findViewById(R.id.end_date);
         selectBtn = findViewById(R.id.select);
 
+        no_data_found = findViewById(R.id.txt_no_data_found);
         logBottomNavigationView.setOnNavigationItemSelectedListener(LogActivity.this);
         logBottomNavigationView.setSelectedItemId(R.id.device_connect);
 
@@ -73,19 +76,7 @@ public class LogActivity extends AppCompatActivity implements BottomNavigationVi
         startDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final Calendar cldr = Calendar.getInstance();
-                int day = cldr.get(Calendar.DAY_OF_MONTH);
-                int month = cldr.get(Calendar.MONTH);
-                int year = cldr.get(Calendar.YEAR);
-                // date picker dialog
-                picker = new DatePickerDialog(LogActivity.this,
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                startDate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
-                            }
-                        }, year, month, day);
-                picker.show();
+                startDateCalendar();
             }
         });
 
@@ -93,24 +84,76 @@ public class LogActivity extends AppCompatActivity implements BottomNavigationVi
         endDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final Calendar cldr = Calendar.getInstance();
-                int day = cldr.get(Calendar.DAY_OF_MONTH);
-                int month = cldr.get(Calendar.MONTH);
-                int year = cldr.get(Calendar.YEAR);
-                // date picker dialog
-                picker = new DatePickerDialog(LogActivity.this,
-                        new DatePickerDialog.OnDateSetListener() {
-                            @SuppressLint("SetTextI18n")
-                            @Override
-                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                endDate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
-                            }
-                        }, year, month, day);
-                picker.show();
+               endDateCalendar();
             }
         });
     }
 
+    private void startDateCalendar(){
+        Calendar c=Calendar.getInstance();
+        Integer month=c.get(Calendar.MONTH);
+        Integer day=c.get(Calendar.DAY_OF_MONTH);
+        Integer year=c.get(Calendar.YEAR);
+        DatePickerDialog datePickerDialog =new DatePickerDialog(LogActivity.this, new DatePickerDialog.OnDateSetListener() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                c.set(year,month,dayOfMonth);
+                int get_month = month+1;
+                if(dayOfMonth < 10){
+                    String day = "0"+dayOfMonth;
+                    Log.d(TAG,"day:::"+day);
+                    if(get_month < 10){
+                        startDate.setText(day+"-"+"0"+get_month+"-"+year);
+                    }else {
+
+                        startDate.setText(day+"-"+get_month+"-"+year);
+                    }
+                }else {
+                    if(get_month < 10){
+                        startDate.setText(dayOfMonth+"-"+"0"+get_month+"-"+year);
+                    }else {
+                        startDate.setText(dayOfMonth+"-"+get_month+"-"+year);
+                    }
+                }
+            }
+        },year,month,day);
+        datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis()-1000);
+        datePickerDialog.show();
+}
+
+private  void endDateCalendar() {
+    Calendar c=Calendar.getInstance();
+    Integer month=c.get(Calendar.MONTH);
+    Integer day=c.get(Calendar.DAY_OF_MONTH);
+    Integer year=c.get(Calendar.YEAR);
+    DatePickerDialog datePickerDialog =new DatePickerDialog(LogActivity.this, new DatePickerDialog.OnDateSetListener() {
+        @SuppressLint("SetTextI18n")
+        @Override
+        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+            c.set(year,month,dayOfMonth);
+            int get_month = month+1;
+            if(dayOfMonth < 10){
+                String day = "0"+dayOfMonth;
+                Log.d(TAG,"day:::"+day);
+                if(get_month < 10){
+                    endDate.setText(day+"-"+"0"+get_month+"-"+year);
+                }else {
+
+                    endDate.setText(day+"-"+get_month+"-"+year);
+                }
+            }else {
+                if(get_month < 10){
+                    endDate.setText(dayOfMonth+"-"+"0"+get_month+"-"+year);
+                }else {
+                    endDate.setText(dayOfMonth+"-"+get_month+"-"+year);
+                }
+            }
+        }
+    },year,month,day);
+    datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis()-1000);
+    datePickerDialog.show();
+}
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
@@ -144,8 +187,13 @@ public class LogActivity extends AppCompatActivity implements BottomNavigationVi
             protected void onPostExecute(List<BloodPressureDB> tasks) {
                 super.onPostExecute(tasks);
 
-                if (tasks.size() > 0) {
-
+                if (tasks.size() == 0) {
+                    no_data_found.setVisibility(View.VISIBLE);
+                    logRecycleView.setVisibility(View.INVISIBLE);
+                }
+                else {
+                    no_data_found.setVisibility(View.INVISIBLE);
+                    logRecycleView.setVisibility(View.VISIBLE);
                         ReadingsAdapter adapter = new ReadingsAdapter(LogActivity.this, tasks);
                         logRecycleView.setAdapter(adapter);
                         adapter.notifyDataSetChanged();
@@ -153,81 +201,36 @@ public class LogActivity extends AppCompatActivity implements BottomNavigationVi
                     selectBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Date start_var = null, end_var = null;
-                            ArrayList<String> selectedDate = new ArrayList<>();
-                            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd", Locale.ENGLISH);
-                            sdf.setTimeZone(TimeZone.getTimeZone("T"));
-//                            TimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH);
-//                            LocalDate date = LocalDate.parse(string, formatter);
-                            try {
-//                                start_var = sdf.parse(startDate.getText().toString());
-                                start_var = new java.sql.Date(sdf.parse(startDate.getText().toString()).getTime());
-//                                end_var = sdf.parse(endDate.getText().toString());
-                                end_var = new java.sql.Date(sdf.parse(endDate.getText().toString()).getTime());
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
 
-                            resultDate = getDates(start_var,end_var);
-                            Log.i(TAG, "onClick: result date " + resultDate);
-
-                            for (Date result : resultDate) {
-                                selectedDate.add(String.valueOf(result));
-                            }
+                            String start_date = startDate.getText().toString().replaceAll("-","");
+                            String end_date = endDate.getText().toString().replaceAll("-","");
 
                            for (BloodPressureDB i : tasks) {
-                               if (selectedDate.equals(i.getDate()))
-                               {
-                                   newTask.add(i);
-                               }
-                           }
+                              String date = i.getDate().replaceAll("-","");
 
-                            Log.i(TAG, "onClick: new task " + newTask);
-                            ReadingsAdapter adapter = new ReadingsAdapter(LogActivity.this, newTask);
-                            logRecycleView.setAdapter(adapter);
-                            adapter.notifyDataSetChanged();
+                              if (Integer.parseInt(date) >= Integer.parseInt(start_date) && Integer.parseInt(date) <= Integer.parseInt(end_date)) {
+                                  newTask.add(i);
+                              }
+
+                              if (newTask.size() == 0){
+                                  no_data_found.setVisibility(View.VISIBLE);
+                                  logRecycleView.setVisibility(View.INVISIBLE);
+                              }
+                              else {
+                                  no_data_found.setVisibility(View.INVISIBLE);
+                                  logRecycleView.setVisibility(View.VISIBLE);
+                                  ReadingsAdapter adapter = new ReadingsAdapter(LogActivity.this, newTask);
+                                  logRecycleView.setAdapter(adapter);
+                                  adapter.notifyDataSetChanged();
+                              }
+                           }
                         }
                     });
-
-
-
-                }
-                else {
-                    Log.i(TAG, "onPostExecute: No data");
                 }
             }
         }
         GetTasks gt = new GetTasks();
         gt.execute();
-    }
-
-    public static List<Date> getDates(Date startDate, Date endDate) {
-        ArrayList<Date> dates = new ArrayList<Date>();
-//        DateFormat df1 = new SimpleDateFormat("MMM dd");
-
-//        Date date1 = null;
-//        Date date2 = null;
-//
-//        try {
-//            date1 = df1.parse(startDate);
-//            date2 = df1.parse(endDate);
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-
-        Calendar cal1 = Calendar.getInstance();
-        cal1.setTime(startDate);
-
-
-        Calendar cal2 = Calendar.getInstance();
-        cal2.setTime(endDate);
-
-        while(!cal1.after(cal2))
-        {
-            dates.add(cal1.getTime());
-            cal1.add(Calendar.DATE, 1);
-        }
-        return dates;
     }
 
 }

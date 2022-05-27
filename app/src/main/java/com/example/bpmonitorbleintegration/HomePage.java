@@ -155,7 +155,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
 //                candleStick.clear();
                 combinedChart.clear();
                 if (tasks.size() > 0) {
-                    @SuppressLint("SimpleDateFormat") DateFormat df1 = new SimpleDateFormat("MMM dd"); // Format date
+                    @SuppressLint("SimpleDateFormat") DateFormat df1 = new SimpleDateFormat("dd-MM-yyyy"); // Format date
                     String date = df1.format(Calendar.getInstance().getTime());
 
                     BloodPressureDB list = tasks.get(tasks.size() - 1);

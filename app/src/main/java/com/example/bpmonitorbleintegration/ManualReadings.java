@@ -87,6 +87,7 @@ public class ManualReadings extends AppCompatActivity {
                     systolic.setText("");
                     diastolic.setText("");
                     heartRate.setText("");
+                    progressBar.setVisibility(View.GONE);
                 }
 
             }
@@ -121,7 +122,7 @@ public class ManualReadings extends AppCompatActivity {
 //            @Override
 //            protected void onPostExecute(List<BloodPressureDB> tasks) {
 //                super.onPostExecute(tasks);
-//                progressBar.setVisibility(View.GONE);
+//
 //                ReadingsAdapter adapter = new ReadingsAdapter(ManualReadings.this, tasks);
 //                manualList.setAdapter(adapter);
 //                adapter.notifyDataSetChanged();
