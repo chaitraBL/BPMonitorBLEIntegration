@@ -8,6 +8,7 @@ import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.data.CandleEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.utils.MPPointF;
 import com.github.mikephil.charting.utils.Utils;
 
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class CustomMarkerView extends MarkerView {
         super.refreshContent(e, highlight);
         if (e instanceof CandleEntry) {
             CandleEntry ce = (CandleEntry) e;
-            markerText.setText("Systolic: " + Utils.formatNumber(ce.getHigh(), 0, true) + "\n" + " Diastolic: " + Utils.formatNumber(ce.getLow(),0,true));
+            markerText.setText("Systolic: " + Utils.formatNumber(ce.getHigh(), 0, true) + " \n" + "Diastolic: " + Utils.formatNumber(ce.getLow(),0,true) + " ");
         }
         else{
             markerText.setText("" + Utils.formatNumber(e.getY(),0,true));
@@ -50,5 +51,18 @@ public class CustomMarkerView extends MarkerView {
     @Override
     public float getY() {
         return -getHeight();
+    }
+
+    private MPPointF mOffset;
+    @Override
+    public MPPointF getOffsetForDrawingAtPoint(float posX, float posY) {
+        if(mOffset == null) {
+            // center the marker horizontally and fixed Y position at the top
+
+            mOffset = new MPPointF(-(getWidth() / 2f), -150);
+
+        }
+
+        return mOffset;
     }
 }

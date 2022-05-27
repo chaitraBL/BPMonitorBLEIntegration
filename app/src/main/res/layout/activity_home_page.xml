@@ -145,16 +145,6 @@
                     android:indeterminate="false"
                     android:progressTint="#550178"
                     android:max="200" />
-                <!--                <com.google.android.material.slider.Slider-->
-                <!--                    android:layout_width="90dp"-->
-                <!--                    android:layout_height="wrap_content"-->
-                <!--                    android:valueFrom="0.0dp"-->
-                <!--                    android:valueTo="200dp"-->
-                <!--                    android:id="@+id/pb_systa"-->
-                <!--                    android:layout_marginTop="5dp"-->
-                <!--                    android:layout_marginStart="5dp">-->
-
-                <!--                </com.google.android.material.slider.Slider>-->
 
                 <TextView
                     android:id="@+id/systa_pbText"
@@ -186,17 +176,6 @@
                     android:indeterminate="false"
                     android:max="200"
                     android:progressTint="#02416A"/>
-
-                <!--                <com.google.android.material.slider.Slider-->
-                <!--                    android:layout_width="90dp"-->
-                <!--                    android:layout_height="wrap_content"-->
-                <!--                    android:valueFrom="0.0dp"-->
-                <!--                    android:valueTo="200dp"-->
-                <!--                    android:id="@+id/pb_diasta"-->
-                <!--                    android:layout_marginTop="5dp"-->
-                <!--                    android:layout_marginStart="5dp">-->
-
-                <!--                </com.google.android.material.slider.Slider>-->
 
                 <TextView
                     android:id="@+id/diasta_pbText"
@@ -372,28 +351,35 @@
         android:background="#000000"
         android:src="@drawable/ic_baseline_arrow_forward_ios_24" />
 
-    <com.github.mikephil.charting.charts.CandleStickChart
-        android:id="@+id/reading_list"
+<!--    <com.github.mikephil.charting.charts.CandleStickChart-->
+<!--        android:id="@+id/reading_list"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="230dp"-->
+<!--        android:layout_below="@+id/analytics_home"-->
+<!--        android:layout_marginTop="10dp"-->
+<!--        android:layout_marginBottom="10dp"-->
+<!--        android:layout_marginStart="10dp"-->
+<!--        android:layout_marginEnd="10dp"/>-->
+
+    <com.github.mikephil.charting.charts.CombinedChart
         android:layout_width="match_parent"
         android:layout_height="230dp"
+        android:id="@+id/reading_list"
         android:layout_below="@+id/analytics_home"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"/>
+        android:layout_marginTop="10dp" />
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigationView"
-        style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_below="@+id/reading_list"
-        android:layout_alignParentBottom="true"
-        android:background="@color/white"
-        app:itemIconTint="@drawable/navigation_item_color"
-        app:itemTextColor="@drawable/navigation_item_color"
-        app:menu="@menu/bottom_nav_menu" />
-<!--    android:background="#151B54"-->
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigationView"
+            style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/reading_list"
+            android:layout_alignParentBottom="true"
+            android:background="@color/white"
+            app:itemIconTint="@drawable/navigation_item_color"
+            app:itemTextColor="@drawable/navigation_item_color"
+            app:menu="@menu/bottom_nav_menu" />
+    <!--    android:background="#151B54"-->
 
 </RelativeLayout>

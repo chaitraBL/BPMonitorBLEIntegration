@@ -13,39 +13,28 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.Toolbar;
 
-import com.github.mikephil.charting.charts.CandleStickChart;
 import com.github.mikephil.charting.charts.CombinedChart;
-import com.github.mikephil.charting.charts.ScatterChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.CandleData;
 import com.github.mikephil.charting.data.CandleDataSet;
 import com.github.mikephil.charting.data.CandleEntry;
 import com.github.mikephil.charting.data.CombinedData;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.ScatterData;
-import com.github.mikephil.charting.data.ScatterDataSet;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
-import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.utils.EntryXComparator;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -55,14 +44,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 public class HomePage extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
-    TextView bloodpressureText, pulseText, nameText, addressText, systaVal, diastaVal;
-//   RecyclerView currentReading;
-    List<String> readingList;
-    ArrayAdapter adapter;
+    TextView bloodpressureText, pulseText, nameText, addressText;
     private String TAG = HomePage.class.getName();
     List<BloodPressureDB> newTask = new ArrayList<>();
     BottomNavigationView bottomNavigationView;
@@ -85,8 +70,6 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
         bloodpressureText = findViewById(R.id.blood_pressure);
         pulseText = findViewById(R.id.pulse);
         combinedChart = findViewById(R.id.reading_list);
-//        currentReading = findViewById(R.id.reading_list);
-//        currentReading.setLayoutManager(new LinearLayoutManager(this));
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
 //        candleStick = findViewById(R.id.reading_list);
         analyticBtn = findViewById(R.id.next_btn);
@@ -184,7 +167,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                     progressBar2.setProgress(list.getDystolic());
 
                     for (int i = 0; i < tasks.size(); i++) {
-                    if ("May 23".equals(tasks.get(i).getDate())) {
+                    if (date.equals(tasks.get(i).getDate())) {
                         newTask.add(tasks.get(i));
 //                        plotCandleStickTimeWise(newTask);
                         plotCombinedChart(newTask);
@@ -204,121 +187,221 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
         gt.execute();
     }
 
+    // Combined chart with candle stick & line chart.
     public void plotCombinedChart(List<BloodPressureDB> task) {
         timeList.clear();
         combinedChart.clear();
 
-        combinedChart.getDescription().setEnabled(false);
-        combinedChart.setBackgroundColor(Color.parseColor("#f9f9f9"));
-        combinedChart.setDrawGridBackground(false);
-        combinedChart.setDrawBarShadow(false);
-        combinedChart.setHighlightFullBarEnabled(false);
+        if (task != null && task.size() > 0) {
+            combinedChart.getDescription().setEnabled(false);
+            combinedChart.setBackgroundColor(Color.parseColor("#f9f9f9"));
+            combinedChart.setDrawGridBackground(false);
+            combinedChart.setDrawBarShadow(false);
+            combinedChart.setHighlightFullBarEnabled(false);
 
-        // draw bars behind lines
-        combinedChart.setDrawOrder(new CombinedChart.DrawOrder[]{
-                CombinedChart.DrawOrder.BAR, CombinedChart.DrawOrder.SCATTER
-        });
-
-        combinedChart.getAxisRight().setEnabled(false);
-        combinedChart.getAxisLeft().setEnabled(false);
-        combinedChart.getXAxis().setEnabled(false);
-
-        Legend legend = combinedChart.getLegend();
-        legend.setEnabled(false);
-
-        CustomMarkerView mv = new CustomMarkerView(HomePage.this, R.layout.marker_view);
-        // Set the marker to the chart
-        mv.setChartView(combinedChart);
-        combinedChart.setMarker(mv);
-        combinedChart.setDragEnabled(false);
-        combinedChart.setScaleEnabled(true);
-
-        // force pinch zoom along both axis
-        combinedChart.setPinchZoom(false);
-
-        // enable touch gestures
-        combinedChart.setTouchEnabled(true);
-        CombinedData data = new CombinedData();
-
-        data.setData(generateBarData(task));
-        data.setData(generateScatterData(task));
-
-        combinedChart.setData(data);
-        combinedChart.invalidate();
-    }
-
-        private BarData generateBarData(List<BloodPressureDB> task) {
-
-            ArrayList<BarEntry> entries1 = new ArrayList<>();
-            ArrayList<BarEntry> entries2 = new ArrayList<>();
-
-            int count = 0;
-//            for (int index = 0; index < count; index++) {
-//                entries1.add(new BarEntry(0, getRandom(25, 25)));
-//
-//                // stacked
-//                entries2.add(new BarEntry(0, new float[]{getRandom(13, 12), getRandom(13, 12)}));
-//            }
-
-            for (int i = 0; i < task.size();i++)
-            {
-                entries1.add(new BarEntry(count, task.get(i).getSystolic()));
+            for (BloodPressureDB list : task) {
+                timeList.add(list.getTime());
             }
 
-            BarDataSet set1 = new BarDataSet(entries1, "");
-            set1.setColor(Color.rgb(60, 220, 78));
-            set1.setValueTextColor(Color.rgb(60, 220, 78));
-            set1.setValueTextSize(10f);
-            set1.setAxisDependency(YAxis.AxisDependency.LEFT);
+            // draw bars behind lines
+            combinedChart.setDrawOrder(new CombinedChart.DrawOrder[]{
+                    CombinedChart.DrawOrder.CANDLE, CombinedChart.DrawOrder.LINE
+            });
 
-            BarDataSet set2 = new BarDataSet(entries2, "");
-            set2.setStackLabels(new String[]{"Stack 1", "Stack 2"});
-            set2.setColors(Color.rgb(61, 165, 255), Color.rgb(23, 197, 255));
-            set2.setValueTextColor(Color.rgb(61, 165, 255));
-            set2.setValueTextSize(10f);
-            set2.setAxisDependency(YAxis.AxisDependency.LEFT);
+            // Legend
+            Legend legend = combinedChart.getLegend();
+            legend.setWordWrapEnabled(false);
+            legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+            legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+            legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+            legend.setDrawInside(true);
+            legend.setEnabled(false);
 
-            float groupSpace = 0.06f;
-            float barSpace = 0.02f; // x2 dataset
-            float barWidth = 0.45f; // x2 dataset
-            // (0.45 + 0.02) * 2 + 0.06 = 1.00 -> interval per "group"
+//            X axis
+            XAxis xAxis = combinedChart.getXAxis();
+            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+            xAxis.setLabelCount(timeList.size());
+            xAxis.setValueFormatter(new IndexAxisValueFormatter(timeList));
+            xAxis.setAvoidFirstLastClipping(true);
+            xAxis.setLabelRotationAngle(-45);
+            xAxis.setDrawGridLines(false);
+            xAxis.setDrawAxisLine(false);
+            xAxis.setGranularity(1f);
+            xAxis.setGranularityEnabled(true);
+            xAxis.setCenterAxisLabels(false);
+            xAxis.setTextSize(8);
+            xAxis.setEnabled(true);
+            CustomMarkerView mv = new CustomMarkerView(HomePage.this, R.layout.marker_view);
+            // Set the marker to the chart
+            mv.setChartView(combinedChart);
+            combinedChart.setMarker(mv);
 
-            BarData d = new BarData(set1, set2);
-            d.setBarWidth(barWidth);
+            //Y axis
+            YAxis yAxisRight = combinedChart.getAxisRight();
+            yAxisRight.setEnabled(false);
+            YAxis yAxisLeft = combinedChart.getAxisLeft();
+            yAxisLeft.setLabelCount(6,true);
+            yAxisLeft.setDrawAxisLine(false);
+            yAxisLeft.setTextSize(8);
+            yAxisLeft.setAxisMinimum(50);
+            yAxisLeft.setAxisMaximum(200);
 
-            // make this BarData object grouped
-            d.groupBars(0, groupSpace, barSpace); // start at x = 0
+            // Set color as per the mode - Dark mode/Light mode.
+            switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+                case Configuration.UI_MODE_NIGHT_YES:
+                    xAxis.setTextColor(Color.WHITE);
+                    yAxisLeft.setTextColor(Color.WHITE);
+                    yAxisRight.setTextColor(Color.WHITE);
+                    break;
 
+                case Configuration.UI_MODE_NIGHT_NO:
+                    xAxis.setTextColor(Color.BLACK);
+                    yAxisLeft.setTextColor(Color.BLACK);
+                    yAxisRight.setTextColor(Color.BLACK);
+                    break;
+            }
+
+            combinedChart.setDragEnabled(true);
+            combinedChart.setScaleEnabled(true);
+
+            // force pinch zoom along both axis
+            combinedChart.setPinchZoom(true);
+
+            // enable touch gestures
+            combinedChart.setTouchEnabled(true);
+            CombinedData data = new CombinedData();
+
+            data.setData(generateCandleData(task));
+            data.setData(generateLineData(task));
+
+            combinedChart.setData(data);
+            combinedChart.notifyDataSetChanged();
+            combinedChart.invalidate();
+        }
+    }
+
+    // Candle stick chart time based.
+        private CandleData generateCandleData(List<BloodPressureDB> task) {
+            CandleData d = null;
+
+            if (task != null && task.size() > 0) {
+
+            int count = 0;
+                ArrayList<CandleEntry> entries1 = new ArrayList<>();
+
+            for (BloodPressureDB list : task) {
+                entries1.add(new CandleEntry(count, list.getSystolic(),list.getDystolic(),list.getSystolic(),list.getDystolic()));
+                count++;
+            }
+
+            Collections.sort(entries1,new EntryXComparator());
+
+            CandleDataSet cds = new CandleDataSet(entries1, "");
+            cds.setColor(Color.rgb(80, 80, 80));
+            cds.setShadowColor(Color.DKGRAY);
+            cds.setBarSpace(1f);
+            cds.setDecreasingColor(Color.parseColor("#FFA500"));
+            cds.setDecreasingPaintStyle(Paint.Style.FILL);
+            cds.setIncreasingColor(Color.parseColor("#FFA500"));
+            cds.setIncreasingPaintStyle(Paint.Style.STROKE);
+            cds.setDrawValues(false);
+            cds.setNeutralColor(Color.BLUE);
+
+            d = new CandleData(cds);
+
+            if (entries1.size() >= 5) {
+                combinedChart.setVisibleXRangeMaximum(5);
+            }
+            else
+            {
+                combinedChart.invalidate();
+            }
+        }
             return d;
         }
 
-        private ScatterData generateScatterData(List<BloodPressureDB> task) {
+    // Line chart time based.
+        private LineData generateLineData(List<BloodPressureDB> task) {
+            LineData d = null;
+            if (task != null && task.size() > 0) {
 
-            ScatterData d = new ScatterData();
-            ArrayList<Integer> colors = new ArrayList<Integer>();
+            d = new LineData();
+//            ArrayList<Integer> colors = new ArrayList<Integer>();
 //            for (String color : details.getSequenceColors()) {
 //                colors.add(Color.parseColor(color));
 //            }
             ArrayList<Entry> entries = new ArrayList<>();
+            ArrayList<Entry> entries1 = new ArrayList<>();
 
             int count = 0;
-            for(int i = 0; i <task.size(); i++)
-            {
-                entries.add(new Entry(count,task.get(i).getSystolic()));
+            for (int i = 0; i < task.size(); i++) {
+                entries.add(new Entry(count, task.get(i).getSystolic()));
+                entries1.add(new Entry(count,task.get(i).getDystolic()));
+                count++;
             }
-//            for (float index = 0; index < count; index += 0.5f)
-//                entries.add(new Entry(index + 0.25f, getRandom(10, 55),"title;"+colors.get((int) index)));
 
-            ScatterDataSet set = new ScatterDataSet(entries, "");
+                Collections.sort(entries,new EntryXComparator());
+
+            LineDataSet set = new LineDataSet(entries, "");
             set.setDrawHorizontalHighlightIndicator(false);
             set.setDrawVerticalHighlightIndicator(false);
-            set.setColors(colors);
-            set.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
-            set.setScatterShapeSize(20f);
-            set.setDrawValues(false);
+            set.setDrawCircles(false);
+            set.setColors(Color.BLUE);
             set.setValueTextSize(10f);
-            d.addDataSet(set);
+            set.setDrawValues(true);
 
+            Collections.sort(entries1,new EntryXComparator());
+            LineDataSet set2 = new LineDataSet(entries1,"");
+            set2.setDrawHorizontalHighlightIndicator(false);
+            set2.setDrawVerticalHighlightIndicator(false);
+            set2.setDrawCircles(false);
+            set2.setColors(Color.RED);
+            set2.setValueTextSize(10f);
+            set2.setDrawValues(true);
+
+                // Set color as per the mode - Dark mode/Light mode.
+                switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+                    case Configuration.UI_MODE_NIGHT_YES:
+                        set.setValueTextColor(Color.WHITE);
+                        set2.setValueTextColor(Color.WHITE);
+                        break;
+                    case Configuration.UI_MODE_NIGHT_NO:
+                        set.setValueTextColor(Color.BLACK);
+                        set2.setValueTextColor(Color.BLACK);
+                        break;
+                }
+
+                d.addDataSet(set);
+                d.addDataSet(set2);
+
+                if (entries.size() >= 5) {
+                    combinedChart.setVisibleXRangeMaximum(5);
+                }
+                else
+                {
+                    combinedChart.invalidate();
+                }
+
+                if (entries1.size() >= 5) {
+                    combinedChart.setVisibleXRangeMaximum(5);
+                }
+                else
+                {
+                    combinedChart.invalidate();
+                }
+
+//                if (entries1.size() > 1){
+//                    Entry lastEntry = entries1.get(entries1.size()-1);
+//                    Highlight highlight = new Highlight(lastEntry.getX(), lastEntry.getY(), 0);
+//                    highlight.setDataIndex(0);
+//                    combinedChart.highlightValue(highlight);
+//                    combinedChart.moveViewToX(timeList.size()-1);
+//                }
+//                else
+//                {
+//                    Log.i(TAG, "No data found!!!");
+//                }
+        }
             return d;
         }
     }

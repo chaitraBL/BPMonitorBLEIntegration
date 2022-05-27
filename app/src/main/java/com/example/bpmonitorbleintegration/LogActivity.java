@@ -24,10 +24,15 @@ import android.widget.EditText;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class LogActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -35,6 +40,7 @@ public class LogActivity extends AppCompatActivity implements BottomNavigationVi
     List<BloodPressureDB> newTask = new ArrayList<>();
     BottomNavigationView logBottomNavigationView;
     EditText startDate, endDate;
+    List<Date> resultDate = new ArrayList<>();
 
     RecyclerView logRecycleView;
     Button selectBtn;
@@ -140,12 +146,50 @@ public class LogActivity extends AppCompatActivity implements BottomNavigationVi
 
                 if (tasks.size() > 0) {
 
-                    DateFormat df1 = new SimpleDateFormat("MMM dd"); // Format date
-                    String date = df1.format(Calendar.getInstance().getTime());
-
                         ReadingsAdapter adapter = new ReadingsAdapter(LogActivity.this, tasks);
                         logRecycleView.setAdapter(adapter);
                         adapter.notifyDataSetChanged();
+
+                    selectBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Date start_var = null, end_var = null;
+                            ArrayList<String> selectedDate = new ArrayList<>();
+                            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd", Locale.ENGLISH);
+                            sdf.setTimeZone(TimeZone.getTimeZone("T"));
+//                            TimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH);
+//                            LocalDate date = LocalDate.parse(string, formatter);
+                            try {
+//                                start_var = sdf.parse(startDate.getText().toString());
+                                start_var = new java.sql.Date(sdf.parse(startDate.getText().toString()).getTime());
+//                                end_var = sdf.parse(endDate.getText().toString());
+                                end_var = new java.sql.Date(sdf.parse(endDate.getText().toString()).getTime());
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+
+                            resultDate = getDates(start_var,end_var);
+                            Log.i(TAG, "onClick: result date " + resultDate);
+
+                            for (Date result : resultDate) {
+                                selectedDate.add(String.valueOf(result));
+                            }
+
+                           for (BloodPressureDB i : tasks) {
+                               if (selectedDate.equals(i.getDate()))
+                               {
+                                   newTask.add(i);
+                               }
+                           }
+
+                            Log.i(TAG, "onClick: new task " + newTask);
+                            ReadingsAdapter adapter = new ReadingsAdapter(LogActivity.this, newTask);
+                            logRecycleView.setAdapter(adapter);
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+
+
 
                 }
                 else {
@@ -155,6 +199,35 @@ public class LogActivity extends AppCompatActivity implements BottomNavigationVi
         }
         GetTasks gt = new GetTasks();
         gt.execute();
+    }
+
+    public static List<Date> getDates(Date startDate, Date endDate) {
+        ArrayList<Date> dates = new ArrayList<Date>();
+//        DateFormat df1 = new SimpleDateFormat("MMM dd");
+
+//        Date date1 = null;
+//        Date date2 = null;
+//
+//        try {
+//            date1 = df1.parse(startDate);
+//            date2 = df1.parse(endDate);
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+
+        Calendar cal1 = Calendar.getInstance();
+        cal1.setTime(startDate);
+
+
+        Calendar cal2 = Calendar.getInstance();
+        cal2.setTime(endDate);
+
+        while(!cal1.after(cal2))
+        {
+            dates.add(cal1.getTime());
+            cal1.add(Calendar.DATE, 1);
+        }
+        return dates;
     }
 
 }
