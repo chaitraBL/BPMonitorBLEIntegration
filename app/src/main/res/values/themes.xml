@@ -8,6 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+<!--        <item name="mediumBlue">@colo</item>-->
     </style>
 
     <!-- Base application theme. -->
@@ -37,7 +38,5 @@
             <item name="colorPrimaryDark">@color/purple_700</item>
             <item name="colorAccent">@color/colorAccent</item>
         </style>
-
-
 
 </resources>

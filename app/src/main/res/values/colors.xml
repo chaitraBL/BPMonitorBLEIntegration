@@ -9,5 +9,14 @@
     <color name="white">#FFFFFFFF</color>
     <color name="colorAccent">#09093A</color>
     <color name="blue_200">#151B54</color>
-<!--    <Color name="platinum">#FFAEADAD</Color>-->
+    <color name="medium_blue"> #0000CD </color>
+    <color name="forest_green">#228B22</color>
+    <color name="rebeccaPurple">#663399</color>
+<!--    <Color name="platinum_100">#FFAEADAD</Color>-->
+
+    <array name="colors_hex_code">
+        <item>@color/medium_blue</item>
+        <item>@color/forest_green</item>
+        <item>@color/rebeccaPurple</item>
+    </array>
 </resources>

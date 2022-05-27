@@ -142,7 +142,8 @@
                     android:layout_marginStart="5dp"
                     android:layout_marginTop="5dp"
                     android:indeterminate="false"
-                    android:progressTint="#550178"
+                    android:progressTint="#D53434"
+                    android:progress="100"
                     android:max="200" />
 
                 <TextView
@@ -151,8 +152,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="3dp"
                     android:layout_marginTop="5dp"
-                    android:text="@string/systolic"
                     android:fontFamily="@font/arial"
+                    android:text="@string/systolic"
                     android:textColor="@color/black"
                     android:textSize="10sp"
                     tools:ignore="SmallSp" />
@@ -174,7 +175,8 @@
                     android:layout_marginTop="5dp"
                     android:indeterminate="false"
                     android:max="200"
-                    android:progressTint="#02416A"/>
+                    android:progress="100"
+                    android:progressTint="#5E35B1"/>
 
                 <TextView
                     android:id="@+id/diasta_pbText"
@@ -362,23 +364,23 @@
 
     <com.github.mikephil.charting.charts.CombinedChart
         android:layout_width="match_parent"
-        android:layout_height="230dp"
+        android:layout_height="240dp"
         android:id="@+id/reading_list"
         android:layout_below="@+id/analytics_home"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"/>
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNavigationView"
-            style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_below="@+id/reading_list"
-            android:layout_alignParentBottom="true"
-            android:background="@color/white"
-            app:itemIconTint="@drawable/navigation_item_color"
-            app:itemTextColor="@drawable/navigation_item_color"
-            app:menu="@menu/bottom_nav_menu" />
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/reading_list"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        app:itemIconTint="@drawable/navigation_item_color"
+        app:itemTextColor="@drawable/navigation_item_color"
+        app:menu="@menu/bottom_nav_menu" />
     <!--    android:background="#151B54"-->
 
 </RelativeLayout>

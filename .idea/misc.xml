@@ -4,7 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/drawable/background_drawable.xml" value="0.5061538461538462" />
-        <entry key="app/src/main/res/drawable/background_drawable1.xml" value="0.4703703703703704" />
+        <entry key="app/src/main/res/drawable/background_drawable1.xml" value="0.25" />
         <entry key="app/src/main/res/drawable/background_line.xml" value="0.4041666666666667" />
         <entry key="app/src/main/res/drawable/bg_transparent.xml" value="0.37395833333333334" />
         <entry key="app/src/main/res/drawable/bg_transparent1.xml" value="0.40520833333333334" />
@@ -16,7 +16,7 @@
         <entry key="app/src/main/res/font/arial_font.xml" value="0.46111111111111114" />
         <entry key="app/src/main/res/font/helvetica.xml" value="0.46111111111111114" />
         <entry key="app/src/main/res/layout/activity_data_transfer.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/activity_home_page.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/activity_home_page.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_log.xml" value="0.3578125" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.5" />
         <entry key="app/src/main/res/layout/activity_manual_readings.xml" value="0.33" />
