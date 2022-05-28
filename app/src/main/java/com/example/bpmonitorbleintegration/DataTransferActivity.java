@@ -212,15 +212,17 @@ public class DataTransferActivity extends AppCompatActivity{
                                                                     runOnUiThread(new Runnable() {
                                                                         @Override
                                                                         public void run() {
+                                                                            Log.i(TAG, "run: cuff replaced " + Constants.is_cuffReplaced);
                                                                             if (Constants.is_ackReceived == true) {
                                                                                 mCountDownTimer.cancel();
                                                                                 dialog.dismiss();
                                                                                 Constants.is_readingStarted = false;
                                                                                 Constants.is_resultReceived = false;
 //                                                                                Constants.is_ackReceived = false;
-
-                                                                                Log.i(TAG, "run: cuff replaced " + Constants.is_cuffReplaced);
+                                                                            }
+                                                                            else {
                                                                                 if (Constants.is_cuffReplaced == true) {
+                                                                                    dialog.dismiss();
                                                                                     alertDialogForReset();
                                                                                 }
                                                                             }
@@ -235,6 +237,7 @@ public class DataTransferActivity extends AppCompatActivity{
                                                                     runOnUiThread(new Runnable() {
                                                                         @Override
                                                                         public void run() {
+                                                                            Log.i(TAG, "run: cuff replaced " + Constants.is_cuffReplaced);
                                                                             if (Constants.is_ackReceived == false){
 //                                                Log.i(TAG, "Start again");
                                                                                 dialog.show();
@@ -242,6 +245,10 @@ public class DataTransferActivity extends AppCompatActivity{
 //                            Log.i(TAG, "Stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
                                                                                 mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
                                                                                 start();
+                                                                            }
+                                                                            else if (Constants.is_cuffReplaced == true) {
+                                                                                dialog.dismiss();
+                                                                                alertDialogForReset();
                                                                             }
 //
                                                                         }
