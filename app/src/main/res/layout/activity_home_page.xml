@@ -142,7 +142,6 @@
                     android:layout_marginStart="5dp"
                     android:layout_marginTop="5dp"
                     android:indeterminate="false"
-                    android:progressTint="#D53434"
                     android:progress="100"
                     android:max="200" />
 
@@ -175,8 +174,7 @@
                     android:layout_marginTop="5dp"
                     android:indeterminate="false"
                     android:max="200"
-                    android:progress="100"
-                    android:progressTint="#5E35B1"/>
+                    android:progress="100"/>
 
                 <TextView
                     android:id="@+id/diasta_pbText"
@@ -191,6 +189,8 @@
                     tools:ignore="SmallSp" />
 
             </LinearLayout>
+
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -224,7 +224,7 @@
             android:layout_width="150dp"
             android:layout_height="200dp"
             android:layout_marginStart="20dp"
-            android:background="@drawable/background_drawable"
+            android:background="@drawable/background_drawable1"
             android:elevation="1dp"
             android:orientation="vertical">
 
@@ -240,7 +240,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="3dp"
                     android:src="@mipmap/heartrate_foreground"
-                    app:tint="#7E7E7E" />
+                    app:tint="#D2535252" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -250,7 +250,7 @@
                     android:layout_marginBottom="3dp"
                     android:text="@string/heart_rate"
                     android:fontFamily="@font/arial"
-                    android:textColor="#7E7E7E"
+                    android:textColor="#393636"
                     android:textSize="13sp"
                     android:textStyle="bold" />
 

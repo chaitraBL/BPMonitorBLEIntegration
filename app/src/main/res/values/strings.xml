@@ -39,4 +39,5 @@
     <string name="end_date">End Date</string>
     <string name="select">Select</string>
     <string name="no_data_found">No Data Found</string>
+    <string name="reset">reset</string>
 </resources>

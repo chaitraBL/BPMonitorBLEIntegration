@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".LogActivity">
 
         <LinearLayout
@@ -54,7 +55,6 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:id="@+id/logLinear_layout"
-            android:layout_below="@+id/lig_linear"
             android:layout_marginTop="5dp"
             android:gravity="center"
             android:weightSum="1">
@@ -122,9 +122,8 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="500dp"
+            android:layout_height="520dp"
             android:id="@+id/list_layout"
-            android:layout_below="@+id/lig_linear"
             android:layout_marginTop="5dp">
                 <TextView
                     android:layout_width="match_parent"
@@ -135,10 +134,11 @@
                     android:textSize="18sp"
                     android:text="@string/no_data_found"
                     android:visibility="invisible"/>
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/log_list"
                     android:layout_width="match_parent"
-                    android:layout_height="500dp"
+                    android:layout_height="match_parent"
                     android:background="@drawable/bg_transparent1">
                         <!--                #ECEFF1-->
                 </androidx.recyclerview.widget.RecyclerView>
@@ -149,12 +149,10 @@
             style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_below="@+id/list_layout"
-            android:layout_alignParentBottom="true"
+            android:layout_marginTop="5dp"
             android:background="@color/white"
             app:itemIconTint="@drawable/navigation_item_color"
             app:itemTextColor="@drawable/navigation_item_color"
             app:menu="@menu/bottom_nav_menu" />
 
-</RelativeLayout>
+</LinearLayout>

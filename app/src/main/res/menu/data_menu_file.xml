@@ -6,9 +6,9 @@
         android:title="@string/disable_bluetooth"
         app:showAsAction="ifRoom"/>
 
-    <item android:id="@+id/read_database"
-        android:icon="@drawable/ic_baseline_read_more_24"
-        android:title="@string/search_devices"
-        app:showAsAction="always"/>
+<!--    <item android:id="@+id/reset"-->
+<!--        android:icon="@mipmap/reset"-->
+<!--        android:title="@string/reset"-->
+<!--        app:showAsAction="always"/>-->
 
 </menu>

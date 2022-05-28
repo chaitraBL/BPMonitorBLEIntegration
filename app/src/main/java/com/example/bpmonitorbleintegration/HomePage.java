@@ -8,6 +8,7 @@ import androidx.sqlite.db.SupportSQLiteOpenHelper;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -163,8 +164,8 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                     bloodpressureText.setText(list.getSystolic() + " / " + list.getDystolic() + " mmHg");
                     pulseText.setText(list.getHeartRate() + " bpm");
 
-                    progressBar1.setProgress(list.getSystolic());
-                    progressBar2.setProgress(list.getDystolic());
+                   changeSystolicProgress(list.getSystolic());
+                   changeDiastolicProgress(list.getDystolic());
 
                     for (int i = 0; i < tasks.size(); i++) {
                     if (date.equals(tasks.get(i).getDate())) {
@@ -187,6 +188,60 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
         gt.execute();
     }
 
+    private void changeSystolicProgress(int systolic) {
+        if (systolic < 80) {
+            progressBar1.setProgress(systolic);
+            progressBar1.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#90EE90")));
+        }
+        else if (systolic <= 120) {
+            progressBar1.setProgress(systolic);
+            progressBar1.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#008000")));
+        }
+        else if (systolic <= 139) {
+            progressBar1.setProgress(systolic);
+            progressBar1.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#FFD700")));
+        }
+        else if (systolic <= 159) {
+            progressBar1.setProgress(systolic);
+            progressBar1.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#FFA500")));
+        }
+        else if (systolic <= 179) {
+            progressBar1.setProgress(systolic);
+            progressBar1.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#FF8C00")));
+        }
+        else {
+            progressBar1.setProgress(systolic);
+            progressBar1.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#FF0000")));
+        }
+    }
+
+    private void changeDiastolicProgress(int diastolic) {
+        if (diastolic < 60) {
+            progressBar2.setProgress(diastolic);
+            progressBar2.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#90EE90")));
+        }
+        else if (diastolic <= 80) {
+            progressBar2.setProgress(diastolic);
+            progressBar2.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#008000")));
+        }
+        else if (diastolic <= 89) {
+            progressBar2.setProgress(diastolic);
+            progressBar2.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#FFD700")));
+        }
+        else if (diastolic <= 99) {
+            progressBar2.setProgress(diastolic);
+            progressBar2.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#FFA500")));
+        }
+        else if (diastolic <= 109) {
+            progressBar2.setProgress(diastolic);
+            progressBar2.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#FF8C00")));
+        }
+        else {
+            progressBar2.setProgress(diastolic);
+            progressBar2.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#FF0000")));
+        }
+    }
+
     // Combined chart with candle stick & line chart.
     public void plotCombinedChart(List<BloodPressureDB> task) {
         timeList.clear();
@@ -194,7 +249,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
 
         if (task != null && task.size() > 0) {
             combinedChart.getDescription().setEnabled(false);
-            combinedChart.setBackgroundColor(Color.parseColor("#f9f9f9"));
+//            combinedChart.setBackgroundColor(Color.parseColor("#f9f9f9"));
             combinedChart.setDrawGridBackground(false);
             combinedChart.setDrawBarShadow(false);
             combinedChart.setHighlightFullBarEnabled(false);
@@ -231,10 +286,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             xAxis.setCenterAxisLabels(false);
             xAxis.setTextSize(8);
             xAxis.setEnabled(true);
-            CustomMarkerView mv = new CustomMarkerView(HomePage.this, R.layout.marker_view);
-            // Set the marker to the chart
-            mv.setChartView(combinedChart);
-            combinedChart.setMarker(mv);
+
 
             //Y axis
             YAxis yAxisRight = combinedChart.getAxisRight();
@@ -306,6 +358,10 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             cds.setIncreasingPaintStyle(Paint.Style.STROKE);
             cds.setDrawValues(false);
             cds.setNeutralColor(Color.BLUE);
+            CustomMarkerView mv = new CustomMarkerView(HomePage.this, R.layout.marker_view);
+                // Set the marker to the chart
+                 mv.setChartView(combinedChart);
+                combinedChart.setMarker(mv);
 
             d = new CandleData(cds);
 
@@ -405,6 +461,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             return d;
         }
     }
+
     // Candle stick chart time based.
 //    public void plotCandleStickTimeWise(List<BloodPressureDB> tasks) {
 //        yVal.clear();
@@ -513,3 +570,41 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
 //        }
 //    }
 //}
+
+//
+//if (systolic < 80 || diastolic < 60) {
+//        progressBar1.setProgress(systolic);
+//        progressBar2.setProgress(diastolic);
+//        progressBar1.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#90EE90")));
+//        progressBar2.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#90EE90")));
+//        }
+//        else if ((systolic >= 80 && systolic <= 120) || (diastolic >= 60 && diastolic <= 80)) {
+//        progressBar1.setProgress(systolic);
+//        progressBar2.setProgress(diastolic);
+//        progressBar1.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#008000")));
+//        progressBar2.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#008000")));
+//        }
+//        else if ((systolic > 120 && systolic <= 139) || (diastolic > 80 && diastolic <= 89)) {
+//        progressBar1.setProgress(systolic);
+//        progressBar2.setProgress(diastolic);
+//        progressBar1.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#FFD700")));
+//        progressBar2.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#FFD700")));
+//        }
+//        else if ((systolic >= 140 && systolic <= 159) || (diastolic >= 90 && diastolic <= 99)) {
+//        progressBar1.setProgress(systolic);
+//        progressBar2.setProgress(diastolic);
+//        progressBar1.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#FFA500")));
+//        progressBar2.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#FFA500")));
+//        }
+//        else if ((systolic >= 160 && systolic <= 179) || (diastolic >= 100 && diastolic <= 109)) {
+//        progressBar1.setProgress(systolic);
+//        progressBar2.setProgress(diastolic);
+//        progressBar1.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#FF8C00")));
+//        progressBar2.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#FF8C00")));
+//        }
+//        else if ((systolic >= 180) || (diastolic >= 110)) {
+//        progressBar1.setProgress(systolic);
+//        progressBar2.setProgress(diastolic);
+//        progressBar1.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#FF0000")));
+//        progressBar2.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#FF0000")));
+//        }

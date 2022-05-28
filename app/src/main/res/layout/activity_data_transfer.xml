@@ -161,109 +161,109 @@
         android:layout_below="@+id/rate_val"
         android:layout_margin="8dp"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="1"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_below="@+id/range_val"
-        android:id="@+id/ll_list">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/date"
-            android:textColor="?android:textColorPrimary"
-            android:textSize="12sp"
-            android:fontFamily="@font/arial"
-            android:layout_weight="0.17"
-            android:gravity="center"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/manual_time"
-            android:text="@string/time"
-            android:textSize="12sp"
-            android:textColor="?android:textColorPrimary"
-            android:layout_weight="0.17"
-            android:fontFamily="@font/arial"
-            android:gravity="center"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sys"
-            android:textSize="12sp"
-            android:layout_weight="0.17"
-            android:textColor="?android:textColorPrimary"
-            android:gravity="center"
-            android:fontFamily="@font/arial"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/dya"
-            android:textSize="12sp"
-            android:layout_weight="0.17"
-            android:fontFamily="@font/arial"
-            android:textColor="?android:textColorPrimary"
-            android:gravity="center"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/rate"
-            android:textSize="12sp"
-            android:layout_weight="0.17"
-            android:gravity="center"
-            android:fontFamily="@font/arial"
-            android:textColor="?android:textColorPrimary"
-            android:textStyle="bold"/>
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:weightSum="1"-->
+<!--        android:layout_marginTop="5dp"-->
+<!--        android:layout_marginLeft="10dp"-->
+<!--        android:layout_marginRight="10dp"-->
+<!--        android:layout_below="@+id/range_val"-->
+<!--        android:id="@+id/ll_list">-->
 
 <!--        <TextView-->
 <!--            android:layout_width="wrap_content"-->
 <!--            android:layout_height="wrap_content"-->
-<!--            android:text="MAP"-->
+<!--            android:text="@string/date"-->
+<!--            android:textColor="?android:textColorPrimary"-->
 <!--            android:textSize="12sp"-->
+<!--            android:fontFamily="@font/arial"-->
 <!--            android:layout_weight="0.17"-->
 <!--            android:gravity="center"-->
 <!--            android:textStyle="bold"/>-->
 
-    </LinearLayout>
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:id="@+id/manual_time"-->
+<!--            android:text="@string/time"-->
+<!--            android:textSize="12sp"-->
+<!--            android:textColor="?android:textColorPrimary"-->
+<!--            android:layout_weight="0.17"-->
+<!--            android:fontFamily="@font/arial"-->
+<!--            android:gravity="center"-->
+<!--            android:textStyle="bold"/>-->
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/ll_list">
-        <!--        <TextView-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_centerInParent="true"-->
-        <!--            android:id="@+id/txt_no_data_found"-->
-        <!--            android:gravity="center"-->
-        <!--            android:textSize="18sp"-->
-        <!--            android:text="No Data Found"-->
-        <!--            android:visibility="invisible"></TextView>-->
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/sys"-->
+<!--            android:textSize="12sp"-->
+<!--            android:layout_weight="0.17"-->
+<!--            android:textColor="?android:textColorPrimary"-->
+<!--            android:gravity="center"-->
+<!--            android:fontFamily="@font/arial"-->
+<!--            android:textStyle="bold"/>-->
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerview_tasks"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:background="#ECEFF1"
-            android:layout_marginBottom="10dp">
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/dya"-->
+<!--            android:textSize="12sp"-->
+<!--            android:layout_weight="0.17"-->
+<!--            android:fontFamily="@font/arial"-->
+<!--            android:textColor="?android:textColorPrimary"-->
+<!--            android:gravity="center"-->
+<!--            android:textStyle="bold"/>-->
 
-        </androidx.recyclerview.widget.RecyclerView>
-    </RelativeLayout>
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/rate"-->
+<!--            android:textSize="12sp"-->
+<!--            android:layout_weight="0.17"-->
+<!--            android:gravity="center"-->
+<!--            android:fontFamily="@font/arial"-->
+<!--            android:textColor="?android:textColorPrimary"-->
+<!--            android:textStyle="bold"/>-->
+
+<!--&lt;!&ndash;        <TextView&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_width="wrap_content"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_height="wrap_content"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:text="MAP"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:textSize="12sp"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_weight="0.17"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:gravity="center"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:textStyle="bold"/>&ndash;&gt;-->
+
+<!--    </LinearLayout>-->
+
+<!--    <RelativeLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_below="@+id/ll_list">-->
+<!--        &lt;!&ndash;        <TextView&ndash;&gt;-->
+<!--        &lt;!&ndash;            android:layout_width="match_parent"&ndash;&gt;-->
+<!--        &lt;!&ndash;            android:layout_height="wrap_content"&ndash;&gt;-->
+<!--        &lt;!&ndash;            android:layout_centerInParent="true"&ndash;&gt;-->
+<!--        &lt;!&ndash;            android:id="@+id/txt_no_data_found"&ndash;&gt;-->
+<!--        &lt;!&ndash;            android:gravity="center"&ndash;&gt;-->
+<!--        &lt;!&ndash;            android:textSize="18sp"&ndash;&gt;-->
+<!--        &lt;!&ndash;            android:text="No Data Found"&ndash;&gt;-->
+<!--        &lt;!&ndash;            android:visibility="invisible"></TextView>&ndash;&gt;-->
+
+<!--        <androidx.recyclerview.widget.RecyclerView-->
+<!--            android:id="@+id/recyclerview_tasks"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_marginStart="10dp"-->
+<!--            android:layout_marginTop="10dp"-->
+<!--            android:layout_marginEnd="10dp"-->
+<!--            android:background="#ECEFF1"-->
+<!--            android:layout_marginBottom="10dp">-->
+
+<!--        </androidx.recyclerview.widget.RecyclerView>-->
+<!--    </RelativeLayout>-->
 
 </RelativeLayout>

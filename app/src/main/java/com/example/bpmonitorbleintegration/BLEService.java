@@ -256,6 +256,8 @@ public class BLEService extends Service implements DecodeListener{
                         Constants.startValue = decoder.replaceArrayVal(Constants.startValue,Constants.deviceId);
                         Constants.ack = decoder.replaceArrayVal(Constants.ack,Constants.deviceId);
                         Constants.noAck = decoder.replaceArrayVal(Constants.noAck,Constants.deviceId);
+                        Constants.resetValue = decoder.replaceArrayVal(Constants.resetValue,Constants.deviceId);
+                        Constants.noResetValue = decoder.replaceArrayVal(Constants.noResetValue,Constants.deviceId);
                         Constants.checkSumError = decoder.replaceArrayVal(Constants.checkSumError,Constants.deviceId);
 //                        Log.i(TAG, "new start value " + Constants.startValue);
                         break;
@@ -309,6 +311,7 @@ public class BLEService extends Service implements DecodeListener{
                                 intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
                                 break;
                             case 6:
+                                Constants.is_cuffReplaced = true;
                                 msg = "Indicates Cuff replacement!!!";
                                 intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
                                 break;
