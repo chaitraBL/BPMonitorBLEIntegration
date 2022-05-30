@@ -19,6 +19,7 @@ import android.widget.Toast;
 import android.widget.Toolbar;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ManualReadings extends AppCompatActivity {
     EditText systolic, diastolic, heartRate;
@@ -46,7 +47,7 @@ public class ManualReadings extends AppCompatActivity {
         database = new RoomDB();
 
         ActionBar actioBar = getSupportActionBar();
-        actioBar.setTitle("Manual Readings");
+        Objects.requireNonNull(actioBar).setTitle(R.string.manual_reading);
         actioBar.setHomeAsUpIndicator(R.drawable.ic_baseline_keyboard_arrow_left_24);
         actioBar.setDisplayHomeAsUpEnabled(true);
 
@@ -79,9 +80,6 @@ public class ManualReadings extends AppCompatActivity {
                     //Saves to local database.
                     database.saveTask("No device",Integer.parseInt(systolic.getText().toString()),Integer.parseInt(diastolic.getText().toString()),Integer.parseInt(heartRate.getText().toString()),map,ManualReadings.this);
 
-                    //Fetch local database value to recyclerview.
-//                    getManualTasks();
-
                     progressBar.setVisibility(View.VISIBLE);
                     //After saving data make textfield empty.
                     systolic.setText("");
@@ -93,7 +91,6 @@ public class ManualReadings extends AppCompatActivity {
             }
         });
 
-//        getManualTasks();
     }
 
     @Override
@@ -104,31 +101,4 @@ public class ManualReadings extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-//    //To retrieve data from Room DB.
-//    private void getManualTasks() {
-//        class GetTasks extends AsyncTask<Void, Void, List<BloodPressureDB>> {
-//
-//            @Override
-//            protected List<BloodPressureDB> doInBackground(Void... voids) {
-//                List<BloodPressureDB> taskList = DatabaseClient
-//                        .getInstance(getApplicationContext())
-//                        .getAppDatabase()
-//                        .bpReadingsDao()
-//                        .getAll();
-//                return taskList;
-//            }
-//
-//            @Override
-//            protected void onPostExecute(List<BloodPressureDB> tasks) {
-//                super.onPostExecute(tasks);
-//
-//                ReadingsAdapter adapter = new ReadingsAdapter(ManualReadings.this, tasks);
-//                manualList.setAdapter(adapter);
-//                adapter.notifyDataSetChanged();
-//            }
-//        }
-//        GetTasks gt = new GetTasks();
-//        gt.execute();
-//    }
 }

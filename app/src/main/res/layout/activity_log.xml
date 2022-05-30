@@ -8,45 +8,75 @@
     tools:context=".LogActivity">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:id="@+id/lig_linear">
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:weightSum="0.9">
 
-                <EditText
-                    android:id="@+id/start_date"
-                    android:layout_width="100dp"
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="10dp"
-                    android:ems="10"
-                    android:fontFamily="@font/arial"
-                    android:textSize="12sp"
-                    android:textColor="?android:textColorPrimary"
-                    android:hint="@string/start_date" />
+                    android:layout_weight="0.3"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:id="@+id/start_date_layout">
 
-                <EditText
-                    android:id="@+id/end_date"
-                    android:layout_width="100dp"
+                        <TextView
+                            android:id="@+id/txt_start_date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/start_date"
+                            android:paddingLeft="5dp"/>
+                        <Button
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:background="@drawable/ic_baseline_calendar_today_24"
+                            android:layout_alignParentRight="true"
+                            android:id="@+id/btn_start_date"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="10dp"
-                    android:ems="10"
-                    android:fontFamily="@font/arial"
-                    android:textSize="12sp"
-                    android:textColor="?android:textColorPrimary"
-                    android:hint="@string/end_date" />
+                    android:layout_weight="0.3"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:paddingLeft="10dp"
+                    android:id="@+id/end_date_layout">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/end_date"
+                            android:paddingLeft="5dp"
+                            android:id="@+id/txt_end_date"/>
+                        <Button
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:background="@drawable/ic_baseline_calendar_today_24"
+                            android:id="@+id/btn_end_date"
+                            android:layout_alignParentRight="true"/>
+                </RelativeLayout>
 
-                <Button
-                    android:layout_width="100dp"
-                    android:layout_height="40dp"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="10dp"
-                    android:text="@string/select"
-                    android:id="@+id/select"
-                    android:fontFamily="@font/arial"
-                    android:textSize="12sp"
-                    android:textStyle="bold"/>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.3"
+                    android:layout_gravity="center">
+                        <Button
+                            android:layout_width="match_parent"
+                            android:layout_height="38dp"
+                            android:text="@string/apply"
+                            android:gravity="center"
+                            android:layout_margin="10dp"
+                            android:textSize="12sp"
+                            android:id="@+id/btn_filter_logs"
+                            android:textAllCaps="false"/>
+<!--                        android:background="@drawable/graph_selection_txt_bg"-->
+                </RelativeLayout>
+
 
         </LinearLayout>
 
@@ -122,7 +152,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="520dp"
+            android:layout_height="500dp"
             android:id="@+id/list_layout"
             android:layout_marginTop="5dp">
                 <TextView

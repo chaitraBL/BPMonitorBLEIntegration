@@ -288,7 +288,7 @@ public class BLEService extends Service implements DecodeListener{
                         break;
 
                     case Constants.ERROR_COMMANDID:
-                        Constants.is_cuffReplaced = true;
+
                         int error = value[8];
                         switch (error) {
                             case 1:
@@ -314,6 +314,7 @@ public class BLEService extends Service implements DecodeListener{
                             case 6:
                                 msg = "Indicates Cuff replacement!!!";
                                 intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
+                                Constants.is_cuffReplaced = true;
                                 break;
                             default:
                                 msg = " ";
@@ -326,7 +327,7 @@ public class BLEService extends Service implements DecodeListener{
 //                        Log.i(TAG, "ack sent " + Constants.ack);
                         writeCharacteristics(characteristic,Constants.ack);
                         Constants.is_resultReceived = true;
-                        Constants.is_cuffReplaced = true;
+
                         break;
 
                     case Constants.ACK_COMMANDID:
@@ -547,10 +548,9 @@ public class BLEService extends Service implements DecodeListener{
     }
 
     @Override
-    public void errorMsg(int errNo) {
-//        Log.i(TAG, "Error " + errNo);
+    public void errorMsg(int err) {
         if (mHandler != null) {
-            mHandler.obtainMessage(errNo).sendToTarget();
+            mHandler.obtainMessage(err).sendToTarget();
         }
     }
 

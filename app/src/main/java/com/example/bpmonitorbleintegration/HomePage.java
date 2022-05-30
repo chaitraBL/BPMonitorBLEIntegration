@@ -93,10 +93,10 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
         SecondFragment secondFragment = new SecondFragment();
         ThirdFragment thirdFragment = new ThirdFragment();
 
-        getSupportActionBar().setTitle("DashBoard");
+        getSupportActionBar().setTitle(R.string.dashboard);
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#151B54")));
 
-        nameText.setText("Welcome  Chaitra");
+        nameText.setText("Welcome Chaitra");
         addressText.setText("Bangalore");
 
         getManualTasks();
@@ -124,10 +124,10 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             case R.id.home:
 //                startActivity(new Intent(HomePage.this, MainActivity.class));
                 break;
-            case R.id.analytics:
+            case R.id.profile:
 //                startActivity(new Intent(HomePage.this, LogActivity.class));
                 break;
-            case R.id.device_connect:
+            case R.id.logs:
                 startActivity(new Intent(HomePage.this, LogActivity.class));
                 break;
         }
@@ -168,7 +168,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                    changeDiastolicProgress(list.getDystolic());
 
                     for (int i = 0; i < tasks.size(); i++) {
-                    if (date.equals(tasks.get(i).getDate())) {
+                    if ("27-05-2022".equals(tasks.get(i).getDate())) {
                         newTask.add(tasks.get(i));
 //                        plotCandleStickTimeWise(newTask);
                         plotCombinedChart(newTask);
@@ -401,8 +401,12 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             LineDataSet set = new LineDataSet(entries, "");
             set.setDrawHorizontalHighlightIndicator(false);
             set.setDrawVerticalHighlightIndicator(false);
-            set.setDrawCircles(false);
-            set.setColors(Color.BLUE);
+            set.setDrawCircles(true);
+            set.setColors(Color.MAGENTA);
+            set.setCircleColor(Color.parseColor("#50EBEC"));
+            set.setCircleRadius(5f);
+            set.setDrawCircleHole(false);
+            set.enableDashedLine(10,5,0);
             set.setValueTextSize(10f);
             set.setDrawValues(true);
 
@@ -410,8 +414,12 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             LineDataSet set2 = new LineDataSet(entries1,"");
             set2.setDrawHorizontalHighlightIndicator(false);
             set2.setDrawVerticalHighlightIndicator(false);
-            set2.setDrawCircles(false);
+            set2.setDrawCircles(true);
+            set2.setDrawCircleHole(false);
+            set2.enableDashedLine(10,5,0);
             set2.setColors(Color.RED);
+            set2.setCircleColor(Color.parseColor("#50EBEC"));
+            set2.setCircleRadius(5f);
             set2.setValueTextSize(10f);
             set2.setDrawValues(true);
 

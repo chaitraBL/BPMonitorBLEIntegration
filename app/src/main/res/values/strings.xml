@@ -40,4 +40,12 @@
     <string name="select">Select</string>
     <string name="no_data_found">No Data Found</string>
     <string name="reset">reset</string>
+    <string name="dashboard">DashBoard</string>
+    <string name="welcome">Welcome</string>
+    <string name="manual_reading">Manual Readings</string>
+    <string name="readings">Readings</string>
+    <string name="connect_device">Connect Device</string>
+    <string name="ok">OK</string>
+    <string name="apply">Apply</string>
+
 </resources>

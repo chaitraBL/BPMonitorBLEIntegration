@@ -9,6 +9,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 //import org.apache.commons.codec.binary.Hex;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -45,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -58,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayAdapter<String> deviceAdapter;
     ListAdapter adapterLeScanResult;
     private BluetoothAdapter mBluetoothAdapter;
-    private int REQUEST_ENABLE_BT = 1;
+    private final int REQUEST_ENABLE_BT = 1;
     private Handler mHandler;
     private static final long SCAN_PERIOD = 100000;
     private BluetoothLeScanner mLEScanner;
@@ -105,10 +108,10 @@ public class MainActivity extends AppCompatActivity {
         checkPermissions(MainActivity.this, this);
         mHandler = new Handler();
 
-        ActionBar actioBar = getSupportActionBar();
-        actioBar.setTitle("Connect Device");
-        actioBar.setHomeAsUpIndicator(R.drawable.ic_baseline_keyboard_arrow_left_24);
-        actioBar.setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        Objects.requireNonNull(actionBar).setTitle(R.string.connect_device);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_keyboard_arrow_left_24);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
 
         bluetoothManager =
@@ -133,23 +136,15 @@ public class MainActivity extends AppCompatActivity {
 //            bluetoothDevice = (BluetoothDevice) adapterView.getItemAtPosition(i);
 
             String info = ((TextView) view).getText().toString();
-//            Log.i(TAG, " length " + info.length());
             String address = info.substring(info.length() - 17);
-//            Log.i(TAG, " address " + address);
-
-//            String name = info.substring(info.length() + 8);
-//            Log.i(TAG, " name " + name);
 
             String msg = info;
-//                    + "\n"
-//                    + getBTDevieType(bluetoothDevice);
-
             deviceAddress = address;
 
             new AlertDialog.Builder(MainActivity.this)
 //                    .setTitle(bluetoothDevice.getName())
                     .setMessage(msg)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
@@ -197,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -216,6 +212,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     @Override
     protected void onResume() {
         super.onResume();
@@ -273,10 +270,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Scan for bluetooth devices.
+    @SuppressLint("ObsoleteSdkInt")
     private void scanLeDevice(final boolean enable) {
         if (enable) {
             progressBar.setVisibility(View.GONE);
             mHandler.postDelayed(new Runnable() {
+                @SuppressLint("ObsoleteSdkInt")
                 @Override
                 public void run() {
                     if (Build.VERSION.SDK_INT < 21) {
@@ -351,9 +350,9 @@ public class MainActivity extends AppCompatActivity {
     //Check permissions for location.
     public void checkPermissions(Activity activity, Context context) {
         if (ContextCompat.checkSelfPermission(context,
-                android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
         } else {
-            ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     PERMISSIONS_REQUEST_LOCATION);
         }
     }

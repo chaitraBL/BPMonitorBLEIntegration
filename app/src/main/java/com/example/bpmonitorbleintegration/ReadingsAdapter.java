@@ -1,5 +1,6 @@
 package com.example.bpmonitorbleintegration;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,11 +27,39 @@ public class ReadingsAdapter extends RecyclerView.Adapter<ReadingsAdapter.Readin
         return new ReadingViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(ReadingViewHolder holder, int position) {
         BloodPressureDB t = readingList.get(position);
 //        holder.textViewAddress.setText(t.getName());
-        holder.textViewDate.setText(t.getDate());
+        String date = t.getDate();
+        String[] showDate = date.split("-");
+
+        if (showDate[1].equalsIgnoreCase("01")) {
+            holder.textViewDate.setText(showDate[0]+"-"+"JAN");
+        }else if(showDate[1].equalsIgnoreCase("02")){
+            holder.textViewDate.setText(showDate[0]+"-"+"FEB");
+        }else if(showDate[1].equalsIgnoreCase("03")){
+            holder.textViewDate.setText(showDate[0]+"-"+"MAR");
+        }else if(showDate[1].equalsIgnoreCase("04")){
+            holder.textViewDate.setText(showDate[0]+"-"+"APR");
+        }else if(showDate[1].equalsIgnoreCase("05")){
+            holder.textViewDate.setText(showDate[0]+"-"+"MAY");
+        }else if(showDate[1].equalsIgnoreCase("06")){
+            holder.textViewDate.setText(showDate[0]+"-"+"JUN");
+        }else if(showDate[1].equalsIgnoreCase("07")){
+            holder.textViewDate.setText(showDate[0]+"-"+"JLY");
+        }else if(showDate[1].equalsIgnoreCase("08")){
+            holder.textViewDate.setText(showDate[0]+"-"+"AUG");
+        }else if(showDate[1].equalsIgnoreCase("09")){
+            holder.textViewDate.setText(showDate[0]+"-"+"SEP");
+        }else if(showDate[1].equalsIgnoreCase("10")){
+            holder.textViewDate.setText(showDate[0]+"-"+"OCT");
+        }else if(showDate[1].equalsIgnoreCase("11")){
+            holder.textViewDate.setText(showDate[0]+"-"+"NOV");
+        }else if(showDate[1].equalsIgnoreCase("12")){
+            holder.textViewDate.setText(showDate[0]+"-"+"DEC");
+        }
         holder.textViewTime.setText(t.getTime());
         holder.textViewSysta.setText(String.valueOf(t.getSystolic()));
         holder.textViewDiasta.setText(String.valueOf(t.getDystolic()));

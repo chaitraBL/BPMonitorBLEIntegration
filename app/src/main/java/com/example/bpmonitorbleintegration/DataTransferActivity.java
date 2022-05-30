@@ -57,6 +57,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
@@ -128,7 +129,7 @@ public class DataTransferActivity extends AppCompatActivity{
         decoder = new Decoder();
         localDB = new RoomDB();
 
-        getSupportActionBar().setTitle("Readings");
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.readings);
 
         pref = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -212,27 +213,15 @@ public class DataTransferActivity extends AppCompatActivity{
                                                                     runOnUiThread(new Runnable() {
                                                                         @Override
                                                                         public void run() {
-                                                                            Log.i(TAG, "run: cuff replaced " + Constants.is_cuffReplaced);
-                                                                            if (Constants.is_ackReceived == true) {
-                                                                                mCountDownTimer.cancel();
-                                                                                dialog.dismiss();
-                                                                                Constants.is_readingStarted = false;
-                                                                                Constants.is_resultReceived = false;
-//                                                                                Constants.is_ackReceived = false;
-                                                                            }
-                                                                            if (Constants.is_cuffReplaced == true) {
-                                                                                    dialog.dismiss();
-                                                                                mCountDownTimer = new CountDownTimer(30, 10) {
+//                                                                            Log.i(TAG, "run: cuff replaced " + Constants.is_cuffReplaced);
+
+
+                                                                                mCountDownTimer = new CountDownTimer(50, 10) {
                                                                                     @Override
                                                                                     public void onTick(long l) {
                                                                                         counter++;
 //                                                Log.i(TAG, "counter Started " + startTime);
-                                                                                        runOnUiThread(new Runnable() {
-                                                                                            @Override
-                                                                                            public void run() {
-                                                                                                Log.i(TAG, "run: cuff replaced " + Constants.is_cuffReplaced);
-                                                                                            }
-                                                                                        });
+
                                                                                     }
 
                                                                                     @Override
@@ -241,14 +230,27 @@ public class DataTransferActivity extends AppCompatActivity{
                                                                                         runOnUiThread(new Runnable() {
                                                                                             @Override
                                                                                             public void run() {
-                                                                                                Log.i(TAG, "run: cuff replaced " + Constants.is_cuffReplaced);
-                                                                                                alertDialogForReset();
+                                                                                                if (Constants.is_ackReceived == true) {
+                                                                                                    mCountDownTimer.cancel();
+                                                                                                    dialog.dismiss();
+                                                                                                    Constants.is_readingStarted = false;
+                                                                                                    Constants.is_resultReceived = false;
+//                                                                                Constants.is_ackReceived = false;
+                                                                                                }
+
+//                                                                                                Log.i(TAG, " before run: cuff replaced " + Constants.is_cuffReplaced);
+//                                                                                                Toast.makeText(getApplicationContext(), "cuff replaced " + Constants.is_cuffReplaced, Toast.LENGTH_SHORT).show();
+                                                                                                if (Constants.is_cuffReplaced == true) {
+                                                                                                    dialog.dismiss();
+//                                                                                                Log.i(TAG, "run: cuff replaced " + Constants.is_cuffReplaced);
+                                                                                                    alertDialogForReset();
+                                                                                                }
                                                                                             }
                                                                                         });
                                                                                     }
                                                                                 }.start();
                                                                                 }
-                                                                            }
+
                                                                     });
                                                                 }
 
@@ -258,7 +260,7 @@ public class DataTransferActivity extends AppCompatActivity{
                                                                     runOnUiThread(new Runnable() {
                                                                         @Override
                                                                         public void run() {
-                                                                            Log.i(TAG, "run: cuff replaced " + Constants.is_cuffReplaced);
+//                                                                            Log.i(TAG, "run: cuff replaced " + Constants.is_cuffReplaced);
                                                                             if (Constants.is_ackReceived == false){
 //                                                Log.i(TAG, "Start again");
                                                                                 dialog.show();
@@ -309,12 +311,34 @@ public class DataTransferActivity extends AppCompatActivity{
                                                                     runOnUiThread(new Runnable() {
                                                                         @Override
                                                                         public void run() {
-                                                                            if (Constants.is_ackReceived == true) {
-                                                                                mCountDownTimer.cancel();
-                                                                                dialog.dismiss();
-                                                                            Constants.is_readingStarted = false;
+//                                                                            Log.i(TAG, "run ontick: ack " + Constants.is_ackReceived);
+//                                                                            Toast.makeText(getApplicationContext(), "ontick ack " + Constants.is_ackReceived, Toast.LENGTH_SHORT).show();
+                                                                            mCountDownTimer = new CountDownTimer(30, 10) {
+                                                                                @Override
+                                                                                public void onTick(long l) {
+                                                                                    counter++;
+//                                            Log.i(TAG, "counter Started " + startTime);
+                                                                                }
+
+                                                                                @Override
+                                                                                public void onFinish() {
+//                                            Log.i(TAG, "Stopped");
+                                                                                    runOnUiThread(new Runnable() {
+                                                                                        @Override
+                                                                                        public void run() {
+//                                                                            Log.i(TAG, "run onfinish: ack " + Constants.is_ackReceived);
+//                                                                            Toast.makeText(getApplicationContext(), "onfinish ack " + Constants.is_ackReceived, Toast.LENGTH_SHORT).show();
+                                                                                            if (Constants.is_ackReceived == true) {
+                                                                                                mCountDownTimer.cancel();
+                                                                                                dialog.dismiss();
+//                                                                                dialog.setCancelable(true);
+                                                                                                Constants.is_readingStarted = false;
 //                                                                            Constants.is_ackReceived = false;
-                                                                            }
+                                                                                            }
+                                                                                        }
+                                                                                    });
+                                                                                }
+                                                                            }.start();
                                                                         }
                                                                     });
                                                                 }
@@ -325,6 +349,8 @@ public class DataTransferActivity extends AppCompatActivity{
                                                                     runOnUiThread(new Runnable() {
                                                                         @Override
                                                                         public void run() {
+//                                                                            Log.i(TAG, "run onfinish: ack " + Constants.is_ackReceived);
+//                                                                            Toast.makeText(getApplicationContext(), "onfinish ack " + Constants.is_ackReceived, Toast.LENGTH_SHORT).show();
                                                                             if (Constants.is_ackReceived == false){
 //                                                Log.i(TAG, "Start again");
                                                                                 dialog.show();
@@ -410,43 +436,6 @@ public class DataTransferActivity extends AppCompatActivity{
 
                         setTimerForResetVal();
 
-//                            mCountDownTimer = new CountDownTimer(startTime, 50) {
-//                                @Override
-//                                public void onTick(long l) {
-//                                    counter++;
-////                                                Log.i(TAG, "counter Started " + startTime);
-//                                    runOnUiThread(new Runnable() {
-//                                        @Override
-//                                        public void run() {
-//                                            if (Constants.is_ackReceived == true) {
-//                                                mCountDownTimer.cancel();
-//                                                dialog.dismiss();
-//                                                Constants.is_cuffReplaced = false;
-//                                            }
-//
-//                                        }
-//                                    });
-//                                }
-//
-//                                @Override
-//                                public void onFinish() {
-////                                                Log.i(TAG, "Stopped");
-//                                    runOnUiThread(new Runnable() {
-//                                        @Override
-//                                        public void run() {
-//                                            if (Constants.is_ackReceived == false){
-////                                                Log.i(TAG, "Start again");
-//
-//                                                Constants.resetValue = decoder.computeCheckSum(Constants.resetValue);
-//////          Log.i(TAG, "Reset value after checksum " + Arrays.toString(Constants.resetValue) + " " + Constants.resetValue);
-//                                                mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.resetValue);
-//                                                start();
-//                                            }
-//                                        }
-//                                    });
-//                                }
-//                            }.start();
-
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -492,7 +481,6 @@ public class DataTransferActivity extends AppCompatActivity{
                                     });
                                 }
                             }.start();
-
                     }
                 }).show();
     }
@@ -510,6 +498,7 @@ public class DataTransferActivity extends AppCompatActivity{
                             mCountDownTimer.cancel();
                             dialog1.dismiss();
                             Constants.is_cuffReplaced = false;
+
                         }
 
                     }
@@ -732,7 +721,7 @@ public class DataTransferActivity extends AppCompatActivity{
 //                                Constants.is_readingStarted = false;
                             }
 
-                            // Method 1: To enable/disable Ok button on basis of readings.
+                            // Method 1: To enable/disable Ok/cancel button on basis of readings.
                             if (Constants.is_resultReceived == true) {
                                 ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
                                 ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
