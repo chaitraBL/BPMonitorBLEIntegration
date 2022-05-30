@@ -78,7 +78,7 @@ public class DataTransferActivity extends AppCompatActivity{
     Button readBtn;
 //    RecyclerView recyclerView;
     Decoder decoder;
-    public AlertDialog dialog;
+    public AlertDialog dialog, dialog1;
     RoomDB localDB;
     ProgressBar progress;
     String resultData;
@@ -220,14 +220,35 @@ public class DataTransferActivity extends AppCompatActivity{
                                                                                 Constants.is_resultReceived = false;
 //                                                                                Constants.is_ackReceived = false;
                                                                             }
-                                                                            else {
-                                                                                if (Constants.is_cuffReplaced == true) {
+                                                                            if (Constants.is_cuffReplaced == true) {
                                                                                     dialog.dismiss();
-                                                                                    alertDialogForReset();
+                                                                                mCountDownTimer = new CountDownTimer(30, 10) {
+                                                                                    @Override
+                                                                                    public void onTick(long l) {
+                                                                                        counter++;
+//                                                Log.i(TAG, "counter Started " + startTime);
+                                                                                        runOnUiThread(new Runnable() {
+                                                                                            @Override
+                                                                                            public void run() {
+                                                                                                Log.i(TAG, "run: cuff replaced " + Constants.is_cuffReplaced);
+                                                                                            }
+                                                                                        });
+                                                                                    }
+
+                                                                                    @Override
+                                                                                    public void onFinish() {
+//                                                Log.i(TAG, "Stopped");
+                                                                                        runOnUiThread(new Runnable() {
+                                                                                            @Override
+                                                                                            public void run() {
+                                                                                                Log.i(TAG, "run: cuff replaced " + Constants.is_cuffReplaced);
+                                                                                                alertDialogForReset();
+                                                                                            }
+                                                                                        });
+                                                                                    }
+                                                                                }.start();
                                                                                 }
                                                                             }
-
-                                                                        }
                                                                     });
                                                                 }
 
@@ -246,11 +267,6 @@ public class DataTransferActivity extends AppCompatActivity{
                                                                                 mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
                                                                                 start();
                                                                             }
-                                                                            else if (Constants.is_cuffReplaced == true) {
-                                                                                dialog.dismiss();
-                                                                                alertDialogForReset();
-                                                                            }
-//
                                                                         }
                                                                     });
                                                                 }
@@ -379,69 +395,66 @@ public class DataTransferActivity extends AppCompatActivity{
         });
     }
 
+    // To check cuff replacement is reset or not.
     private void alertDialogForReset() {
-        dialog = new AlertDialog.Builder(DataTransferActivity.this)
+        dialog1 = new AlertDialog.Builder(DataTransferActivity.this)
                 .setTitle("Message")
                 .setMessage("Have you replaced the cuff")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                            mCountDownTimer.cancel();
-                            dialog.dismiss();
+                    public void onClick(DialogInterface dialog1, int which) {
+
                             Constants.resetValue = decoder.computeCheckSum(Constants.resetValue);
 //          Log.i(TAG, "Reset value after checksum " + Arrays.toString(Constants.resetValue) + " " + Constants.resetValue);
                             mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.resetValue);
 
+                        setTimerForResetVal();
 
-                            mCountDownTimer = new CountDownTimer(startTime, 50) {
-                                @Override
-                                public void onTick(long l) {
-                                    counter++;
-//                                                Log.i(TAG, "counter Started " + startTime);
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            if (Constants.is_ackReceived == true) {
-                                                mCountDownTimer.cancel();
-                                                dialog.dismiss();
-                                                Constants.is_cuffReplaced = false;
-                                            }
-
-                                        }
-                                    });
-                                }
-
-                                @Override
-                                public void onFinish() {
-//                                                Log.i(TAG, "Stopped");
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            if (Constants.is_ackReceived == false){
-//                                                Log.i(TAG, "Start again");
-//                                                dialog.show();
-                                                Constants.resetValue = decoder.computeCheckSum(Constants.resetValue);
-////          Log.i(TAG, "Reset value after checksum " + Arrays.toString(Constants.resetValue) + " " + Constants.resetValue);
-                                                mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.resetValue);
-                                                start();
-                                            }
-                                        }
-                                    });
-                                }
-                            }.start();
+//                            mCountDownTimer = new CountDownTimer(startTime, 50) {
+//                                @Override
+//                                public void onTick(long l) {
+//                                    counter++;
+////                                                Log.i(TAG, "counter Started " + startTime);
+//                                    runOnUiThread(new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//                                            if (Constants.is_ackReceived == true) {
+//                                                mCountDownTimer.cancel();
+//                                                dialog.dismiss();
+//                                                Constants.is_cuffReplaced = false;
+//                                            }
+//
+//                                        }
+//                                    });
+//                                }
+//
+//                                @Override
+//                                public void onFinish() {
+////                                                Log.i(TAG, "Stopped");
+//                                    runOnUiThread(new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//                                            if (Constants.is_ackReceived == false){
+////                                                Log.i(TAG, "Start again");
+//
+//                                                Constants.resetValue = decoder.computeCheckSum(Constants.resetValue);
+//////          Log.i(TAG, "Reset value after checksum " + Arrays.toString(Constants.resetValue) + " " + Constants.resetValue);
+//                                                mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.resetValue);
+//                                                start();
+//                                            }
+//                                        }
+//                                    });
+//                                }
+//                            }.start();
 
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
-                            mCountDownTimer.cancel();
-                            dialog.dismiss();
                             Constants.resetValue = decoder.computeCheckSum(Constants.resetValue);
 //          Log.i(TAG, "Reset value after checksum " + Arrays.toString(Constants.resetValue) + " " + Constants.resetValue);
                             mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.resetValue);
-
 
                             mCountDownTimer = new CountDownTimer(startTime, 50) {
                                 @Override
@@ -453,7 +466,7 @@ public class DataTransferActivity extends AppCompatActivity{
                                         public void run() {
                                             if (Constants.is_ackReceived == true) {
                                                 mCountDownTimer.cancel();
-                                                dialog.dismiss();
+                                                dialog1.dismiss();
                                                 Constants.is_cuffReplaced = false;
                                             }
 
@@ -469,7 +482,7 @@ public class DataTransferActivity extends AppCompatActivity{
                                         public void run() {
                                             if (Constants.is_ackReceived == false){
 //                                                Log.i(TAG, "Start again");
-                                                dialog.show();
+                                                dialog1.show();
                                                 Constants.noResetValue = decoder.computeCheckSum(Constants.noResetValue);
 ////          Log.i(TAG, "Reset value after checksum " + Arrays.toString(Constants.resetValue) + " " + Constants.resetValue);
                                                 mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.noResetValue);
@@ -482,6 +495,45 @@ public class DataTransferActivity extends AppCompatActivity{
 
                     }
                 }).show();
+    }
+
+    public void setTimerForResetVal() {
+        mCountDownTimer = new CountDownTimer(startTime, 50) {
+            @Override
+            public void onTick(long l) {
+                counter++;
+//                                                Log.i(TAG, "counter Started " + startTime);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (Constants.is_ackReceived == true) {
+                            mCountDownTimer.cancel();
+                            dialog1.dismiss();
+                            Constants.is_cuffReplaced = false;
+                        }
+
+                    }
+                });
+            }
+
+            @Override
+            public void onFinish() {
+//                                                Log.i(TAG, "Stopped");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (Constants.is_ackReceived == false){
+//                                                Log.i(TAG, "Start again");
+                            dialog1.show();
+                            Constants.resetValue = decoder.computeCheckSum(Constants.resetValue);
+////          Log.i(TAG, "Reset value after checksum " + Arrays.toString(Constants.resetValue) + " " + Constants.resetValue);
+                            mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.resetValue);
+                            start();
+                        }
+                    }
+                });
+            }
+        }.start();
     }
 
     //To delete the memory cache.
