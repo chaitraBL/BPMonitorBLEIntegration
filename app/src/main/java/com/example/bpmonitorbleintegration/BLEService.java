@@ -28,11 +28,15 @@ import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -43,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.WeakHashMap;
 
@@ -64,6 +69,7 @@ public class BLEService extends Service implements DecodeListener{
     public int range;
     public long pressure;
     public int batteryLevel;
+    CoordinatorLayout coordinatorLayout;
 
 //    Decoder mDecoder;
     Handler mHandler;
@@ -87,7 +93,7 @@ public class BLEService extends Service implements DecodeListener{
                 return false;
             }
         }
-        final BluetoothDevice bluetoothDevice = mBluetoothAdapter.getRemoteDevice(address);
+        final BluetoothDevice bluetoothDevice = Objects.requireNonNull(mBluetoothAdapter).getRemoteDevice(address);
         if (bluetoothDevice == null) {
             Toast.makeText(getApplicationContext(), "Device not found ", Toast.LENGTH_SHORT).show();
             return false;
@@ -157,7 +163,7 @@ public class BLEService extends Service implements DecodeListener{
                 new ConnectionThread().start();
 
                 try {
-                    // BluetoothGatt gatt
+                    // To refresh BluetoothGatt gatt service
                     final Method refresh = gatt.getClass().getMethod("refresh");
                     if (refresh != null) {
                         refresh.invoke(gatt);
@@ -333,7 +339,7 @@ public class BLEService extends Service implements DecodeListener{
                     case Constants.ACK_COMMANDID:
                         Constants.is_ackReceived = true;
                         int ack = value[8];
-//                        Log.i(TAG, "ack in bleservice " + ack);
+                        Log.i(TAG, "ack in bleservice " + ack);
 //
                         break;
 

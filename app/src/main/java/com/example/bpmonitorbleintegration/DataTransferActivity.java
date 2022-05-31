@@ -88,7 +88,7 @@ public class DataTransferActivity extends AppCompatActivity{
     private CountDownTimer mCountDownTimer;
     private boolean mTimerRunning;
     private long mTimeLeftInMillis = 2000;
-    private long startTime = 100;
+    private long startTime = 50;
     View customView;
 
     private Handler myHandler = new Handler(new Handler.Callback() {
@@ -159,7 +159,7 @@ public class DataTransferActivity extends AppCompatActivity{
                     @Override
                     public void onTick(long l) {
                         counter++;
-                        mCountDownTimer = new CountDownTimer(startTime,100) {
+                        mCountDownTimer = new CountDownTimer(startTime,10) {
                             @Override
                             public void onTick(long l) {
                                 counter++;
@@ -205,7 +205,7 @@ public class DataTransferActivity extends AppCompatActivity{
 //                            Log.i(TAG, "Stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
                                                             mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
 
-                                                            mCountDownTimer = new CountDownTimer(startTime, 50) {
+                                                            mCountDownTimer = new CountDownTimer(startTime, 10) {
                                                                 @Override
                                                                 public void onTick(long l) {
                                                                     counter++;
@@ -213,9 +213,7 @@ public class DataTransferActivity extends AppCompatActivity{
                                                                     runOnUiThread(new Runnable() {
                                                                         @Override
                                                                         public void run() {
-//                                                                            Log.i(TAG, "run: cuff replaced " + Constants.is_cuffReplaced);
-
-
+                                                                            Log.i(TAG, "run: cuff replaced " + Constants.is_cuffReplaced);
                                                                                 mCountDownTimer = new CountDownTimer(50, 10) {
                                                                                     @Override
                                                                                     public void onTick(long l) {
@@ -237,10 +235,7 @@ public class DataTransferActivity extends AppCompatActivity{
                                                                                                     Constants.is_resultReceived = false;
 //                                                                                Constants.is_ackReceived = false;
                                                                                                 }
-
-//                                                                                                Log.i(TAG, " before run: cuff replaced " + Constants.is_cuffReplaced);
-//                                                                                                Toast.makeText(getApplicationContext(), "cuff replaced " + Constants.is_cuffReplaced, Toast.LENGTH_SHORT).show();
-                                                                                                if (Constants.is_cuffReplaced == true) {
+                                                                                                else if (Constants.is_cuffReplaced == true) {
                                                                                                     dialog.dismiss();
 //                                                                                                Log.i(TAG, "run: cuff replaced " + Constants.is_cuffReplaced);
                                                                                                     alertDialogForReset();
@@ -249,8 +244,7 @@ public class DataTransferActivity extends AppCompatActivity{
                                                                                         });
                                                                                     }
                                                                                 }.start();
-                                                                                }
-
+                                                                        }
                                                                     });
                                                                 }
 
@@ -262,13 +256,19 @@ public class DataTransferActivity extends AppCompatActivity{
                                                                         public void run() {
 //                                                                            Log.i(TAG, "run: cuff replaced " + Constants.is_cuffReplaced);
                                                                             if (Constants.is_ackReceived == false){
-//                                                Log.i(TAG, "Start again");
                                                                                 dialog.show();
                                                                                 Constants.cancelValue = decoder.computeCheckSum(Constants.cancelValue);
 //                            Log.i(TAG, "Stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
                                                                                 mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
                                                                                 start();
                                                                             }
+//                                                                            else if (Constants.is_cuffReplaced == false) {
+//                                                                                dialog.show();
+//                                                                                Constants.cancelValue = decoder.computeCheckSum(Constants.cancelValue);
+////                            Log.i(TAG, "Stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
+//                                                                                mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
+//                                                                                start();
+//                                                                            }
                                                                         }
                                                                     });
                                                                 }
@@ -288,7 +288,7 @@ public class DataTransferActivity extends AppCompatActivity{
                                                 dialog.setOnShowListener(new DialogInterface.OnShowListener() {
                                                     @Override
                                                     public void onShow(DialogInterface dialogInterface) {
-                                                        ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+//                                                        ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                                                     }
                                                 });
                                             }
@@ -303,7 +303,7 @@ public class DataTransferActivity extends AppCompatActivity{
 //                            Log.i(TAG, "Force stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
                                                             mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
 
-                                                            mCountDownTimer = new CountDownTimer(startTime, 100) {
+                                                            mCountDownTimer = new CountDownTimer(startTime, 10) {
                                                                 @Override
                                                                 public void onTick(long l) {
                                                                     counter++;
@@ -425,7 +425,7 @@ public class DataTransferActivity extends AppCompatActivity{
     private void alertDialogForReset() {
         dialog1 = new AlertDialog.Builder(DataTransferActivity.this)
                 .setTitle("Message")
-                .setMessage("Have you replaced the cuff")
+                .setMessage("Have you replaced the cuff?")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog1, int which) {
@@ -435,17 +435,16 @@ public class DataTransferActivity extends AppCompatActivity{
                             mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.resetValue);
 
                         setTimerForResetVal();
-
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                            Constants.resetValue = decoder.computeCheckSum(Constants.resetValue);
+                            Constants.noResetValue = decoder.computeCheckSum(Constants.noResetValue);
 //          Log.i(TAG, "Reset value after checksum " + Arrays.toString(Constants.resetValue) + " " + Constants.resetValue);
-                            mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.resetValue);
+                            mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.noResetValue);
 
-                            mCountDownTimer = new CountDownTimer(startTime, 50) {
+                            mCountDownTimer = new CountDownTimer(startTime, 10) {
                                 @Override
                                 public void onTick(long l) {
                                     counter++;
@@ -458,7 +457,6 @@ public class DataTransferActivity extends AppCompatActivity{
                                                 dialog1.dismiss();
                                                 Constants.is_cuffReplaced = false;
                                             }
-
                                         }
                                     });
                                 }
@@ -483,14 +481,17 @@ public class DataTransferActivity extends AppCompatActivity{
                             }.start();
                     }
                 }).show();
+        //Prevent dialog box from getting dismissed on back key pressed
+        dialog1.setCancelable(false);
+        //Prevent dialog box from getting dismissed on outside touch
+        dialog1.setCanceledOnTouchOutside(false);
     }
 
     public void setTimerForResetVal() {
-        mCountDownTimer = new CountDownTimer(startTime, 50) {
+        mCountDownTimer = new CountDownTimer(startTime, 10) {
             @Override
             public void onTick(long l) {
                 counter++;
-//                                                Log.i(TAG, "counter Started " + startTime);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -498,21 +499,17 @@ public class DataTransferActivity extends AppCompatActivity{
                             mCountDownTimer.cancel();
                             dialog1.dismiss();
                             Constants.is_cuffReplaced = false;
-
                         }
-
                     }
                 });
             }
 
             @Override
             public void onFinish() {
-//                                                Log.i(TAG, "Stopped");
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (Constants.is_ackReceived == false){
-//                                                Log.i(TAG, "Start again");
                             dialog1.show();
                             Constants.resetValue = decoder.computeCheckSum(Constants.resetValue);
 ////          Log.i(TAG, "Reset value after checksum " + Arrays.toString(Constants.resetValue) + " " + Constants.resetValue);
@@ -602,13 +599,6 @@ public class DataTransferActivity extends AppCompatActivity{
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-//        if (item.getItemId() == R.id.reset) {
-//            Constants.resetValue = decoder.computeCheckSum(Constants.resetValue);
-////          Log.i(TAG, "Reset value after checksum " + Arrays.toString(Constants.resetValue) + " " + Constants.resetValue);
-//            mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.resetValue);
-//
-//            return true;
-//        }
 
         if (item.getItemId() == R.id.disable_bluetooth) {
             dialog = new AlertDialog.Builder(DataTransferActivity.this)
@@ -626,6 +616,7 @@ public class DataTransferActivity extends AppCompatActivity{
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                                 Intent intent = new Intent(DataTransferActivity.this, HomePage.class);
                                 startActivity(intent);
+//                                finish();
                             }
                         }
                     })
@@ -659,6 +650,9 @@ public class DataTransferActivity extends AppCompatActivity{
                 mConnected = true;
                 updateConnectionState("Connected");
             }
+//            else if (Constants.ACTION_GATT_CONNECTING.equals(action)) {
+//
+//            }
             else if (Constants.ACTION_GATT_DISCONNECTED.equals(action)) {
                 mConnected = false;
                 updateConnectionState("Disconnected");

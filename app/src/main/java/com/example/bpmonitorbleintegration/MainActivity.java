@@ -262,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Bluetooth not enabled.
                 Toast.makeText(getApplicationContext(), "Bluetooth not enabled", Toast.LENGTH_SHORT).show();
-//                finish();
+                finish();
                 return;
             }
         }

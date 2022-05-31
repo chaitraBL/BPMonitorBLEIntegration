@@ -3,6 +3,8 @@ package com.example.bpmonitorbleintegration;
 public class Constants {
     public final static String ACTION_GATT_CONNECTED =
             "android-er.ACTION_GATT_CONNECTED";
+    public final static String ACTION_GATT_CONNECTING =
+            "android-er.ACTION_GATT_CONNECTING";
     public final static String ACTION_GATT_DISCONNECTED =
             "android-er.ACTION_GATT_DISCONNECTED";
     public final static String ACTION_GATT_SERVICES_DISCOVERED =
@@ -30,8 +32,8 @@ public class Constants {
 //    public static byte cancelValue = 0x02;
 //    public static byte[] cancelValue = {0x7B,0x02,0x7D};
     public static byte[] cancelValue = {0x7B,deviceId[0],deviceId[1],deviceId[2],deviceId[3],0x10,0x0A,0x00,0x02,0x00,0x1C,0x7D};
-    public static byte[] resetValue = {0x7B,deviceId[0],deviceId[1],deviceId[2],deviceId[3],0x02,0x0A,0x01,0x01,0x00,0x1C,0x7D};
-    public static byte[] noResetValue = {0x7B,deviceId[0],deviceId[1],deviceId[2],deviceId[3],0x02,0x0A,0x01,0x00,0x00,0x1C,0x7D};
+    public static byte[] resetValue = {0x7B,deviceId[0],deviceId[1],deviceId[2],deviceId[3],0x02,0x0A,0x00,0x01,0x00,0x1C,0x7D};
+    public static byte[] noResetValue = {0x7B,deviceId[0],deviceId[1],deviceId[2],deviceId[3],0x02,0x0A,0x00,0x00,0x00,0x1C,0x7D};
     public static final int RAW_COMMANDID = 17;
     public static final int RESULT_COMMANDID = 18;
     public static final int ERROR_COMMANDID = 19;

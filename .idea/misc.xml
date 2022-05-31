@@ -17,7 +17,7 @@
         <entry key="app/src/main/res/font/helvetica.xml" value="0.46111111111111114" />
         <entry key="app/src/main/res/layout/activity_data_transfer.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_home_page.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/activity_log.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_log.xml" value="0.22" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.5" />
         <entry key="app/src/main/res/layout/activity_manual_readings.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_statistics.xml" value="0.33" />

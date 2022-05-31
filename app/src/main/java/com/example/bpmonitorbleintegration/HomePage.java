@@ -168,7 +168,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                    changeDiastolicProgress(list.getDystolic());
 
                     for (int i = 0; i < tasks.size(); i++) {
-                    if ("27-05-2022".equals(tasks.get(i).getDate())) {
+                    if (date.equals(tasks.get(i).getDate())) {
                         newTask.add(tasks.get(i));
 //                        plotCandleStickTimeWise(newTask);
                         plotCombinedChart(newTask);

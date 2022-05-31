@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -73,18 +74,16 @@ public class ReadingsAdapter extends RecyclerView.Adapter<ReadingsAdapter.Readin
     }
     public class ReadingViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView textViewAddress, textViewDate, textViewTime, textViewSysta, textViewDiasta, textViewRate, textViewRange;
+        Button textViewDate, textViewTime, textViewSysta, textViewDiasta, textViewRate, textViewRange;
 
         public ReadingViewHolder(View itemView) {
             super(itemView);
 
-//            textViewAddress = itemView.findViewById(R.id.address);
             textViewDate = itemView.findViewById(R.id.date);
             textViewTime = itemView.findViewById(R.id.time1);
             textViewSysta = itemView.findViewById(R.id.systalic);
             textViewDiasta = itemView.findViewById(R.id.dystalic);
             textViewRate = itemView.findViewById(R.id.heartRate);
-//            textViewRange = itemView.findViewById(R.id.map);
 
             itemView.setOnClickListener(this);
         }
@@ -92,6 +91,8 @@ public class ReadingsAdapter extends RecyclerView.Adapter<ReadingsAdapter.Readin
         @Override
         public void onClick(View view) {
             BloodPressureDB task = readingList.get(getAdapterPosition());
+
+
 
 //            Intent intent = new Intent(mCtx, UpdateTaskActivity.class);
 //            intent.putExtra("task", task);

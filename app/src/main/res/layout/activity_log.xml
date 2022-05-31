@@ -79,80 +79,67 @@
 
 
         </LinearLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:id="@+id/logLinear_layout"
+            android:weightSum="1"
             android:layout_marginTop="5dp"
-            android:gravity="center"
-            android:weightSum="1">
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="0.20"
                     android:text="@string/date"
-                    android:textSize="12sp"
-                    android:fontFamily="@font/arial"
-                    android:textColor="?android:textColorPrimary"
-                    android:layout_weight="0.17"
-                    android:gravity="center"
-                    android:padding="5dp"/>
-                <!--                    android:layout_marginRight="5dp"/>-->
-
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/log_text_size1"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="12sp"
+                    android:layout_weight="0.20"
                     android:text="@string/time"
-                    android:fontFamily="@font/arial"
-                    android:layout_weight="0.17"
-                    android:textColor="?android:textColorPrimary"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/log_text_size1"
+                    android:textStyle="bold"
                     android:gravity="center"
-                    android:padding="5dp"/>
-                <!--                    android:layout_marginRight="3dp"/>-->
-
+                    android:paddingLeft="10dp"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="12sp"
+                    android:layout_weight="0.20"
                     android:text="@string/sys"
-                    android:fontFamily="@font/arial"
-                    android:layout_weight="0.17"
-                    android:textColor="?android:textColorPrimary"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/log_text_size1"
+                    android:textStyle="bold"
                     android:gravity="center"
-                    android:padding="5dp"/>
-                <!--                    android:layout_marginRight="3dp"/>-->
-
+                    android:paddingLeft="8dp"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="0.20"
                     android:text="@string/dya"
-                    android:textSize="12sp"
-                    android:layout_weight="0.17"
-                    android:textColor="?android:textColorPrimary"
-                    android:gravity="center"
-                    android:padding="5dp"/>
-                <!--                    android:layout_marginRight="3dp"/>-->
-
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/log_text_size1"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="0.20"
                     android:text="@string/rate"
-                    android:textSize="12sp"
-                    android:fontFamily="@font/arial"
-                    android:layout_weight="0.17"
-                    android:textColor="?android:textColorPrimary"
-                    android:gravity="center"
-                    android:padding="5dp"/>
-                <!--                    android:layout_marginRight="3dp"/>-->
-
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/log_text_size1"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
         </LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="500dp"
+            android:layout_height="510dp"
             android:id="@+id/list_layout"
             android:layout_marginTop="5dp">
                 <TextView
@@ -169,7 +156,9 @@
                     android:id="@+id/log_list"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/bg_transparent1">
+                    android:layout_margin="5dp">
+
+<!--                        android:background="@drawable/bg_transparent1"-->
                         <!--                #ECEFF1-->
                 </androidx.recyclerview.widget.RecyclerView>
         </RelativeLayout>
