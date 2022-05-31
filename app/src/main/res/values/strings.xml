@@ -47,5 +47,8 @@
     <string name="connect_device">Connect Device</string>
     <string name="ok">OK</string>
     <string name="apply">Apply</string>
+    <string name="cancel">Cancel</string>
+    <string name="share">Share</string>
+    <string name="share_reading">Share Reading...</string>
 
 </resources>

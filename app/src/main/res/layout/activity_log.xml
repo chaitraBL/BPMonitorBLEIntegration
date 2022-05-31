@@ -29,13 +29,16 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:hint="@string/start_date"
-                            android:paddingLeft="5dp"/>
+                            android:paddingStart="5dp"
+                            tools:ignore="RtlSymmetry" />
                         <Button
                             android:layout_width="20dp"
                             android:layout_height="20dp"
+                            android:paddingStart="5dp"
                             android:background="@drawable/ic_baseline_calendar_today_24"
-                            android:layout_alignParentRight="true"
-                            android:id="@+id/btn_start_date"/>
+                            android:layout_alignParentEnd="true"
+                            android:id="@+id/btn_start_date"
+                            tools:ignore="RtlSymmetry" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -44,20 +47,24 @@
                     android:layout_weight="0.3"
                     android:orientation="horizontal"
                     android:layout_gravity="center"
-                    android:paddingLeft="10dp"
-                    android:id="@+id/end_date_layout">
+                    android:paddingStart="5dp"
+                    android:id="@+id/end_date_layout"
+                    tools:ignore="RtlHardcoded">
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="@string/end_date"
-                            android:paddingLeft="5dp"
-                            android:id="@+id/txt_end_date"/>
+                            android:paddingStart="5dp"
+                            android:id="@+id/txt_end_date"
+                            tools:ignore="RtlSymmetry" />
                         <Button
                             android:layout_width="20dp"
                             android:layout_height="20dp"
+                            android:paddingStart="5dp"
                             android:background="@drawable/ic_baseline_calendar_today_24"
                             android:id="@+id/btn_end_date"
-                            android:layout_alignParentRight="true"/>
+                            android:layout_alignParentEnd="true"
+                            tools:ignore="RtlSymmetry" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -106,7 +113,8 @@
                     android:textSize="@dimen/log_text_size1"
                     android:textStyle="bold"
                     android:gravity="center"
-                    android:paddingLeft="10dp"/>
+                    android:paddingStart="10dp"
+                    tools:ignore="RtlHardcoded" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -116,7 +124,8 @@
                     android:textSize="@dimen/log_text_size1"
                     android:textStyle="bold"
                     android:gravity="center"
-                    android:paddingLeft="8dp"/>
+                    android:paddingStart="8dp"
+                    tools:ignore="RtlHardcoded" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

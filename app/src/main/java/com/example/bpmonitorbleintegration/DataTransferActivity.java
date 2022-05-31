@@ -352,7 +352,7 @@ public class DataTransferActivity extends AppCompatActivity{
 //                                                                            Log.i(TAG, "run onfinish: ack " + Constants.is_ackReceived);
 //                                                                            Toast.makeText(getApplicationContext(), "onfinish ack " + Constants.is_ackReceived, Toast.LENGTH_SHORT).show();
                                                                             if (Constants.is_ackReceived == false){
-//                                                Log.i(TAG, "Start again");
+                                                Log.i(TAG, "Start again");
                                                                                 dialog.show();
                                                                                 Constants.cancelValue = decoder.computeCheckSum(Constants.cancelValue);
                                                                                 mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);

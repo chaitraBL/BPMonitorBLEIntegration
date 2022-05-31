@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -15,8 +17,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -249,6 +256,173 @@ private  void endDateCalendar() {
         }
         GetTasks gt = new GetTasks();
         gt.execute();
+    }
+
+    public class ReadingsAdapter extends RecyclerView.Adapter<ReadingsAdapter.ReadingViewHolder> {
+        private Context mCtx;
+        private List<BloodPressureDB> readingList;
+
+        public ReadingsAdapter(Context mCtx, List<BloodPressureDB> taskList) {
+            this.mCtx = mCtx;
+            this.readingList = taskList;
+        }
+
+        @Override
+        public ReadingsAdapter.ReadingViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(mCtx).inflate(R.layout.recyclerview_tasks, parent, false);
+            return new ReadingsAdapter.ReadingViewHolder(view);
+        }
+
+        @SuppressLint("SetTextI18n")
+        @Override
+        public void onBindViewHolder(@NonNull ReadingViewHolder holder, int position) {
+            BloodPressureDB t = readingList.get(position);
+
+            String date = t.getDate();
+            String[] showDate = date.split("-");
+
+            if (showDate[1].equalsIgnoreCase("01")) {
+                holder.textViewDate.setText(showDate[0]+"-"+"JAN");
+            }else if(showDate[1].equalsIgnoreCase("02")){
+                holder.textViewDate.setText(showDate[0]+"-"+"FEB");
+            }else if(showDate[1].equalsIgnoreCase("03")){
+                holder.textViewDate.setText(showDate[0]+"-"+"MAR");
+            }else if(showDate[1].equalsIgnoreCase("04")){
+                holder.textViewDate.setText(showDate[0]+"-"+"APR");
+            }else if(showDate[1].equalsIgnoreCase("05")){
+                holder.textViewDate.setText(showDate[0]+"-"+"MAY");
+            }else if(showDate[1].equalsIgnoreCase("06")){
+                holder.textViewDate.setText(showDate[0]+"-"+"JUN");
+            }else if(showDate[1].equalsIgnoreCase("07")){
+                holder.textViewDate.setText(showDate[0]+"-"+"JLY");
+            }else if(showDate[1].equalsIgnoreCase("08")){
+                holder.textViewDate.setText(showDate[0]+"-"+"AUG");
+            }else if(showDate[1].equalsIgnoreCase("09")){
+                holder.textViewDate.setText(showDate[0]+"-"+"SEP");
+            }else if(showDate[1].equalsIgnoreCase("10")){
+                holder.textViewDate.setText(showDate[0]+"-"+"OCT");
+            }else if(showDate[1].equalsIgnoreCase("11")){
+                holder.textViewDate.setText(showDate[0]+"-"+"NOV");
+            }else if(showDate[1].equalsIgnoreCase("12")){
+                holder.textViewDate.setText(showDate[0]+"-"+"DEC");
+            }
+            holder.textViewTime.setText(t.getTime());
+            holder.textViewSysta.setText(String.valueOf(t.getSystolic()));
+            holder.textViewDiasta.setText(String.valueOf(t.getDystolic()));
+            holder.textViewRate.setText(String.valueOf(t.getHeartRate()));
+        }
+
+        @Override
+        public int getItemCount() {
+            return readingList.size();
+        }
+        public class ReadingViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+//            Button textViewDate, textViewTime, textViewSysta, textViewDiasta, textViewRate, textViewRange;
+            TextView textViewDate, textViewTime, textViewSysta, textViewDiasta, textViewRate, textViewRange;
+
+            public ReadingViewHolder(View itemView) {
+                super(itemView);
+
+                textViewDate = itemView.findViewById(R.id.date);
+                textViewTime = itemView.findViewById(R.id.time1);
+                textViewSysta = itemView.findViewById(R.id.systalic);
+                textViewDiasta = itemView.findViewById(R.id.dystalic);
+                textViewRate = itemView.findViewById(R.id.heartRate);
+
+                itemView.setOnClickListener(this);
+            }
+
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onClick(View view) {
+                BloodPressureDB task = readingList.get(getAdapterPosition());
+
+                Dialog shareDialog = new Dialog(mCtx);
+                shareDialog.setContentView(R.layout.share_readings);
+                shareDialog.setCancelable(false);
+                TextView systolicText = shareDialog.findViewById(R.id.reading_sys_txt);
+                TextView diastolicText = shareDialog.findViewById(R.id.reading_dia_txt);
+                TextView heartRateText = shareDialog.findViewById(R.id.reading_rate_txt);
+                TextView statusText = shareDialog.findViewById(R.id.reading_status_txt);
+                TextView dateText = shareDialog.findViewById(R.id.reading_date_txt);
+                Button btnShare = shareDialog.findViewById(R.id.btn_share_reading);
+                Button btnCancel = shareDialog.findViewById(R.id.btn_share_reading_cancel);
+                systolicText.setText(task.getSystolic() + " mmHg");
+                diastolicText.setText(task.getDystolic() + " mmHg");
+                heartRateText.setText(task.getHeartRate() + " bpm");
+                String status = changeStatus(task.getSystolic(),task.getDystolic());
+                statusText.setText(status);
+                dateText.setText(task.getDate());
+                btnCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        shareDialog.dismiss();
+                    }
+                });
+                btnShare.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        shareDialog.dismiss();
+                        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                        sharingIntent.setType("text/plain");
+                        String shareBody = "Name :" +task.getName()+"\n"+
+                                "Blood Pressure Reading :" +systolicText.getText().toString() + "/ " + diastolicText.getText().toString() + "/ " + heartRateText.getText().toString() +"\n"+
+                                "Date of Reading : "+ dateText.getText().toString()+"\n"+
+                                "Time of Reading : "+ task.getTime()+"\n"+
+                                "Status :"+statusText.getText().toString();
+                        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Blood Pressure Readings For "+task.getName());
+                        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                        startActivity(Intent.createChooser(sharingIntent, "Share via"));
+                    }
+                });
+                shareDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                Window window = shareDialog.getWindow();
+                WindowManager.LayoutParams wlp = window.getAttributes();
+                wlp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                wlp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                wlp.gravity = Gravity.CENTER;
+                shareDialog.create();
+                shareDialog.show();
+
+            }
+
+            private String changeStatus(int systolic, int diastolic) {
+                String msg = null;
+                if ((systolic < 50) && (diastolic < 33)) {
+                    msg = "Very Serious Hypotension";
+                }
+                else if ((systolic <= 60) && (diastolic <= 40)) {
+                    msg = "Serious Hypotension";
+                }
+                else if ((systolic <= 90) && (diastolic <= 60)) {
+                    msg = "Borderline Hypotension";
+                }
+                else if ((systolic <= 110) && (diastolic <= 75)) {
+                    msg = "Low Blood Pressure";
+                }
+                else if ((systolic <= 120 && (diastolic <= 80))) {
+                    msg = "Normal Blood Pressure";
+                }
+                else if ((systolic <= 130) && (diastolic <= 85)) {
+                    msg = "High Normal Blood Pressure";
+                }
+                else if ((systolic <= 140) && (diastolic <= 90)) {
+                    msg = "Hypertension Stage 1";
+                }
+                else if ((systolic <= 160) && (diastolic <= 100)) {
+                    msg = "Hypertension Stage 2";
+                }
+                else if ((systolic <= 180 && (diastolic <= 110))) {
+                    msg = "Hypertension Stage 3";
+                }
+                else {
+                    msg = "Hypertension Stage 4";
+                }
+                return msg;
+            }
+
+        }
     }
 
 }
