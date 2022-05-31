@@ -259,8 +259,8 @@ private  void endDateCalendar() {
     }
 
     public class ReadingsAdapter extends RecyclerView.Adapter<ReadingsAdapter.ReadingViewHolder> {
-        private Context mCtx;
-        private List<BloodPressureDB> readingList;
+        private final Context mCtx;
+        private final List<BloodPressureDB> readingList;
 
         public ReadingsAdapter(Context mCtx, List<BloodPressureDB> taskList) {
             this.mCtx = mCtx;
@@ -367,10 +367,10 @@ private  void endDateCalendar() {
                         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                         sharingIntent.setType("text/plain");
                         String shareBody = "Name :" +task.getName()+"\n"+
-                                "Blood Pressure Reading :" +systolicText.getText().toString() + "/ " + diastolicText.getText().toString() + "/ " + heartRateText.getText().toString() +"\n"+
+                                "Blood Pressure Reading :" +systolicText.getText().toString() + " / " + diastolicText.getText().toString() + " / " + heartRateText.getText().toString() +"\n"+
                                 "Date of Reading : "+ dateText.getText().toString()+"\n"+
                                 "Time of Reading : "+ task.getTime()+"\n"+
-                                "Status :"+statusText.getText().toString();
+                                "Status :"+ statusText.getText().toString();
                         sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Blood Pressure Readings For "+task.getName());
                         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
                         startActivity(Intent.createChooser(sharingIntent, "Share via"));
@@ -384,7 +384,6 @@ private  void endDateCalendar() {
                 wlp.gravity = Gravity.CENTER;
                 shareDialog.create();
                 shareDialog.show();
-
             }
 
             private String changeStatus(int systolic, int diastolic) {

@@ -262,13 +262,6 @@ public class DataTransferActivity extends AppCompatActivity{
                                                                                 mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
                                                                                 start();
                                                                             }
-//                                                                            else if (Constants.is_cuffReplaced == false) {
-//                                                                                dialog.show();
-//                                                                                Constants.cancelValue = decoder.computeCheckSum(Constants.cancelValue);
-////                            Log.i(TAG, "Stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
-//                                                                                mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
-//                                                                                start();
-//                                                                            }
                                                                         }
                                                                     });
                                                                 }
