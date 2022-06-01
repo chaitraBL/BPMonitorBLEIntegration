@@ -199,6 +199,7 @@ public class ReadingData extends AppCompatActivity {
         builder1 = new AlertDialog.Builder(ReadingData.this);
         builder1.setTitle("Message");
         builder1.setMessage("Have you replaced the cuff?");
+        // On click ok button reset command will be sent
         builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog1, int which) {
@@ -212,6 +213,7 @@ public class ReadingData extends AppCompatActivity {
                 setTimerForResetVal();
             }
         });
+        // On click ok button noreset command will be sent
         builder1.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -220,6 +222,7 @@ public class ReadingData extends AppCompatActivity {
                 mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.noResetValue);
 //                Log.i(TAG, "run: ack in ok before timer " + Constants.is_ackReceived);
 
+                // To check the ack after the reset command sent
                 mCountDownTimer = new CountDownTimer(startTime, 10) {
                     @Override
                     public void onTick(long l) {
@@ -246,6 +249,7 @@ public class ReadingData extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                // If ack not received
                                 if (Constants.is_ackReceived == false){
 //                                                Log.i(TAG, "Start again");
                                     dialog1.show();
@@ -262,14 +266,17 @@ public class ReadingData extends AppCompatActivity {
                 }.start();
             }
         });
+        //To create alert dialog
         dialog1 = builder1.create();
         //Prevent dialog box from getting dismissed on back key pressed
         dialog1.setCancelable(false);
         //Prevent dialog box from getting dismissed on outside touch
         dialog1.setCanceledOnTouchOutside(false);
+        //To show alert dialog
         dialog1.show();
     }
 
+    // To check the ack after the reset command sent
     public void setTimerForResetVal() {
         mCountDownTimer = new CountDownTimer(startTime, 10) {
             @Override
@@ -296,6 +303,7 @@ public class ReadingData extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        // If ack not received
                         if (Constants.is_ackReceived == false){
                             dialog1.show();
                             Constants.resetValue = decoder.computeCheckSum(Constants.resetValue);
@@ -570,7 +578,6 @@ public class ReadingData extends AppCompatActivity {
                             if (Constants.is_ackReceived == false){
                                 mCountDownTimer.cancel();
                                 Toast.makeText(ReadingData.this,"Please start again",Toast.LENGTH_SHORT).show();
-//
                             }
                             Constants.is_ackReceived = false;
                         }
