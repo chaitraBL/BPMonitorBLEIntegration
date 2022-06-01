@@ -126,7 +126,8 @@
                 android:fontFamily="@font/arial"
                 android:layout_marginStart="140dp"
                 android:visibility="gone"
-                android:background="@drawable/filled_bg_circle" />
+                android:background="@drawable/filled_bg_circle" 
+                android:drawableTint="#C58917"/>
 <!--                android:backgroundTint="#C58917"/>-->
 <!--                android:background="@drawable/filled_bg_circle" />-->
 

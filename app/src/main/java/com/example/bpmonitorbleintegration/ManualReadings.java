@@ -65,22 +65,23 @@ public class ManualReadings extends AppCompatActivity {
                 if (systolic.getText().toString().equals(""))
                 {
                     Toast.makeText(getApplicationContext(),"Please enter systolic value",Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.GONE);
                 }
                 else if (diastolic.getText().toString().equals(""))
                 {
                     Toast.makeText(getApplicationContext(),"Please enter diastolic value",Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.GONE);
                 }
                 else if (heartRate.getText().toString().equals(""))
                 {
                     Toast.makeText(getApplicationContext(),"Please enter heart rate value",Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.GONE);
                 }
                 else {
                     //Calculates mean arterial pressure(MAP) value.
                     map = decoder.calculateMAP(Integer.parseInt(systolic.getText().toString()),Integer.parseInt(diastolic.getText().toString()));
                     //Saves to local database.
                     database.saveTask("No device",Integer.parseInt(systolic.getText().toString()),Integer.parseInt(diastolic.getText().toString()),Integer.parseInt(heartRate.getText().toString()),map,ManualReadings.this);
-
-                    progressBar.setVisibility(View.VISIBLE);
                     //After saving data make textfield empty.
                     systolic.setText("");
                     diastolic.setText("");

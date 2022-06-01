@@ -20,6 +20,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -101,6 +102,7 @@ public class ReadingData extends AppCompatActivity {
         }
 
         stopBtn.setEnabled(false);
+        stopBtn.setVisibility(View.INVISIBLE);
 
         stopBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,6 +168,8 @@ public class ReadingData extends AppCompatActivity {
                                     }
                                     Constants.is_ackReceived = false;
                                     stopBtn.setEnabled(false);
+                                    stopBtn.setVisibility(View.INVISIBLE);
+                                    startBtn.setVisibility(View.VISIBLE);
                                     startBtn.setEnabled(true);
                                 }
                             });
@@ -185,9 +189,6 @@ public class ReadingData extends AppCompatActivity {
 //                    Log.i(TAG, "Start value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
                     mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
                 }
-
-                startBtn.setEnabled(false);
-                stopBtn.setEnabled(true);
 //                startBtn.setText("Cancel");
             }
         });
@@ -469,11 +470,28 @@ public class ReadingData extends AppCompatActivity {
                             if (Constants.is_ackReceived == true)
                             {
                                 mCountDownTimer.cancel();
+                                startBtn.setEnabled(false);
+                                startBtn.setVisibility(View.INVISIBLE);
+                                stopBtn.setVisibility(View.VISIBLE);
+                                stopBtn.setEnabled(true);
                                 progressText.setText(data);
 //                                startBtn.setText("Cancel");
-                                if (counter <= mTimeLeftInMillis) {
-                                    progressBar.setProgress((int) mTimeLeftInMillis);
+                                if (counter < mTimeLeftInMillis) {
+
                                     counter = counter++;
+                                    Handler handler = new Handler();
+                                    handler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            progressBar.setProgress((int) counter);
+                                        }
+                                    });
+                                    try {
+                                        Thread.sleep(8);
+                                    }catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+
 //                                    Log.i(TAG, "timer in readings " + (int) mTimeLeftInMillis);
                                 }
 //                                Constants.is_readingStarted = false;
@@ -493,6 +511,7 @@ public class ReadingData extends AppCompatActivity {
                                                     mCountDownTimer.cancel();
 //                                                    Log.i(TAG, "run: cuff replaced before alert start " + Constants.is_cuffReplaced);
                                                     alertDialogForReset();
+                                                    progressText.setText("");
                                                 }
 
                                                 if (Constants.is_finalResult == true) {
@@ -528,6 +547,10 @@ public class ReadingData extends AppCompatActivity {
                                     public void onFinish() {
                                         if ((Constants.is_resultReceived == false) || (Constants.is_readingStarted == false)) {
                                             Toast.makeText(getApplicationContext(), "Please start again!", Toast.LENGTH_SHORT).show();
+                                            startBtn.setEnabled(true);
+                                            startBtn.setVisibility(View.VISIBLE);
+                                            stopBtn.setVisibility(View.INVISIBLE);
+                                            stopBtn.setEnabled(false);
                                         }
 //                                        Constants.is_ackReceived = false;
 //                                        Constants.is_resultReceived = false;
