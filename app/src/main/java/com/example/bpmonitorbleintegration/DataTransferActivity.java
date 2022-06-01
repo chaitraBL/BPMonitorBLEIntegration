@@ -71,7 +71,7 @@ public class DataTransferActivity extends AppCompatActivity{
     private boolean mConnected;
     BluetoothDevice bluetoothDevice;
     IntentFilter intentFilter;
-    AlertDialog.Builder builder;
+    AlertDialog.Builder builder, builder1;
     TextView statusText, systolicText, diastolicText, heartRateText,rangeText, tv, batteryLevel;
     private String TAG = "DataTransferActivity";
     SharedPreferences pref;
@@ -184,7 +184,7 @@ public class DataTransferActivity extends AppCompatActivity{
                                                 View customView = layoutInflater.inflate(R.layout.custom_popup_dialog, null);
 //                                    LinearLayout attLayout = customView.findViewById(R.id.att_layout);
                                                 // reference the textview of custom_popup_dialog
-                                                tv = customView.findViewById(R.id.tvpopup);
+                                                tv = customView.findViewById(R.id.textView_popup);
                                                 tv.setTextSize(15);
 //                                    tv.setText(resultData);
 
@@ -236,8 +236,9 @@ public class DataTransferActivity extends AppCompatActivity{
 //                                                                                Constants.is_ackReceived = false;
                                                                                                 }
                                                                                                 else if (Constants.is_cuffReplaced == true) {
+                                                                                                    mCountDownTimer.cancel();
                                                                                                     dialog.dismiss();
-//                                                                                                Log.i(TAG, "run: cuff replaced " + Constants.is_cuffReplaced);
+                                                                                                Log.i(TAG, "run: cuff replaced before alert start " + Constants.is_cuffReplaced);
                                                                                                     alertDialogForReset();
                                                                                                 }
                                                                                             }
@@ -345,7 +346,7 @@ public class DataTransferActivity extends AppCompatActivity{
 //                                                                            Log.i(TAG, "run onfinish: ack " + Constants.is_ackReceived);
 //                                                                            Toast.makeText(getApplicationContext(), "onfinish ack " + Constants.is_ackReceived, Toast.LENGTH_SHORT).show();
                                                                             if (Constants.is_ackReceived == false){
-                                                Log.i(TAG, "Start again");
+//                                                Log.i(TAG, "Start again");
                                                                                 dialog.show();
                                                                                 Constants.cancelValue = decoder.computeCheckSum(Constants.cancelValue);
                                                                                 mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
@@ -416,12 +417,13 @@ public class DataTransferActivity extends AppCompatActivity{
 
     // To check cuff replacement is reset or not.
     private void alertDialogForReset() {
-        dialog1 = new AlertDialog.Builder(DataTransferActivity.this)
-                .setTitle("Message")
-                .setMessage("Have you replaced the cuff?")
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder1 = new AlertDialog.Builder(DataTransferActivity.this);
+        builder1.setTitle("Message");
+        builder1.setMessage("Have you replaced the cuff?");
+        builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog1, int which) {
+                        Log.i(TAG, "onClick: cuff replaced after alert " + Constants.is_cuffReplaced);
 
                             Constants.resetValue = decoder.computeCheckSum(Constants.resetValue);
 //          Log.i(TAG, "Reset value after checksum " + Arrays.toString(Constants.resetValue) + " " + Constants.resetValue);
@@ -429,8 +431,8 @@ public class DataTransferActivity extends AppCompatActivity{
 
                         setTimerForResetVal();
                     }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                });
+        builder1.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                             Constants.noResetValue = decoder.computeCheckSum(Constants.noResetValue);
@@ -473,11 +475,13 @@ public class DataTransferActivity extends AppCompatActivity{
                                 }
                             }.start();
                     }
-                }).show();
+                });
+        dialog1 = builder1.create();
         //Prevent dialog box from getting dismissed on back key pressed
         dialog1.setCancelable(false);
         //Prevent dialog box from getting dismissed on outside touch
         dialog1.setCanceledOnTouchOutside(false);
+        dialog1.show();
     }
 
     public void setTimerForResetVal() {
@@ -558,6 +562,7 @@ public class DataTransferActivity extends AppCompatActivity{
         //Disconnect through services.
         unregisterReceiver(broadCastReceiver);
         dialog.dismiss();
+        dialog1.dismiss();
     }
 
     @Override

@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
 
                             //Navigating to next activity on tap of bluetooth device address.
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                Intent intent = new Intent(MainActivity.this, DataTransferActivity.class);
+                                Intent intent = new Intent(MainActivity.this, ReadingData.class);
                                 intent.putExtra("Device", deviceAddress);
                                 intent.putExtra("DeviceName", info);
                                 startActivity(intent);

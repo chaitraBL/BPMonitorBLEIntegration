@@ -8,6 +8,9 @@
         <entry key="app/src/main/res/drawable/background_line.xml" value="0.4041666666666667" />
         <entry key="app/src/main/res/drawable/bg_transparent.xml" value="0.37395833333333334" />
         <entry key="app/src/main/res/drawable/bg_transparent1.xml" value="0.40520833333333334" />
+        <entry key="app/src/main/res/drawable/circular_progress_bar.xml" value="0.40729166666666666" />
+        <entry key="app/src/main/res/drawable/circular_shape.xml" value="0.40729166666666666" />
+        <entry key="app/src/main/res/drawable/filled_bg_circle.xml" value="0.40729166666666666" />
         <entry key="app/src/main/res/drawable/ic_baseline_account_circle_24.xml" value="0.5061538461538462" />
         <entry key="app/src/main/res/drawable/ic_baseline_arrow_forward_ios_24.xml" value="0.4740740740740741" />
         <entry key="app/src/main/res/drawable/navigation_item_color.xml" value="0.37395833333333334" />
@@ -17,9 +20,10 @@
         <entry key="app/src/main/res/font/helvetica.xml" value="0.46111111111111114" />
         <entry key="app/src/main/res/layout/activity_data_transfer.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_home_page.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/activity_log.xml" value="0.22" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/activity_log.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_manual_readings.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_reading_data.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_statistics.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_statistics2.xml" value="0.4979166666666667" />
         <entry key="app/src/main/res/layout/custom_popup_dialog.xml" value="0.5082051282051282" />

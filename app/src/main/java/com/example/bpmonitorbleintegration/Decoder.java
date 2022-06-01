@@ -73,9 +73,9 @@ public class Decoder
 
                     int error = value[8];
                     decodeListener.errorMsg(error);
-//                    if (error == 6) {
-//                        Constants.is_cuffReplaced = true;
-//                    }
+                    if (error == 6) {
+                        Constants.is_cuffReplaced = true;
+                    }
 //                    Log.i("Decoder", "error value " + error);
 //                    String msg;
 //                    switch (error) {

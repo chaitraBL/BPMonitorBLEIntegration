@@ -269,7 +269,7 @@ public class BLEService extends Service implements DecodeListener{
                         break;
                     case Constants.RAW_COMMANDID:
                         Constants.is_readingStarted = true;
-                        Constants.is_resultReceived = false;
+//                        Constants.is_resultReceived = false;
                         int cuffValue = value[8] * 256 + value[9];
                         int pulseValue = value[10] * 256 + value[11];
                         intent.putExtra(Constants.EXTRA_DATA, cuffValue + " / " + pulseValue);
@@ -278,7 +278,7 @@ public class BLEService extends Service implements DecodeListener{
 
                     case Constants.RESULT_COMMANDID:
                         Constants.is_resultReceived = true;
-                        Constants.is_readingStarted = true;
+//                        Constants.is_readingStarted = true;
                         int systolic = value[8] * 256 + value[9];
                         int dystolic = value[10] * 256 + value[11];
                         int heartRateValue = value[12];
@@ -318,9 +318,9 @@ public class BLEService extends Service implements DecodeListener{
                                 intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
                                 break;
                             case 6:
+                                Constants.is_cuffReplaced = true;
                                 msg = "Indicates Cuff replacement!!!";
                                 intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
-                                Constants.is_cuffReplaced = true;
                                 break;
                             default:
                                 msg = " ";

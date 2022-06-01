@@ -36,6 +36,9 @@
         android:theme="@style/Theme.BPMonitorBLEIntegration"
         tools:ignore="ExtraText">
         <activity
+            android:name=".ReadingData"
+            android:exported="false" />
+        <activity
             android:name=".LogActivity"
             android:exported="false" />
         <activity
@@ -66,6 +69,7 @@
         <service
             android:name=".BLEService"
             android:enabled="true" />
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

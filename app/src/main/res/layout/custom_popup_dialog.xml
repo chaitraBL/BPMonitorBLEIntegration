@@ -9,6 +9,6 @@
         android:layout_height="wrap_content"
         android:textColor="?android:textColorPrimary"
         android:fontFamily="@font/arial"
-        android:id="@+id/tvpopup"/>
+        android:id="@+id/textView_popup"/>
 
 </RelativeLayout>
