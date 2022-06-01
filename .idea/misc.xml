@@ -23,7 +23,7 @@
         <entry key="app/src/main/res/layout/activity_log.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_manual_readings.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/activity_reading_data.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/activity_reading_data.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_statistics.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_statistics2.xml" value="0.4979166666666667" />
         <entry key="app/src/main/res/layout/custom_popup_dialog.xml" value="0.5082051282051282" />

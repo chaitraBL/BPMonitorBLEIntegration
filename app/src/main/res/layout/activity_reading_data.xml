@@ -92,18 +92,42 @@
                 android:gravity="center"
                 android:text="---"
                 android:textColor="@color/black"
-                android:textSize="28sp"
+                android:textSize="14sp"
                 android:textStyle="bold" />
         </RelativeLayout>
 
-        <Button
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:text="@string/start"
-            android:id="@+id/start_reading"
-            android:background="@drawable/filled_bg_circle"
-            android:backgroundTint="#C58917"
-            android:layout_marginStart="155dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center">
+            <Button
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:text="@string/start"
+                android:id="@+id/start_reading"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/arial"
+                android:layout_marginStart="70dp"
+                android:backgroundTint="#C58917"/>
+<!--                android:background="@drawable/filled_bg_circle" />-->
+
+            <Button
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:text="@string/stop"
+                android:id="@+id/stop_reading"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/arial"
+                android:layout_marginStart="50dp"
+                android:backgroundTint="#C58917"/>
+<!--                android:background="@drawable/filled_bg_circle" />-->
+
+        </LinearLayout>
+
+
     </LinearLayout>
 
     <LinearLayout

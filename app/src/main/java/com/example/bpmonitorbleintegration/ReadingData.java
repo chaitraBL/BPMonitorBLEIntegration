@@ -42,22 +42,20 @@ public class ReadingData extends AppCompatActivity {
     private boolean mConnected;
     BluetoothDevice bluetoothDevice;
     IntentFilter intentFilter;
-    AlertDialog.Builder builder, builder1;
+    AlertDialog.Builder builder1;
     Decoder decoder;
     public AlertDialog dialog, dialog1;
     RoomDB localDB;
-    String resultData;
 
     public int counter = 0;
     private CountDownTimer mCountDownTimer;
-    private boolean mTimerRunning;
     private long mTimeLeftInMillis = 2000;
     private long startTime = 50;
     View customView;
     private String TAG = ReadingData.class.getName();
 
     private TextView statusText, batteryText, systolicText, diastolicText, heartRateText, mapText, progressText;
-    private Button startBtn;
+    private Button startBtn,stopBtn;
     private ProgressBar progressBar, progress;
     int i = 0;
 
@@ -76,6 +74,7 @@ public class ReadingData extends AppCompatActivity {
         progress = findViewById(R.id.progress_start);
         progressBar = findViewById(R.id.progress_bar);
         startBtn = findViewById(R.id.start_reading);
+        stopBtn = findViewById(R.id.stop_reading);
 
         deviceAddress = getIntent().getStringExtra("Device");
         intentFilter = new IntentFilter(BluetoothDevice.ACTION_PAIRING_REQUEST);
@@ -101,9 +100,85 @@ public class ReadingData extends AppCompatActivity {
             }
         }
 
+        stopBtn.setEnabled(false);
+
+        stopBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mNotifyCharacteristic != null) {
+                    Constants.cancelValue = decoder.computeCheckSum(Constants.cancelValue);
+//                            Log.i(TAG, "Force stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
+                    mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
+
+                    mCountDownTimer = new CountDownTimer(startTime, 10) {
+                        @Override
+                        public void onTick(long l) {
+                            counter++;
+//                                            Log.i(TAG, "counter Started " + startTime);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+//                                                                            Log.i(TAG, "run ontick: ack " + Constants.is_ackReceived);
+//                                                                            Toast.makeText(getApplicationContext(), "ontick ack " + Constants.is_ackReceived, Toast.LENGTH_SHORT).show();
+                                    mCountDownTimer = new CountDownTimer(30, 10) {
+                                        @Override
+                                        public void onTick(long l) {
+                                            counter++;
+//                                            Log.i(TAG, "counter Started " + startTime);
+                                        }
+
+                                        @Override
+                                        public void onFinish() {
+//                                            Log.i(TAG, "Stopped");
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+//                                                    Log.i(TAG, "run: cuff replaced before condition " + Constants.is_cuffReplaced);
+                                                    if (Constants.is_ackReceived == true) {
+                                                        mCountDownTimer.cancel();
+
+
+//                                                                                dialog.setCancelable(true);
+//                                                        Constants.is_readingStarted = false;
+
+//                                                                            Constants.is_ackReceived = false;
+                                                    }
+
+                                                }
+                                            });
+                                        }
+                                    }.start();
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onFinish() {
+//                                            Log.i(TAG, "Stopped");
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if ((Constants.is_ackReceived == false)){
+//                                                Log.i(TAG, "Start again");
+                                        Constants.cancelValue = decoder.computeCheckSum(Constants.cancelValue);
+                                        mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
+                                        start();
+                                    }
+                                    Constants.is_ackReceived = false;
+                                    stopBtn.setEnabled(false);
+                                    startBtn.setEnabled(true);
+                                }
+                            });
+                        }
+                    }.start();
+                }
+            }
+        });
+
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Constants.is_buttonStarted = true;
                 if (mNotifyCharacteristic != null) {
 //                    Log.i(TAG, "Start value " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
                     Constants.startValue = decoder.computeCheckSum(Constants.startValue);
@@ -111,101 +186,128 @@ public class ReadingData extends AppCompatActivity {
                     mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
                 }
 
-                mCountDownTimer = new CountDownTimer(50,10) {
+                startBtn.setEnabled(false);
+                stopBtn.setEnabled(true);
+//                startBtn.setText("Cancel");
+            }
+        });
+    }
+
+    // To check cuff replacement is reset or not.
+    private void alertDialogForReset() {
+        builder1 = new AlertDialog.Builder(ReadingData.this);
+        builder1.setTitle("Message");
+        builder1.setMessage("Have you replaced the cuff?");
+        builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog1, int which) {
+//                Log.i(TAG, "onClick: cuff replaced after alert " + Constants.is_cuffReplaced);
+
+                Constants.resetValue = decoder.computeCheckSum(Constants.resetValue);
+//          Log.i(TAG, "Reset value after checksum " + Arrays.toString(Constants.resetValue) + " " + Constants.resetValue);
+                mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.resetValue);
+
+//                Log.i(TAG, "run: ack in ok " + Constants.is_ackReceived);
+                setTimerForResetVal();
+            }
+        });
+        builder1.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Constants.noResetValue = decoder.computeCheckSum(Constants.noResetValue);
+//          Log.i(TAG, "Reset value after checksum " + Arrays.toString(Constants.resetValue) + " " + Constants.resetValue);
+                mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.noResetValue);
+//                Log.i(TAG, "run: ack in ok before timer " + Constants.is_ackReceived);
+
+                mCountDownTimer = new CountDownTimer(startTime, 10) {
                     @Override
                     public void onTick(long l) {
-
+                        counter++;
+//                                                Log.i(TAG, "counter Started " + startTime);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+//                                Log.i(TAG, "run: ack in cancel alert " + Constants.is_ackReceived);
+                                if (Constants.is_ackReceived == true) {
+                                    mCountDownTimer.cancel();
+//                                    Log.i(TAG, "run: ack in cancel condition " + Constants.is_ackReceived);
+                                    dialog1.dismiss();
+                                    Constants.is_cuffReplaced = false;
+                                    Constants.is_ackReceived = false;
+                                }
+                            }
+                        });
                     }
 
                     @Override
                     public void onFinish() {
-                        mCountDownTimer = new CountDownTimer(mTimeLeftInMillis,1000) {
-                            @SuppressLint("SetTextI18n")
+//                                                Log.i(TAG, "Stopped");
+                        runOnUiThread(new Runnable() {
                             @Override
-                            public void onTick(long l) {
-                                if (Constants.is_readingStarted == true) {
-                                    startBtn.setText("Cancel");
-                                    if (mNotifyCharacteristic != null) {
-                                        Constants.cancelValue = decoder.computeCheckSum(Constants.cancelValue);
-//                            Log.i(TAG, "Force stop value after checksum " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
-                                        mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
-
-                                        mCountDownTimer = new CountDownTimer(startTime, 10) {
-                                            @Override
-                                            public void onTick(long l) {
-                                                counter++;
-//                                            Log.i(TAG, "counter Started " + startTime);
-                                                runOnUiThread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-//                                                                            Log.i(TAG, "run ontick: ack " + Constants.is_ackReceived);
-//                                                                            Toast.makeText(getApplicationContext(), "ontick ack " + Constants.is_ackReceived, Toast.LENGTH_SHORT).show();
-                                                        mCountDownTimer = new CountDownTimer(30, 10) {
-                                                            @Override
-                                                            public void onTick(long l) {
-                                                                counter++;
-//                                            Log.i(TAG, "counter Started " + startTime);
-                                                            }
-
-                                                            @Override
-                                                            public void onFinish() {
-//                                            Log.i(TAG, "Stopped");
-                                                                runOnUiThread(new Runnable() {
-                                                                    @Override
-                                                                    public void run() {
-//                                                                            Log.i(TAG, "run onfinish: ack " + Constants.is_ackReceived);
-//                                                                            Toast.makeText(getApplicationContext(), "onfinish ack " + Constants.is_ackReceived, Toast.LENGTH_SHORT).show();
-                                                                        if (Constants.is_ackReceived == true) {
-                                                                            mCountDownTimer.cancel();
-//                                                                                dialog.setCancelable(true);
-                                                                            Constants.is_readingStarted = false;
-//                                                                            Constants.is_ackReceived = false;
-                                                                        }
-                                                                    }
-                                                                });
-                                                            }
-                                                        }.start();
-                                                    }
-                                                });
-                                            }
-
-                                            @Override
-                                            public void onFinish() {
-//                                            Log.i(TAG, "Stopped");
-                                                runOnUiThread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-//                                                                            Log.i(TAG, "run onfinish: ack " + Constants.is_ackReceived);
-//                                                                            Toast.makeText(getApplicationContext(), "onfinish ack " + Constants.is_ackReceived, Toast.LENGTH_SHORT).show();
-                                                        if (Constants.is_ackReceived == false){
+                            public void run() {
+                                if (Constants.is_ackReceived == false){
 //                                                Log.i(TAG, "Start again");
-                                                            Constants.cancelValue = decoder.computeCheckSum(Constants.cancelValue);
-                                                            mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
-                                                            start();
-                                                        }
-                                                    }
-                                                });
-                                            }
-                                        }.start();
-                                    }
+                                    dialog1.show();
+                                    Constants.noResetValue = decoder.computeCheckSum(Constants.noResetValue);
+////          Log.i(TAG, "Reset value after checksum " + Arrays.toString(Constants.resetValue) + " " + Constants.resetValue);
+                                    mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.noResetValue);
+                                    start();
                                 }
-
-                                else if (Constants.is_resultReceived == true) {
-                                    startBtn.setText("Stop");
-
-
-                                }
+                                Constants.is_ackReceived = false;
+                                Constants.is_cuffReplaced = false;
                             }
-
-                            @Override
-                            public void onFinish() {
-
-                            }
-                        }.start();
+                        });
                     }
                 }.start();
             }
         });
+        dialog1 = builder1.create();
+        //Prevent dialog box from getting dismissed on back key pressed
+        dialog1.setCancelable(false);
+        //Prevent dialog box from getting dismissed on outside touch
+        dialog1.setCanceledOnTouchOutside(false);
+        dialog1.show();
+    }
+
+    public void setTimerForResetVal() {
+        mCountDownTimer = new CountDownTimer(startTime, 10) {
+            @Override
+            public void onTick(long l) {
+                counter++;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+//                        Log.i(TAG, "run: ack in alert " + Constants.is_ackReceived);
+                        if (Constants.is_ackReceived == true) {
+                            mCountDownTimer.cancel();
+//                            Log.i(TAG, "run: ack in condition " + Constants.is_ackReceived);
+                            dialog1.dismiss();
+                            Constants.is_cuffReplaced = false;
+                            Constants.is_ackReceived = false;
+
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onFinish() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (Constants.is_ackReceived == false){
+                            dialog1.show();
+                            Constants.resetValue = decoder.computeCheckSum(Constants.resetValue);
+////          Log.i(TAG, "Reset value after checksum " + Arrays.toString(Constants.resetValue) + " " + Constants.resetValue);
+                            mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.resetValue);
+                            start();
+                        }
+                        Constants.is_ackReceived = false;
+                        Constants.is_cuffReplaced = false;
+                    }
+                });
+            }
+        }.start();
     }
 
     @Override
@@ -228,8 +330,6 @@ public class ReadingData extends AppCompatActivity {
         super.onPause();
         //Disconnect through services.
         unregisterReceiver(broadCastReceiver);
-        dialog.dismiss();
-        dialog1.dismiss();
     }
 
     @Override
@@ -353,43 +453,88 @@ public class ReadingData extends AppCompatActivity {
 
     private  void displayData(String data) {
 
-        Log.i(TAG, "received data before " + data);
         if (data != null) {
+            Log.i(TAG, "received data before " + data);
 //           Log.i(TAG, "reading started and result received " + Constants.is_readingStarted + " " + Constants.is_resultReceived);
             mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
                 @Override
                 public void onTick(long millisUntilFinished) {
-//                    mTimeLeftInMillis = millisUntilFinished;
+                    mTimeLeftInMillis = millisUntilFinished;
 
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             progress.setVisibility(View.GONE);
-                            if (Constants.is_readingStarted == true)
+
+                            if (Constants.is_ackReceived == true)
                             {
                                 mCountDownTimer.cancel();
+                                progressText.setText(data);
+//                                startBtn.setText("Cancel");
                                 if (counter <= mTimeLeftInMillis) {
-                                    progressBar.setProgress(counter);
-                                    progressText.setText(data);
+                                    progressBar.setProgress((int) mTimeLeftInMillis);
                                     counter = counter++;
-                                    Log.i(TAG, "timer in readings " + counter);
+//                                    Log.i(TAG, "timer in readings " + (int) mTimeLeftInMillis);
                                 }
 //                                Constants.is_readingStarted = false;
                             }
+//                            Log.i(TAG, "run: reading before condion in displayDate " + Constants.is_readingStarted);
+//                            Log.i(TAG, "run: result before condion in displayDate " + Constants.is_resultReceived);
 
-                            // Method 1: To enable/disable Ok/cancel button on basis of readings.
-                            if (Constants.is_resultReceived == true) {
-                                progressText.setText(data);
-                                ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                                ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
-                            }
-                            else
-                            {
-                                ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                                ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(true);
-                            }
+                            if ((Constants.is_resultReceived == true) || (Constants.is_readingStarted == true)) {
+                                mCountDownTimer = new CountDownTimer(startTime, 10) {
+                                    @Override
+                                    public void onTick(long l) {
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+//                                                Log.i(TAG, "run: cuff replaced before condion in displayDate " + Constants.is_cuffReplaced);
+                                                if (Constants.is_cuffReplaced == true) {
+                                                    mCountDownTimer.cancel();
+//                                                    Log.i(TAG, "run: cuff replaced before alert start " + Constants.is_cuffReplaced);
+                                                    alertDialogForReset();
+                                                }
 
-//          Method 2:  ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(Constants.is_resultReceived == true);
+                                                if (Constants.is_finalResult == true) {
+                                                    progress.setVisibility(View.VISIBLE);
+                                                    systolicText.setText(String.valueOf(mBluetoothLeService.systalic));
+                                                    diastolicText.setText(String.valueOf(mBluetoothLeService.dystolic));
+                                                    heartRateText.setText(String.valueOf(mBluetoothLeService.rate));
+                                                    mapText.setText(String.valueOf(mBluetoothLeService.range));
+
+                                                    if (systolicText.getText().toString().equals(" ") || systolicText.getText().toString().equals(0)) {
+//                                            Toast.makeText(getApplicationContext(),"Please enter systolic value",Toast.LENGTH_SHORT).show();
+                                                    }
+                                                    else if (diastolicText.getText().toString().equals(" ") || diastolicText.getText().toString().equals(0)) {
+//                                            Toast.makeText(getApplicationContext(),"Please enter diastolic value",Toast.LENGTH_SHORT).show();
+                                                    }
+                                                    else if (heartRateText.getText().toString().equals(" ") || heartRateText.getText().toString().equals(0)) {
+//                                            Toast.makeText(getApplicationContext(),"Please enter heart rate value",Toast.LENGTH_SHORT).show();
+                                                    }
+                                                    else if (mapText.getText().toString().equals(" ") || mapText.getText().toString().equals(0)) {
+//                                            Toast.makeText(getApplicationContext(),"Please enter MAP value",Toast.LENGTH_SHORT).show();
+                                                    }
+                                                    else {
+                                                        localDB.saveTask(deviceAddress, mBluetoothLeService.systalic, mBluetoothLeService.dystolic, mBluetoothLeService.rate, mBluetoothLeService.range, ReadingData.this);
+                                                        progress.setVisibility(View.GONE);
+                                                    }
+                                                    Constants.is_finalResult = false;
+                                                }
+                                            }
+                                        });
+                                    }
+
+                                    @Override
+                                    public void onFinish() {
+                                        if ((Constants.is_resultReceived == false) || (Constants.is_readingStarted == false)) {
+                                            Toast.makeText(getApplicationContext(), "Please start again!", Toast.LENGTH_SHORT).show();
+                                        }
+//                                        Constants.is_ackReceived = false;
+//                                        Constants.is_resultReceived = false;
+//                                        Constants.is_readingStarted = false;
+                                    }
+                                }.start();
+                            }
                         }
                     });
                 }
@@ -399,13 +544,12 @@ public class ReadingData extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (Constants.is_readingStarted == false){
+                            if (Constants.is_ackReceived == false){
                                 mCountDownTimer.cancel();
                                 Toast.makeText(ReadingData.this,"Please start again",Toast.LENGTH_SHORT).show();
-                                ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                                ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
 //
                             }
+                            Constants.is_ackReceived = false;
                         }
                     });
                 }
