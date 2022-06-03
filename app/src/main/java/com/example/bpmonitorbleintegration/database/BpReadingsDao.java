@@ -1,4 +1,4 @@
-package com.example.bpmonitorbleintegration;
+package com.example.bpmonitorbleintegration.database;
 
 import androidx.room.Dao;
 import androidx.room.Delete;

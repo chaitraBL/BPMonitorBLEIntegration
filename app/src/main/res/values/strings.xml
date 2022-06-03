@@ -52,5 +52,6 @@
     <string name="share_reading">Share Reading...</string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
+    <string name="please_start_again">Please start again!</string>
 
 </resources>

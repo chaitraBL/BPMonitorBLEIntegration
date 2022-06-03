@@ -1,57 +1,37 @@
-package com.example.bpmonitorbleintegration;
+package com.example.bpmonitorbleintegration.bleconnect;
 
-import android.accessibilityservice.AccessibilityService;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.icu.text.UFormat;
 import android.os.Binder;
 import android.os.Build;
 
-import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
-import android.preference.PreferenceManager;
 import android.util.Log;
-import android.util.SparseArray;
-import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
-import com.google.android.material.snackbar.Snackbar;
+import com.example.bpmonitorbleintegration.constants.BLEGattAttributes;
+import com.example.bpmonitorbleintegration.constants.Constants;
 
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.WeakHashMap;
 
-public class BLEService extends Service implements DecodeListener{
+public class BLEService extends Service implements DecodeListener {
 
     private final static String TAG = BLEService.class.getSimpleName();
     private BluetoothAdapter mBluetoothAdapter;
@@ -237,6 +217,7 @@ public class BLEService extends Service implements DecodeListener{
 ////                intent.putExtra(Constants.EXTRA_DATA, new String(data) + "\n" +stringBuilder.toString());
 //            }
 
+
 //            Log.i(TAG, "length before switch " + data[6]);
             int length = data[6];
             int[] value = new int[30];
@@ -257,8 +238,10 @@ public class BLEService extends Service implements DecodeListener{
                 //Command Id wise receiving data.
                 switch (value[5]) {
                     case Constants.DEVICE_COMMANDID:
-//                        Log.i(TAG, "Device id " + value);
+                        Log.i(TAG, "Device id " + value);
+                        Log.i(TAG, "broadcastUpdate: device " + value[1] + value[2] + value[3] + value[4]);
                         Constants.deviceId = new byte[]{(byte) value[1], (byte) value[2], (byte) value[3], (byte) value[4]};
+                        Log.i(TAG, "broadcastUpdate: device byte " + (byte) value[1] + (byte) value[2] + (byte) value[3] + (byte) value[4]);
                         Constants.startValue = decoder.replaceArrayVal(Constants.startValue,Constants.deviceId);
                         Constants.ack = decoder.replaceArrayVal(Constants.ack,Constants.deviceId);
                         Constants.noAck = decoder.replaceArrayVal(Constants.noAck,Constants.deviceId);
@@ -300,24 +283,49 @@ public class BLEService extends Service implements DecodeListener{
                         int error = value[8];
                         switch (error) {
                             case 1:
+                                Constants.is_errorReceived = true;
                                 msg = "Indicates cuff placement/fitment incorrect!!!";
                                 intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
+                                Constants.ack = decoder.computeCheckSum(Constants.ack);
+//                        Log.i(TAG, "error" + Arrays.toString(Constants.ack));
+//                        Log.i(TAG, "ack sent " + Constants.ack);
+                                writeCharacteristics(characteristic,Constants.ack);
                                 break;
                             case 2:
+                                Constants.is_errorReceived = true;
                                 msg = "Indicates hand movement detected!!!";
                                 intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
+                                Constants.ack = decoder.computeCheckSum(Constants.ack);
+//                        Log.i(TAG, "error" + Arrays.toString(Constants.ack));
+//                        Log.i(TAG, "ack sent " + Constants.ack);
+                                writeCharacteristics(characteristic,Constants.ack);
                                 break;
                             case 3:
+                                Constants.is_errorReceived = true;
                                 msg = "Indicates irregular heartbeat during measurement!!!";
                                 intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
+                                Constants.ack = decoder.computeCheckSum(Constants.ack);
+//                        Log.i(TAG, "error" + Arrays.toString(Constants.ack));
+//                        Log.i(TAG, "ack sent " + Constants.ack);
+                                writeCharacteristics(characteristic,Constants.ack);
                                 break;
                             case 4:
+                                Constants.is_errorReceived = true;
                                 msg = "Indicates cuff over pressurised!!!";
                                 intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
+                                Constants.ack = decoder.computeCheckSum(Constants.ack);
+//                        Log.i(TAG, "error" + Arrays.toString(Constants.ack));
+//                        Log.i(TAG, "ack sent " + Constants.ack);
+                                writeCharacteristics(characteristic,Constants.ack);
                                 break;
                             case 5:
+                                Constants.is_errorReceived = true;
                                 msg = "Indicates low battery!!!";
                                 intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
+                                Constants.ack = decoder.computeCheckSum(Constants.ack);
+//                        Log.i(TAG, "error" + Arrays.toString(Constants.ack));
+//                        Log.i(TAG, "ack sent " + Constants.ack);
+                                writeCharacteristics(characteristic,Constants.ack);
                                 break;
                             case 6:
                                 Constants.is_cuffReplaced = true;
@@ -330,10 +338,7 @@ public class BLEService extends Service implements DecodeListener{
 //                                intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
                                 break;
                         }
-                        Constants.ack = decoder.computeCheckSum(Constants.ack);
-//                        Log.i(TAG, "error" + Arrays.toString(Constants.ack));
-//                        Log.i(TAG, "ack sent " + Constants.ack);
-                        writeCharacteristics(characteristic,Constants.ack);
+
                         break;
 
                     case Constants.ACK_COMMANDID:
@@ -575,7 +580,7 @@ public class BLEService extends Service implements DecodeListener{
     }
 
     public class LocalBinder extends Binder {
-        BLEService getService() {
+        public BLEService getService() {
             return BLEService.this;
         }
     }

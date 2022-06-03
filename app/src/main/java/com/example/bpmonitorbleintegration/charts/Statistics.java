@@ -1,4 +1,4 @@
-package com.example.bpmonitorbleintegration;
+package com.example.bpmonitorbleintegration.charts;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,6 +20,11 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.bpmonitorbleintegration.R;
+import com.example.bpmonitorbleintegration.database.BloodPressureDB;
+import com.example.bpmonitorbleintegration.database.DatabaseClient;
+import com.example.bpmonitorbleintegration.database.RoomDB;
+import com.example.bpmonitorbleintegration.model.BPModel;
 import com.github.mikephil.charting.charts.CandleStickChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -38,11 +43,9 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.stream.Collectors;
 

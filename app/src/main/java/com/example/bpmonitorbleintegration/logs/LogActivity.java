@@ -1,4 +1,4 @@
-package com.example.bpmonitorbleintegration;
+package com.example.bpmonitorbleintegration.logs;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -26,23 +26,26 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.bpmonitorbleintegration.R;
+import com.example.bpmonitorbleintegration.database.BloodPressureDB;
+import com.example.bpmonitorbleintegration.database.DatabaseClient;
+import com.example.bpmonitorbleintegration.home.HomePage;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
-import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 public class LogActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -82,6 +85,7 @@ public class LogActivity extends AppCompatActivity implements BottomNavigationVi
 
         getManualTasks();
 
+        //Selected start date
         startDate.setInputType(InputType.TYPE_NULL);
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,6 +94,7 @@ public class LogActivity extends AppCompatActivity implements BottomNavigationVi
             }
         });
 
+        // Selected end date
         endDate.setInputType(InputType.TYPE_NULL);
         endBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,6 +104,7 @@ public class LogActivity extends AppCompatActivity implements BottomNavigationVi
         });
     }
 
+    //Formatting the dates.
     private void startDateCalendar(){
         Calendar c=Calendar.getInstance();
         int month=c.get(Calendar.MONTH);
@@ -201,6 +207,7 @@ private  void endDateCalendar() {
             protected void onPostExecute(List<BloodPressureDB> tasks) {
                 super.onPostExecute(tasks);
 
+                // Display all values in recycler view.
                 if (tasks.size() == 0) {
                     no_data_found.setVisibility(View.VISIBLE);
                     logRecycleView.setVisibility(View.INVISIBLE);
@@ -216,38 +223,75 @@ private  void endDateCalendar() {
                         @Override
                         public void onClick(View view) {
 
-                            if (startDate.getText().toString().equals("")) {
+                            if (startDate.getText().toString().isEmpty()) {
                                 Toast.makeText(getApplicationContext(), "Please select start date", Toast.LENGTH_SHORT).show();
                             }
-                            else if (endDate.getText().toString().equals("")){
+                            else if (endDate.getText().toString().isEmpty()){
                                 Toast.makeText(getApplicationContext(), "Please select end date", Toast.LENGTH_SHORT).show();
                             }
-                            else if ((startDate.getText().toString().equals("")) && (endDate.getText().toString().equals(""))){
-                                Toast.makeText(getApplicationContext(), "Please select start & end date", Toast.LENGTH_SHORT).show();
-                            }
                             else {
-                                String start_date = startDate.getText().toString().replaceAll("-","");
-                                String end_date = endDate.getText().toString().replaceAll("-","");
 
+                                newTask.clear();
+
+                                //Method 1: to filter the values between 2 dates.
+
+//                                String start_date = startDate.getText().toString().replaceAll("-","");
+//                                String end_date = endDate.getText().toString().replaceAll("-","");
+//                                        for (int i = 0; i < tasks.size(); i++) {
+//                                            String date = tasks.get(i).getDate().replaceAll("-", "");
+//
+//                                            Log.i(TAG, "onClick: start_date " + start_date + " end_date " + end_date + " date " + date);
+//
+//                                    if (Integer.parseInt(date) >= Integer.parseInt(start_date) && Integer.parseInt(date) <= Integer.parseInt(end_date))
+//                                            {
+//                                                newTask.add(tasks.get(i));
+//                                            }
+//                                            Log.i(TAG, "new task size " + newTask.size());
+//
+////                                            if (i == tasks.size() - 1) {
+//
+//                                                if (newTask.size() == 0) {
+//                                                    no_data_found.setVisibility(View.VISIBLE);
+//                                                    logRecycleView.setVisibility(View.INVISIBLE);
+//                                                } else {
+//                                                    no_data_found.setVisibility(View.INVISIBLE);
+//                                                    logRecycleView.setVisibility(View.VISIBLE);
+//                                                    ReadingsAdapter adapter = new ReadingsAdapter(LogActivity.this, newTask);
+//                                                    logRecycleView.setAdapter(adapter);
+//                                                    adapter.notifyDataSetChanged();
+//                                                }
+////                                            }
+//                                }
+
+                                //Method 2: Filter the dates between start and end date.
+                                List<Date> dates = getDates(startDate.getText().toString(), endDate.getText().toString());
+
+                                //Compare start and end date and filter values display in recycler view.
                                 for (BloodPressureDB i : tasks) {
-                                    String date = i.getDate().replaceAll("-","");
+                                    if (dates.size() > 0) {
+                                        for (Date d : dates) {
+                                            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                                            String strDate = dateFormat.format(d);
+                                            System.out.println("Converted String: " + strDate);
+                                            if (i.getDate().equals(strDate)) {
+                                                newTask.add(i);
+                                            }
 
-                                    if (Integer.parseInt(date) >= Integer.parseInt(start_date) && Integer.parseInt(date) <= Integer.parseInt(end_date)) {
-                                        newTask.add(i);
-                                    }
-
-                                    if (newTask.size() == 0){
-                                        no_data_found.setVisibility(View.VISIBLE);
-                                        logRecycleView.setVisibility(View.INVISIBLE);
-                                    }
-                                    else {
-                                        no_data_found.setVisibility(View.INVISIBLE);
-                                        logRecycleView.setVisibility(View.VISIBLE);
-                                        ReadingsAdapter adapter = new ReadingsAdapter(LogActivity.this, newTask);
-                                        logRecycleView.setAdapter(adapter);
-                                        adapter.notifyDataSetChanged();
+                                            if (newTask.size() == 0) {
+                                                    no_data_found.setVisibility(View.VISIBLE);
+                                                    logRecycleView.setVisibility(View.INVISIBLE);
+                                                } else {
+                                                    no_data_found.setVisibility(View.INVISIBLE);
+                                                    logRecycleView.setVisibility(View.VISIBLE);
+                                                    ReadingsAdapter adapter = new ReadingsAdapter(LogActivity.this, newTask);
+                                                    logRecycleView.setAdapter(adapter);
+                                                    adapter.notifyDataSetChanged();
+                                                }
+                                        }
                                     }
                                 }
+
+
                             }
                         }
                     });
@@ -258,6 +302,38 @@ private  void endDateCalendar() {
         gt.execute();
     }
 
+    //Filter dates between 2 dates.
+    private static List<Date> getDates(String dateString1, String dateString2)
+    {
+        ArrayList<Date> dates = new ArrayList<Date>();
+        DateFormat df1 = new SimpleDateFormat("dd-MM-yyyy");
+
+        Date date1 = null;
+        Date date2 = null;
+
+        try {
+            date1 = df1 .parse(dateString1);
+            date2 = df1 .parse(dateString2);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        Calendar cal1 = Calendar.getInstance();
+        cal1.setTime(date1);
+
+
+        Calendar cal2 = Calendar.getInstance();
+        cal2.setTime(date2);
+
+        while(!cal1.after(cal2))
+        {
+            dates.add(cal1.getTime());
+            cal1.add(Calendar.DATE, 1);
+        }
+        return dates;
+    }
+
+    //Adapter to display data in recycler view.
     public class ReadingsAdapter extends RecyclerView.Adapter<ReadingsAdapter.ReadingViewHolder> {
         private final Context mCtx;
         private final List<BloodPressureDB> readingList;
@@ -281,6 +357,7 @@ private  void endDateCalendar() {
             String date = t.getDate();
             String[] showDate = date.split("-");
 
+            // Changing the date format
             if (showDate[1].equalsIgnoreCase("01")) {
                 holder.textViewDate.setText(showDate[0]+"-"+"JAN");
             }else if(showDate[1].equalsIgnoreCase("02")){
@@ -310,6 +387,7 @@ private  void endDateCalendar() {
             holder.textViewSysta.setText(String.valueOf(t.getSystolic()));
             holder.textViewDiasta.setText(String.valueOf(t.getDystolic()));
             holder.textViewRate.setText(String.valueOf(t.getHeartRate()));
+
         }
 
         @Override
@@ -338,6 +416,7 @@ private  void endDateCalendar() {
             public void onClick(View view) {
                 BloodPressureDB task = readingList.get(getAdapterPosition());
 
+                // Share dialog to share the data through different apps/media.
                 Dialog shareDialog = new Dialog(mCtx);
                 shareDialog.setContentView(R.layout.share_readings);
                 shareDialog.setCancelable(false);
@@ -386,6 +465,7 @@ private  void endDateCalendar() {
                 shareDialog.show();
             }
 
+            // Status according to sys/dia ranges.
             private String changeStatus(int systolic, int diastolic) {
                 String msg = null;
                 if ((systolic < 50) && (diastolic < 33)) {

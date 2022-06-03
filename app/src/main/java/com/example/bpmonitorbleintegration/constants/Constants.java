@@ -1,4 +1,4 @@
-package com.example.bpmonitorbleintegration;
+package com.example.bpmonitorbleintegration.constants;
 
 public class Constants {
     public final static String ACTION_GATT_CONNECTED =
@@ -50,4 +50,5 @@ public class Constants {
     public static boolean is_cuffReplaced = false;
     public static boolean is_finalResult = false;
     public static boolean is_buttonStarted = false;
+    public static boolean is_errorReceived = false;
 }

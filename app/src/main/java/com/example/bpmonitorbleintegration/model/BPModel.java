@@ -1,4 +1,4 @@
-package com.example.bpmonitorbleintegration;
+package com.example.bpmonitorbleintegration.model;
 
 public class BPModel {
     String name;

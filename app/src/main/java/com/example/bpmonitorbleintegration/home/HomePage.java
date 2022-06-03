@@ -1,12 +1,10 @@
-package com.example.bpmonitorbleintegration;
+package com.example.bpmonitorbleintegration.home;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.sqlite.db.SupportSQLiteOpenHelper;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
@@ -24,6 +22,16 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.bpmonitorbleintegration.FirstFragment;
+import com.example.bpmonitorbleintegration.logs.LogActivity;
+import com.example.bpmonitorbleintegration.reading.MainActivity;
+import com.example.bpmonitorbleintegration.R;
+import com.example.bpmonitorbleintegration.SecondFragment;
+import com.example.bpmonitorbleintegration.ThirdFragment;
+import com.example.bpmonitorbleintegration.charts.CustomMarkerView;
+import com.example.bpmonitorbleintegration.charts.Statistics;
+import com.example.bpmonitorbleintegration.database.BloodPressureDB;
+import com.example.bpmonitorbleintegration.database.DatabaseClient;
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
@@ -66,6 +74,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
+//        Activity.reCreate();
         nameText = findViewById(R.id.profile_name);
         addressText = findViewById(R.id.profile_address);
         bloodpressureText = findViewById(R.id.blood_pressure);

@@ -1,9 +1,10 @@
-package com.example.bpmonitorbleintegration;
+package com.example.bpmonitorbleintegration.charts;
 
 import android.content.Context;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.bpmonitorbleintegration.R;
 import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.data.CandleEntry;
 import com.github.mikephil.charting.data.Entry;

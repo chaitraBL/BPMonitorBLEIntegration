@@ -1,11 +1,11 @@
-package com.example.bpmonitorbleintegration;
+package com.example.bpmonitorbleintegration.database;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity
-public class BloodPressureDB {
+public class AverageBPDB {
     @PrimaryKey(autoGenerate = true)
     private int id;
 
@@ -18,17 +18,8 @@ public class BloodPressureDB {
     @ColumnInfo(name = "dystolic")
     private int dystolic;
 
-    @ColumnInfo(name = "heartRate")
-    private int heartRate;
-
-    @ColumnInfo(name = "range")
-    private int range;
-
     @ColumnInfo(name = "date")
     private String date;
-
-    @ColumnInfo(name = "time")
-    private String time;
 
     public int getId() {
         return id;
@@ -62,22 +53,6 @@ public class BloodPressureDB {
         this.dystolic = dystolic;
     }
 
-    public int getHeartRate() {
-        return heartRate;
-    }
-
-    public void setHeartRate(int heartRate) {
-        this.heartRate = heartRate;
-    }
-
-    public int getRange() {
-        return range;
-    }
-
-    public void setRange(int range) {
-        this.range = range;
-    }
-
     public String getDate() {
         return date;
     }
@@ -86,25 +61,14 @@ public class BloodPressureDB {
         this.date = date;
     }
 
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
     @Override
     public String toString() {
-        return "BloodPressureDB{" +
+        return "AverageBPDB{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", systolic=" + systolic +
                 ", dystolic=" + dystolic +
-                ", heartRate=" + heartRate +
-                ", range=" + range +
                 ", date='" + date + '\'' +
-                ", time='" + time + '\'' +
                 '}';
     }
 }

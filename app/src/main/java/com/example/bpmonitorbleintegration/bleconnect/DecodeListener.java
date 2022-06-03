@@ -1,4 +1,4 @@
-package com.example.bpmonitorbleintegration;
+package com.example.bpmonitorbleintegration.bleconnect;
 
 public interface DecodeListener {
     void pressureValue(int value1, int value2);

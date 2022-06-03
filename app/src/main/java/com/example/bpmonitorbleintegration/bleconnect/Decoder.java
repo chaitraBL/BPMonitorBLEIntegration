@@ -1,15 +1,9 @@
-package com.example.bpmonitorbleintegration;
+package com.example.bpmonitorbleintegration.bleconnect;
 
 import android.bluetooth.BluetoothGattCharacteristic;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
-import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.concurrent.LinkedBlockingQueue;
+import com.example.bpmonitorbleintegration.constants.Constants;
 
 public class Decoder
 {
@@ -76,40 +70,6 @@ public class Decoder
                     if (error == 6) {
                         Constants.is_cuffReplaced = true;
                     }
-//                    Log.i("Decoder", "error value " + error);
-//                    String msg;
-//                    switch (error) {
-//                        case 1:
-//                            msg = "Indicates cuff placement/fitment incorrect!!!";
-//                            decodeListener.errorMsg(msg);
-//                            break;
-//                        case 2:
-//                            msg = "Indicates hand movement detected!!!";
-//                            decodeListener.errorMsg(msg);
-//                            break;
-//                        case 3:
-//                            msg = "Indicates irregular heartbeat during measurement!!!";
-//                            decodeListener.errorMsg(msg);
-//                            break;
-//                        case 4:
-//                            msg = "Indicates cuff over pressurised!!!";
-//                            decodeListener.errorMsg(msg);
-//                            break;
-//                        case 5:
-//                            msg = "Indicates low battery!!!";
-//                            decodeListener.errorMsg(msg);
-//                            break;
-//                        case 6:
-//                            msg = "Indicates Cuff replacement!!!";
-//                            decodeListener.errorMsg(msg);
-//                            Constants.is_cuffReplaced = true;
-//                            break;
-//                        default:
-//                            msg = " ";
-//                            decodeListener.errorMsg(msg);
-////                                int11ent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
-//                            break;
-//                    }
 
                     Constants.is_resultReceived = true;
                     break;

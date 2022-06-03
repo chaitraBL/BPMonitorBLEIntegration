@@ -1,15 +1,12 @@
-package com.example.bpmonitorbleintegration;
+package com.example.bpmonitorbleintegration.database;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
 
 public class RoomDB {
 //    public static final String TIME_FORMAT = "hh:mm aa";

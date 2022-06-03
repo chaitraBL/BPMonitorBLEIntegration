@@ -36,28 +36,28 @@
         android:theme="@style/Theme.BPMonitorBLEIntegration"
         tools:ignore="ExtraText">
         <activity
-            android:name=".ReadingData"
+            android:name=".reading.ReadingData"
             android:exported="false" />
         <activity
-            android:name=".LogActivity"
+            android:name=".logs.LogActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".reading.MainActivity"
             android:exported="false" />
         <activity
-            android:name=".Statistics2"
+            android:name=".charts.Statistics2"
             android:exported="false" />
         <activity
-            android:name=".Statistics"
+            android:name=".charts.Statistics"
             android:exported="false" />
         <activity
-            android:name=".ManualReadings"
+            android:name=".reading.ManualReadings"
             android:exported="false" />
         <activity
-            android:name=".DataTransferActivity"
+            android:name=".reading.DataTransferActivity"
             android:exported="false" />
         <activity
-            android:name=".HomePage"
+            android:name=".home.HomePage"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -67,7 +67,7 @@
         </activity>
 
         <service
-            android:name=".BLEService"
+            android:name=".bleconnect.BLEService"
             android:enabled="true" />
 
         <meta-data

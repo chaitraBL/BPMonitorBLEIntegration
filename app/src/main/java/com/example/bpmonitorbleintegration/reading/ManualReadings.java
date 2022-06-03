@@ -1,24 +1,22 @@
-package com.example.bpmonitorbleintegration;
+package com.example.bpmonitorbleintegration.reading;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.AsyncTask;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
-import java.util.List;
+import com.example.bpmonitorbleintegration.R;
+import com.example.bpmonitorbleintegration.bleconnect.Decoder;
+import com.example.bpmonitorbleintegration.database.RoomDB;
+
 import java.util.Objects;
 
 public class ManualReadings extends AppCompatActivity {
@@ -48,8 +46,9 @@ public class ManualReadings extends AppCompatActivity {
 
         ActionBar actioBar = getSupportActionBar();
         Objects.requireNonNull(actioBar).setTitle(R.string.manual_reading);
-        actioBar.setHomeAsUpIndicator(R.drawable.ic_baseline_keyboard_arrow_left_24);
+//        actioBar.setHomeAsUpIndicator(R.drawable.ic_baseline_keyboard_arrow_left_24);
         actioBar.setDisplayHomeAsUpEnabled(true);
+        actioBar.setDisplayShowHomeEnabled(true);
 
         save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,6 +91,17 @@ public class ManualReadings extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        //To refresh activity
+        Intent i = new Intent(this, MainActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
+        finish();
+//        startActivity(getIntent());
     }
 
     @Override

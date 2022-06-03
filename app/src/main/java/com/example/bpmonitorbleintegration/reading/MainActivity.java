@@ -1,7 +1,6 @@
-package com.example.bpmonitorbleintegration;
+package com.example.bpmonitorbleintegration.reading;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,11 +28,9 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -43,12 +40,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.bpmonitorbleintegration.R;
+import com.example.bpmonitorbleintegration.home.HomePage;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 
 @TargetApi(21)
@@ -110,8 +108,9 @@ public class MainActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         Objects.requireNonNull(actionBar).setTitle(R.string.connect_device);
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_keyboard_arrow_left_24);
+//        actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_keyboard_arrow_left_24);
         actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
 
 
         bluetoothManager =
@@ -161,7 +160,18 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-        //Describes bluetooth device type.
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        //To refresh activity
+        Intent i = new Intent(this, HomePage.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
+        finish();
+//        startActivity(getIntent());
+    }
+
+    //Describes bluetooth device type.
     private String getBTDevieType(BluetoothDevice d) {
         String type = "";
 

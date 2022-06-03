@@ -1,4 +1,4 @@
-package com.example.bpmonitorbleintegration;
+package com.example.bpmonitorbleintegration.database;
 
 import androidx.room.Database;
 import androidx.room.RoomDatabase;
