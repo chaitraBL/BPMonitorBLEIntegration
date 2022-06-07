@@ -90,8 +90,6 @@
     <string name="nov">NOV</string>
     <string name="dec">DEC</string>
     <string name="bloodpressure_reading">Blood Pressure Reading :</string>
-    <string name="date_of_reading">\"Date of Reading : \"</string>
-    <string name="time_of_reading">\"Time of Reading : \"</string>
     <string name="status_1">Status :</string>
     <string name="bp_for">\"Blood Pressure Readings For \"</string>
     <string name="share_via">Share via</string>
@@ -106,5 +104,6 @@
     <string name="hypertension_stage_3">Hypertension Stage 3</string>
     <string name="hypertension_stage_4">Hypertension Stage 4</string>
     <string name="saved">Saved</string>
+    <string name="do_you_want_to_save_result">Do you want to save result?</string>
 
 </resources>

@@ -131,6 +131,7 @@ public class Statistics2 extends AppCompatActivity {
             candleStick.setData(cd);
             candleStick.getDescription().setEnabled(false);
 
+
             //X axis
             XAxis xAxis = candleStick.getXAxis();
             xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);

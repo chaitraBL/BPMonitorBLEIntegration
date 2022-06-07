@@ -224,10 +224,10 @@ private  void endDateCalendar() {
                         public void onClick(View view) {
 
                             if (startDate.getText().toString().isEmpty()) {
-                                Toast.makeText(getApplicationContext(), "Please select start date", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), getApplicationContext().getResources().getString(R.string.select_start_date), Toast.LENGTH_SHORT).show();
                             }
                             else if (endDate.getText().toString().isEmpty()){
-                                Toast.makeText(getApplicationContext(), "Please select end date", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), getApplicationContext().getResources().getString(R.string.select_end_date), Toast.LENGTH_SHORT).show();
                             }
                             else {
 
@@ -359,29 +359,29 @@ private  void endDateCalendar() {
 
             // Changing the date format
             if (showDate[1].equalsIgnoreCase("01")) {
-                holder.textViewDate.setText(showDate[0]+"-"+"JAN");
+                holder.textViewDate.setText(showDate[0]+"-"+getString(R.string.jan));
             }else if(showDate[1].equalsIgnoreCase("02")){
-                holder.textViewDate.setText(showDate[0]+"-"+"FEB");
+                holder.textViewDate.setText(showDate[0]+"-"+getString(R.string.feb));
             }else if(showDate[1].equalsIgnoreCase("03")){
-                holder.textViewDate.setText(showDate[0]+"-"+"MAR");
+                holder.textViewDate.setText(showDate[0]+"-"+getString(R.string.mar));
             }else if(showDate[1].equalsIgnoreCase("04")){
-                holder.textViewDate.setText(showDate[0]+"-"+"APR");
+                holder.textViewDate.setText(showDate[0]+"-"+getString(R.string.apr));
             }else if(showDate[1].equalsIgnoreCase("05")){
-                holder.textViewDate.setText(showDate[0]+"-"+"MAY");
+                holder.textViewDate.setText(showDate[0]+"-"+getString(R.string.may));
             }else if(showDate[1].equalsIgnoreCase("06")){
-                holder.textViewDate.setText(showDate[0]+"-"+"JUN");
+                holder.textViewDate.setText(showDate[0]+"-"+getString(R.string.jun));
             }else if(showDate[1].equalsIgnoreCase("07")){
-                holder.textViewDate.setText(showDate[0]+"-"+"JLY");
+                holder.textViewDate.setText(showDate[0]+"-"+getString(R.string.jly));
             }else if(showDate[1].equalsIgnoreCase("08")){
-                holder.textViewDate.setText(showDate[0]+"-"+"AUG");
+                holder.textViewDate.setText(showDate[0]+"-"+getString(R.string.aug));
             }else if(showDate[1].equalsIgnoreCase("09")){
-                holder.textViewDate.setText(showDate[0]+"-"+"SEP");
+                holder.textViewDate.setText(showDate[0]+"-"+getString(R.string.sep));
             }else if(showDate[1].equalsIgnoreCase("10")){
-                holder.textViewDate.setText(showDate[0]+"-"+"OCT");
+                holder.textViewDate.setText(showDate[0]+"-"+getString(R.string.oct));
             }else if(showDate[1].equalsIgnoreCase("11")){
-                holder.textViewDate.setText(showDate[0]+"-"+"NOV");
+                holder.textViewDate.setText(showDate[0]+"-"+getString(R.string.nov));
             }else if(showDate[1].equalsIgnoreCase("12")){
-                holder.textViewDate.setText(showDate[0]+"-"+"DEC");
+                holder.textViewDate.setText(showDate[0]+"-"+getString(R.string.dec));
             }
             holder.textViewTime.setText(t.getTime());
             holder.textViewSysta.setText(String.valueOf(t.getSystolic()));
@@ -445,14 +445,14 @@ private  void endDateCalendar() {
                         shareDialog.dismiss();
                         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                         sharingIntent.setType("text/plain");
-                        String shareBody = "Name :" +task.getName()+"\n"+
-                                "Blood Pressure Reading :" +systolicText.getText().toString() + " / " + diastolicText.getText().toString() + " / " + heartRateText.getText().toString() +"\n"+
-                                "Date of Reading : "+ dateText.getText().toString()+"\n"+
-                                "Time of Reading : "+ task.getTime()+"\n"+
-                                "Status :"+ statusText.getText().toString();
-                        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Blood Pressure Readings For "+task.getName());
+                        String shareBody = getString(R.string.name) +task.getName()+"\n"+
+                                getString(R.string.bloodpressure_reading) +systolicText.getText().toString() + " / " + diastolicText.getText().toString() + " / " + heartRateText.getText().toString() +"\n"+
+                                getString(R.string.date)+ dateText.getText().toString()+"\n"+
+                                getString(R.string.time)+ task.getTime()+"\n"+
+                                getString(R.string.status_1)+ statusText.getText().toString();
+                        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.bp_for)+task.getName());
                         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-                        startActivity(Intent.createChooser(sharingIntent, "Share via"));
+                        startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_via)));
                     }
                 });
                 shareDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -469,34 +469,34 @@ private  void endDateCalendar() {
             private String changeStatus(int systolic, int diastolic) {
                 String msg = null;
                 if ((systolic < 50) && (diastolic < 33)) {
-                    msg = "Very Serious Hypotension";
+                    msg = getString(R.string.very_serious_hypotension);
                 }
                 else if ((systolic <= 60) && (diastolic <= 40)) {
-                    msg = "Serious Hypotension";
+                    msg = getString(R.string.serious_hypotension);
                 }
                 else if ((systolic <= 90) && (diastolic <= 60)) {
-                    msg = "Borderline Hypotension";
+                    msg = getString(R.string.borderline_hypotension);
                 }
                 else if ((systolic <= 110) && (diastolic <= 75)) {
-                    msg = "Low Blood Pressure";
+                    msg = getString(R.string.low_bp);
                 }
-                else if ((systolic <= 120 && (diastolic <= 80))) {
-                    msg = "Normal Blood Pressure";
+                else if ((systolic <= 120) && (diastolic <= 80)) {
+                    msg = getString(R.string.normal_bp);
                 }
                 else if ((systolic <= 130) && (diastolic <= 85)) {
-                    msg = "High Normal Blood Pressure";
+                    msg = getString(R.string.high_normal_bp);
                 }
                 else if ((systolic <= 140) && (diastolic <= 90)) {
-                    msg = "Hypertension Stage 1";
+                    msg = getString(R.string.hypertension_stage_1);
                 }
                 else if ((systolic <= 160) && (diastolic <= 100)) {
-                    msg = "Hypertension Stage 2";
+                    msg = getString(R.string.hypertension_stage_2);
                 }
-                else if ((systolic <= 180 && (diastolic <= 110))) {
-                    msg = "Hypertension Stage 3";
+                else if ((systolic <= 180) && (diastolic <= 110)) {
+                    msg = getString(R.string.hypertension_stage_3);
                 }
                 else {
-                    msg = "Hypertension Stage 4";
+                    msg = getString(R.string.hypertension_stage_4);
                 }
                 return msg;
             }

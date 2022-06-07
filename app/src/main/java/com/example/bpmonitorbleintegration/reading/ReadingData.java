@@ -63,7 +63,9 @@ public class ReadingData extends AppCompatActivity {
     private final String TAG = ReadingData.class.getName();
 
     private TextView statusText, batteryText, systolicText, diastolicText, heartRateText, mapText, progressText;
-    private Button startBtn,stopBtn;
+    private Button startBtn;
+    private Button stopBtn;
+    Button saveBtn;
     private ProgressBar progressBar, progress;
     int i = 0;
 
@@ -83,6 +85,7 @@ public class ReadingData extends AppCompatActivity {
         progressBar = findViewById(R.id.progress_bar);
         startBtn = findViewById(R.id.start_reading);
         stopBtn = findViewById(R.id.stop_reading);
+
 
         deviceAddress = getIntent().getStringExtra("Device");
         intentFilter = new IntentFilter(BluetoothDevice.ACTION_PAIRING_REQUEST);
@@ -148,11 +151,10 @@ public class ReadingData extends AppCompatActivity {
                                                         mCountDownTimer.cancel();
                                                         progressText.setText("---");
 
-
-//                                                                                dialog.setCancelable(true);
-//                                                        Constants.is_readingStarted = false;
-
-//                                                                            Constants.is_ackReceived = false;
+                                                        startBtn.setEnabled(true);
+                                                        startBtn.setVisibility(View.VISIBLE);
+                                                        stopBtn.setVisibility(View.INVISIBLE);
+                                                        stopBtn.setEnabled(false);
                                                     }
 
                                                 }
@@ -175,10 +177,7 @@ public class ReadingData extends AppCompatActivity {
                                         mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.cancelValue);
                                         start();
                                     }
-                                    startBtn.setEnabled(true);
-                                    startBtn.setVisibility(View.VISIBLE);
-                                    stopBtn.setVisibility(View.INVISIBLE);
-                                    stopBtn.setEnabled(false);
+
 //                                    Constants.is_ackReceived = false;
 
                                 }
@@ -186,13 +185,10 @@ public class ReadingData extends AppCompatActivity {
                         }
                     }.start();
                     if (Constants.is_finalResult == true) {
-                        progress.setVisibility(View.VISIBLE);
-                        localDB.saveTask(deviceAddress, mBluetoothLeService.systalic, mBluetoothLeService.dystolic, mBluetoothLeService.rate, mBluetoothLeService.range, ReadingData.this);
                         systolicText.setText(String.valueOf(mBluetoothLeService.systalic));
                         diastolicText.setText(String.valueOf(mBluetoothLeService.dystolic));
                         heartRateText.setText(String.valueOf(mBluetoothLeService.rate));
                         mapText.setText(String.valueOf(mBluetoothLeService.range));
-                        progress.setVisibility(View.GONE);
                     }
                 }
             }
@@ -202,7 +198,6 @@ public class ReadingData extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Constants.is_buttonStarted = true;
-                Constants.is_ackReceived = false;
                 if (mNotifyCharacteristic != null) {
 //                    Log.i(TAG, "Start value " + Arrays.toString(Constants.startValue) + " " + Constants.startValue);
                     Constants.startValue = decoder.computeCheckSum(Constants.startValue);
@@ -210,11 +205,17 @@ public class ReadingData extends AppCompatActivity {
                     mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
                 }
 
-                startBtn.setEnabled(false);
-                startBtn.setVisibility(View.INVISIBLE);
-                stopBtn.setVisibility(View.VISIBLE);
-                stopBtn.setEnabled(true);
 //                startBtn.setText("Cancel");
+            }
+        });
+
+        saveBtn = findViewById(R.id.save_result1);
+        saveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                progress.setVisibility(View.VISIBLE);
+                localDB.saveTask(deviceAddress, mBluetoothLeService.systalic, mBluetoothLeService.dystolic, mBluetoothLeService.rate, mBluetoothLeService.range, ReadingData.this);
+                progress.setVisibility(View.GONE);
             }
         });
     }
@@ -222,10 +223,10 @@ public class ReadingData extends AppCompatActivity {
     // To check cuff replacement is reset or not.
     private void alertDialogForReset() {
         builder1 = new AlertDialog.Builder(ReadingData.this);
-        builder1.setTitle("Message");
-        builder1.setMessage("Have you replaced the cuff?");
+        builder1.setTitle(getApplicationContext().getResources().getString(R.string.message));
+        builder1.setMessage(getApplicationContext().getResources().getString(R.string.cuff_replaced));
         // On click ok button reset command will be sent
-        builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder1.setPositiveButton(getApplicationContext().getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog1, int which) {
 //                Log.i(TAG, "onClick: cuff replaced after alert " + Constants.is_cuffReplaced);
@@ -240,7 +241,7 @@ public class ReadingData extends AppCompatActivity {
             }
         });
         // On click ok button noreset command will be sent
-        builder1.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder1.setNegativeButton(getApplicationContext().getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -296,7 +297,7 @@ public class ReadingData extends AppCompatActivity {
                                     mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.noResetValue);
                                     start();
                                 }
-//                                Constants.is_ackReceived = false;
+                                Constants.is_ackReceived = false;
                             }
                         });
                     }
@@ -307,12 +308,11 @@ public class ReadingData extends AppCompatActivity {
         //To create alert dialog
         dialog1 = builder1.create();
         //Prevent dialog box from getting dismissed on back key pressed
-//        dialog1.setCancelable(false);
+        dialog1.setCancelable(false);
         //Prevent dialog box from getting dismissed on outside touch
         dialog1.setCanceledOnTouchOutside(false);
         //To show alert dialog
         dialog1.show();
-
     }
 
     // To check the ack after the reset command sent
@@ -349,6 +349,7 @@ public class ReadingData extends AppCompatActivity {
                             mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.resetValue);
                             start();
                         }
+//                        Constants.is_cuffReplaced = false;
                     }
                 });
             }
@@ -376,6 +377,7 @@ public class ReadingData extends AppCompatActivity {
         super.onPause();
         //Disconnect through services.
         unregisterReceiver(broadCastReceiver);
+//        dialog1.dismiss();
     }
 
     @Override
@@ -393,6 +395,7 @@ public class ReadingData extends AppCompatActivity {
         super.onStop();
         // Unbind service connection.
         unbindService(mServiceConnection);
+//        dialog1.dismiss();
     }
 
     //Menu item.
@@ -407,9 +410,9 @@ public class ReadingData extends AppCompatActivity {
 
         if (item.getItemId() == R.id.disable_bluetooth) {
             dialog = new AlertDialog.Builder(ReadingData.this)
-                    .setTitle("Message")
-                    .setMessage("Are you sure, disable bluetooth")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    .setTitle(getApplicationContext().getResources().getString(R.string.message))
+                    .setMessage(getApplicationContext().getResources().getString(R.string.are_you_sure_disable_bluetooth))
+                    .setPositiveButton(getApplicationContext().getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
@@ -425,7 +428,7 @@ public class ReadingData extends AppCompatActivity {
                             }
                         }
                     })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    .setNegativeButton(getApplicationContext().getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             dialog.dismiss();
@@ -454,14 +457,14 @@ public class ReadingData extends AppCompatActivity {
             boolean mConnected;
             if (Constants.ACTION_GATT_CONNECTED.equals(action)) {
                 mConnected = true;
-                updateConnectionState("Connected");
+                updateConnectionState(getApplicationContext().getResources().getString(R.string.connected));
             }
 //            else if (Constants.ACTION_GATT_CONNECTING.equals(action)) {
 //
 //            }
             else if (Constants.ACTION_GATT_DISCONNECTED.equals(action)) {
                 mConnected = false;
-                updateConnectionState("Disconnected");
+                updateConnectionState(getApplicationContext().getResources().getString(R.string.disconnected));
             }
 
             else if (Constants.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
@@ -493,6 +496,7 @@ public class ReadingData extends AppCompatActivity {
             }
 
             else if (Constants.ACTION_DATA_AVAILABLE.equals(action)) {
+//                Log.i(TAG, "onReceive: intent value in broadcast" + intent.getStringExtra(Constants.EXTRA_DATA));
                 displayData(intent.getStringExtra(Constants.EXTRA_DATA));
             }
         }
@@ -500,8 +504,10 @@ public class ReadingData extends AppCompatActivity {
 
     private  void displayData(String data) {
 
+//        Toast.makeText(getApplicationContext(), "received data before" + data, Toast.LENGTH_SHORT).show();
         if (data != null) {
-            Log.i(TAG, "received data before " + data);
+//            Log.i(TAG, "received data before " + data);
+//            Toast.makeText(getApplicationContext(), "received data after" + data, Toast.LENGTH_SHORT).show();
 //           Log.i(TAG, "reading started and result received " + Constants.is_readingStarted + " " + Constants.is_resultReceived);
             mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
                 @Override
@@ -516,16 +522,19 @@ public class ReadingData extends AppCompatActivity {
                             if (Constants.is_ackReceived == true)
                             {
                                 mCountDownTimer.cancel();
+                                startBtn.setEnabled(false);
+                                startBtn.setVisibility(View.INVISIBLE);
+                                stopBtn.setVisibility(View.VISIBLE);
+                                stopBtn.setEnabled(true);
                                 progressText.setText(data);
 //                                startBtn.setText("Cancel");
 //                                if (counter < mTimeLeftInMillis) {
-//
 //                                    counter = counter++;
 //                                    Handler handler = new Handler();
 //                                    handler.post(new Runnable() {
 //                                        @Override
 //                                        public void run() {
-//                                            progressBar.setProgress((int) counter);
+//                                            progressBar.setProgress(Integer.parseInt(data));
 //                                        }
 //                                    });
 //                                    try {
@@ -533,8 +542,8 @@ public class ReadingData extends AppCompatActivity {
 //                                    }catch (InterruptedException e) {
 //                                        e.printStackTrace();
 //                                    }
-//
-////                                    Log.i(TAG, "timer in readings " + (int) mTimeLeftInMillis);
+////
+//////                                    Log.i(TAG, "timer in readings " + (int) mTimeLeftInMillis);
 //                                }
 //                                Constants.is_readingStarted = false;
                             }
@@ -551,10 +560,10 @@ public class ReadingData extends AppCompatActivity {
 //                                                Log.i(TAG, "run: cuff replaced before condion in displayDate " + Constants.is_cuffReplaced);
                                                 if (Constants.is_cuffReplaced == true) {
                                                     mCountDownTimer.cancel();
+                                                    progressText.setText("");
 //                                                    Log.i(TAG, "run: cuff replaced before alert start " + Constants.is_cuffReplaced);
                                                     alertDialogForReset();
-                                                    Constants.is_cuffReplaced = false;
-//                                                    progressText.setText("");
+
                                                 }
                                             }
                                         });
@@ -562,16 +571,11 @@ public class ReadingData extends AppCompatActivity {
 
                                     @Override
                                     public void onFinish() {
-                                        if (Constants.is_resultReceived == false) {
+                                        if ((Constants.is_resultReceived == false) || (Constants.is_readingStarted == false)) {
                                             Toast.makeText(getApplicationContext(), getApplicationContext().getResources().getString(R.string.please_start_again), Toast.LENGTH_SHORT).show();
                                         }
-                                        else if (Constants.is_readingStarted == false){
-                                            Toast.makeText(getApplicationContext(), getApplicationContext().getResources().getString(R.string.please_start_again), Toast.LENGTH_SHORT).show();
-                                        }
-
                                     }
                                 }.start();
-
                             }
                         }
                     });
@@ -586,8 +590,6 @@ public class ReadingData extends AppCompatActivity {
                                 mCountDownTimer.cancel();
                                 Toast.makeText(ReadingData.this,getApplicationContext().getResources().getString(R.string.please_start_again),Toast.LENGTH_SHORT).show();
                             }
-
-//                            Constants.is_ackReceived = false;
                         }
                     });
                 }
@@ -626,7 +628,7 @@ public class ReadingData extends AppCompatActivity {
                     public void run() {
                         if (Constants.is_batterValueReceived == false){
                             mCountDownTimer.cancel();
-                            Toast.makeText(ReadingData.this,"Something went wrong please connect again!!!",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ReadingData.this, getApplicationContext().getResources().getString(R.string.please_connect_again),Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -646,7 +648,7 @@ public class ReadingData extends AppCompatActivity {
         }
         else if (mBluetoothLeService.batteryLevel == Constants.LOW_BATTERY) {
             batteryText.setBackgroundColor(Color.parseColor("#FF0000"));
-            Toast.makeText(getApplicationContext(), "Battery is low, Please Change battery",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), getApplicationContext().getResources().getString(R.string.battery_low),Toast.LENGTH_SHORT).show();
         }
 //        Constants.is_batterValueReceived = false;
     }
@@ -685,9 +687,9 @@ public class ReadingData extends AppCompatActivity {
 
                 if (status.equals("Disconnected")){
                     new AlertDialog.Builder(ReadingData.this)
-                            .setTitle("Message")
-                            .setMessage("Connection terminated!, please connect again")
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            .setTitle(getApplicationContext().getResources().getString(R.string.message))
+                            .setMessage(getApplicationContext().getResources().getString(R.string.connection_terminated))
+                            .setPositiveButton(getApplicationContext().getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
 
@@ -702,5 +704,4 @@ public class ReadingData extends AppCompatActivity {
             }
         });
     }
-
 }

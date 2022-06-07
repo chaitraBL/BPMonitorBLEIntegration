@@ -63,17 +63,17 @@ public class ManualReadings extends AppCompatActivity {
                 //Method 2: Validating the edit text fields.
                 if (systolic.getText().toString().equals(""))
                 {
-                    Toast.makeText(getApplicationContext(),"Please enter systolic value",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getApplicationContext().getResources().getString(R.string.enter_systolic_value),Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.GONE);
                 }
                 else if (diastolic.getText().toString().equals(""))
                 {
-                    Toast.makeText(getApplicationContext(),"Please enter diastolic value",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getApplicationContext().getResources().getString(R.string.enter_diastolic_value),Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.GONE);
                 }
                 else if (heartRate.getText().toString().equals(""))
                 {
-                    Toast.makeText(getApplicationContext(),"Please enter heart rate value",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getApplicationContext().getResources().getString(R.string.enter_heart_rate),Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.GONE);
                 }
                 else {

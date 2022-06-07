@@ -101,34 +101,36 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
+            <!--                android:backgroundTint="#C58917"/>-->
+            <!--                android:background="@drawable/filled_bg_circle" />-->
+
             <Button
                 android:id="@+id/start_reading"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
+                android:layout_alignParentStart="true"
                 android:layout_gravity="center"
+                android:layout_marginStart="155dp"
                 android:background="@drawable/filled_bg_circle"
                 android:fontFamily="@font/arial"
-                android:layout_marginStart="140dp"
                 android:text="@string/start"
                 android:textSize="14sp"
                 android:textStyle="bold" />
-<!--                android:backgroundTint="#C58917"/>-->
-<!--                android:background="@drawable/filled_bg_circle" />-->
 
             <Button
+                android:id="@+id/stop_reading"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="155dp"
+                android:background="@drawable/filled_bg_circle"
+                android:fontFamily="@font/arial"
                 android:text="@string/stop"
-                android:id="@+id/stop_reading"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:layout_gravity="center"
-                android:fontFamily="@font/arial"
-                android:layout_marginStart="140dp"
-                android:visibility="gone"
-                android:background="@drawable/filled_bg_circle" />
-<!--                android:backgroundTint="#C58917"/>-->
-<!--                android:background="@drawable/filled_bg_circle" />-->
+                android:visibility="gone" />
+            <!--                android:backgroundTint="#C58917"/>-->
+            <!--                android:background="@drawable/filled_bg_circle" />-->
 
         </RelativeLayout>
 
@@ -136,9 +138,45 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="10dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/do_you_want_to_save_result"
+            android:textSize="12sp"
+            android:textStyle="normal"
+            android:fontFamily="@font/arial"
+            android:textColor="?android:textColorPrimary"/>
+        <Button
+            android:id="@+id/save_result1"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_transparent"
+            android:fontFamily="@font/arial"
+            android:text="@string/save"
+            android:textColor="@color/medium_blue"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/bg_transparent"
+
         android:orientation="horizontal">
 
         <TextView
@@ -164,8 +202,12 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/bg_transparent"
         android:orientation="horizontal">
 
         <TextView
@@ -188,8 +230,13 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/bg_transparent"
+
         android:orientation="horizontal">
 
         <TextView
@@ -212,8 +259,12 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/bg_transparent"
         android:orientation="horizontal">
 
         <TextView

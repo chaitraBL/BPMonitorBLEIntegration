@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 //import org.apache.commons.codec.binary.Hex;
-
+import com.example.bpmonitorbleintegration.home.HomePage;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         // Check if BLE is supported on the device.
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
             Toast.makeText(this,
-                    "BLUETOOTH_LE not supported in this device!",
+                    getApplicationContext().getResources().getString(R.string.bluetooth_le_not_supported),
                     Toast.LENGTH_LONG).show();
 //            finish();
         }
@@ -106,11 +106,11 @@ public class MainActivity extends AppCompatActivity {
         checkPermissions(MainActivity.this, this);
         mHandler = new Handler();
 
-        ActionBar actionBar = getSupportActionBar();
-        Objects.requireNonNull(actionBar).setTitle(R.string.connect_device);
-//        actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_keyboard_arrow_left_24);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowHomeEnabled(true);
+        ActionBar actioBar = getSupportActionBar();
+        Objects.requireNonNull(actioBar).setTitle(R.string.connect_device);
+//        actioBar.setHomeAsUpIndicator(R.drawable.ic_baseline_keyboard_arrow_left_24);
+        actioBar.setDisplayHomeAsUpEnabled(true);
+        actioBar.setDisplayShowHomeEnabled(true);
 
 
         bluetoothManager =
@@ -126,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
 
     // List of bluetooth scan devices.
     AdapterView.OnItemClickListener scanResultOnItemClickListener = new AdapterView.OnItemClickListener() {
@@ -159,17 +158,6 @@ public class MainActivity extends AppCompatActivity {
                     .show();
         }
     };
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        //To refresh activity
-        Intent i = new Intent(this, HomePage.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(i);
-        finish();
-//        startActivity(getIntent());
-    }
 
     //Describes bluetooth device type.
     private String getBTDevieType(BluetoothDevice d) {
@@ -208,11 +196,14 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.bluetooth_searching:
                 progressBar.setVisibility(View.VISIBLE);
-
                 scanLeDevice(true);
                 return true;
 
             case android.R.id.home:
+                //To refresh activity
+//                Intent i = new Intent(this, HomePage.class);
+//                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                startActivity(i);
                 this.finish();
                 return true;
 
@@ -271,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_ENABLE_BT) {
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Bluetooth not enabled.
-                Toast.makeText(getApplicationContext(), "Bluetooth not enabled", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getApplicationContext().getResources().getString(R.string.bluetooth_not_enable), Toast.LENGTH_SHORT).show();
                 finish();
                 return;
             }
@@ -328,7 +319,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onScanFailed(int errorCode) {
-            Toast.makeText(getApplicationContext(), "No devices found", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), getApplicationContext().getResources().getString(R.string.no_device_found), Toast.LENGTH_SHORT).show();
         }
 
         //Adding the scanned devices to listview.

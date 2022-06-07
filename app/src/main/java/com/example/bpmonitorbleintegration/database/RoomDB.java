@@ -41,8 +41,8 @@ public class RoomDB {
 
                 BloodPressureDB reading = new BloodPressureDB();
                 reading.setName(sAddress);
-                reading.setDate("26-05-2022");
-                reading.setTime("11:30 AM");
+                reading.setDate(date);
+                reading.setTime(Timein12hourFormat);
                 reading.setDystolic(dystolic);
                 reading.setSystolic(systolic);
                 reading.setHeartRate(heartRate);
