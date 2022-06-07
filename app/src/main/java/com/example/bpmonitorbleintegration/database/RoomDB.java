@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import com.example.bpmonitorbleintegration.R;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -39,8 +41,8 @@ public class RoomDB {
 
                 BloodPressureDB reading = new BloodPressureDB();
                 reading.setName(sAddress);
-                reading.setDate(date);
-                reading.setTime(Timein12hourFormat);
+                reading.setDate("26-05-2022");
+                reading.setTime("11:30 AM");
                 reading.setDystolic(dystolic);
                 reading.setSystolic(systolic);
                 reading.setHeartRate(heartRate);
@@ -55,7 +57,7 @@ public class RoomDB {
                 super.onPostExecute(unused);
 //                finish();
 //                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                Toast.makeText(context,"Saved",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getResources().getString(R.string.saved),Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -89,7 +91,7 @@ public class RoomDB {
                 super.onPostExecute(unused);
 //                finish();
 //                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                Toast.makeText(context,"Saved",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,context.getResources().getString(R.string.saved),Toast.LENGTH_SHORT).show();
             }
         }
 

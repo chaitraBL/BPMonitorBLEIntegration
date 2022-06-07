@@ -22,6 +22,7 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
+import com.example.bpmonitorbleintegration.R;
 import com.example.bpmonitorbleintegration.constants.BLEGattAttributes;
 import com.example.bpmonitorbleintegration.constants.Constants;
 
@@ -69,7 +70,7 @@ public class BLEService extends Service implements DecodeListener {
                 Toast.makeText(getApplicationContext(), "Connecting...", Toast.LENGTH_SHORT).show();
                 return true;
             } else {
-                Toast.makeText(getApplicationContext(), "Cannot connect...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Cannot connect, Please check device connectivity...", Toast.LENGTH_SHORT).show();
                 return false;
             }
         }
@@ -238,10 +239,10 @@ public class BLEService extends Service implements DecodeListener {
                 //Command Id wise receiving data.
                 switch (value[5]) {
                     case Constants.DEVICE_COMMANDID:
-                        Log.i(TAG, "Device id " + value);
-                        Log.i(TAG, "broadcastUpdate: device " + value[1] + value[2] + value[3] + value[4]);
+//                        Log.i(TAG, "Device id " + value);
+//                        Log.i(TAG, "broadcastUpdate: device " + value[1] + value[2] + value[3] + value[4]);
                         Constants.deviceId = new byte[]{(byte) value[1], (byte) value[2], (byte) value[3], (byte) value[4]};
-                        Log.i(TAG, "broadcastUpdate: device byte " + (byte) value[1] + (byte) value[2] + (byte) value[3] + (byte) value[4]);
+//                        Log.i(TAG, "broadcastUpdate: device byte " + (byte) value[1] + (byte) value[2] + (byte) value[3] + (byte) value[4]);
                         Constants.startValue = decoder.replaceArrayVal(Constants.startValue,Constants.deviceId);
                         Constants.ack = decoder.replaceArrayVal(Constants.ack,Constants.deviceId);
                         Constants.noAck = decoder.replaceArrayVal(Constants.noAck,Constants.deviceId);
@@ -255,8 +256,9 @@ public class BLEService extends Service implements DecodeListener {
 //                        Constants.is_resultReceived = false;
                         int cuffValue = value[8] * 256 + value[9];
                         int pulseValue = value[10] * 256 + value[11];
+//                        Toast.makeText(getApplicationContext(), "cuff and pulse value" + cuffValue + " / " + pulseValue, Toast.LENGTH_SHORT).show();
                         intent.putExtra(Constants.EXTRA_DATA, cuffValue + " / " + pulseValue);
-
+//                        intent.putExtra(Constants.EXTRA_DATA, cuffValue);
                         break;
 
                     case Constants.RESULT_COMMANDID:
@@ -284,8 +286,8 @@ public class BLEService extends Service implements DecodeListener {
                         switch (error) {
                             case 1:
                                 Constants.is_errorReceived = true;
-                                msg = "Indicates cuff placement/fitment incorrect!!!";
-                                intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
+                                msg = getString(R.string.cuff_fitment);
+                                intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + getString(R.string.try_again));
                                 Constants.ack = decoder.computeCheckSum(Constants.ack);
 //                        Log.i(TAG, "error" + Arrays.toString(Constants.ack));
 //                        Log.i(TAG, "ack sent " + Constants.ack);
@@ -293,8 +295,8 @@ public class BLEService extends Service implements DecodeListener {
                                 break;
                             case 2:
                                 Constants.is_errorReceived = true;
-                                msg = "Indicates hand movement detected!!!";
-                                intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
+                                msg = getString(R.string.hand_movement);
+                                intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + getString(R.string.try_again));
                                 Constants.ack = decoder.computeCheckSum(Constants.ack);
 //                        Log.i(TAG, "error" + Arrays.toString(Constants.ack));
 //                        Log.i(TAG, "ack sent " + Constants.ack);
@@ -302,8 +304,8 @@ public class BLEService extends Service implements DecodeListener {
                                 break;
                             case 3:
                                 Constants.is_errorReceived = true;
-                                msg = "Indicates irregular heartbeat during measurement!!!";
-                                intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
+                                msg = getString(R.string.irregular_heartbeat);
+                                intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + getString(R.string.try_again));
                                 Constants.ack = decoder.computeCheckSum(Constants.ack);
 //                        Log.i(TAG, "error" + Arrays.toString(Constants.ack));
 //                        Log.i(TAG, "ack sent " + Constants.ack);
@@ -311,8 +313,8 @@ public class BLEService extends Service implements DecodeListener {
                                 break;
                             case 4:
                                 Constants.is_errorReceived = true;
-                                msg = "Indicates cuff over pressurised!!!";
-                                intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
+                                msg = getString(R.string.cuff_over_pressured);
+                                intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + getString(R.string.try_again));
                                 Constants.ack = decoder.computeCheckSum(Constants.ack);
 //                        Log.i(TAG, "error" + Arrays.toString(Constants.ack));
 //                        Log.i(TAG, "ack sent " + Constants.ack);
@@ -320,8 +322,8 @@ public class BLEService extends Service implements DecodeListener {
                                 break;
                             case 5:
                                 Constants.is_errorReceived = true;
-                                msg = "Indicates low battery!!!";
-                                intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
+                                msg = getString(R.string.low_battery);
+                                intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + getString(R.string.try_again));
                                 Constants.ack = decoder.computeCheckSum(Constants.ack);
 //                        Log.i(TAG, "error" + Arrays.toString(Constants.ack));
 //                        Log.i(TAG, "ack sent " + Constants.ack);
@@ -329,8 +331,8 @@ public class BLEService extends Service implements DecodeListener {
                                 break;
                             case 6:
                                 Constants.is_cuffReplaced = true;
-                                msg = "Indicates Cuff replacement!!!";
-                                intent.putExtra(Constants.EXTRA_DATA, msg + "\n" + "Try again");
+                                msg = getString(R.string.cuff_replacement);
+                                intent.putExtra(Constants.EXTRA_DATA, msg);
                                 break;
                             default:
                                 msg = " ";
@@ -344,7 +346,8 @@ public class BLEService extends Service implements DecodeListener {
                     case Constants.ACK_COMMANDID:
                         Constants.is_ackReceived = true;
                         int ack = value[8];
-                        Log.i(TAG, "ack in bleservice " + ack);
+//                        Log.i(TAG, "ack in bleservice " + ack);
+
 //
                         break;
 
@@ -375,7 +378,7 @@ public class BLEService extends Service implements DecodeListener {
     // To read the data.
     public void readCharacteristic(BluetoothGattCharacteristic bluetoothGattCharacteristic) {
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
-            Toast.makeText(getApplicationContext(), "BluetoothAdapter not initialised", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),  getApplicationContext().getResources().getString(R.string.bluetooth_adapter_not_initialised), Toast.LENGTH_SHORT).show();
             return;
         }
         mBluetoothGatt.readCharacteristic(bluetoothGattCharacteristic);
@@ -384,7 +387,7 @@ public class BLEService extends Service implements DecodeListener {
     //To write data to the device.
     public void writeCharacteristics(BluetoothGattCharacteristic characteristics, byte[] value){
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
-            Toast.makeText(getApplicationContext(), "BluetoothAdapter not initialised", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), getApplicationContext().getResources().getString(R.string.bluetooth_adapter_not_initialised), Toast.LENGTH_SHORT).show();
             return;
         }
         characteristics.setValue(value);
@@ -393,7 +396,7 @@ public class BLEService extends Service implements DecodeListener {
 
     public void setCharacteristicNotification( BluetoothGattCharacteristic characteristic, boolean enabled) {
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
-            Toast.makeText(getApplicationContext(), "BluetoothAdapter not initialised", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), getApplicationContext().getResources().getString(R.string.bluetooth_adapter_not_initialised), Toast.LENGTH_SHORT).show();
             return;
         }
         mBluetoothGatt.setCharacteristicNotification(characteristic, enabled);
@@ -401,7 +404,7 @@ public class BLEService extends Service implements DecodeListener {
 
     public void setCharacteristickIndication(BluetoothGattCharacteristic characteristic, Boolean enabled) {
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
-            Toast.makeText(getApplicationContext(), "BluetoothAdapter not initialised", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), getApplicationContext().getResources().getString(R.string.bluetooth_adapter_not_initialised), Toast.LENGTH_SHORT).show();
             return;
         }
         mBluetoothGatt.setCharacteristicNotification(characteristic, enabled);
