@@ -19,7 +19,6 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
@@ -38,7 +37,6 @@ import com.example.bpmonitorbleintegration.constants.Constants;
 import com.example.bpmonitorbleintegration.database.RoomDB;
 import com.example.bpmonitorbleintegration.home.HomePage;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -65,7 +63,7 @@ public class ReadingData extends AppCompatActivity {
     private TextView statusText, batteryText, systolicText, diastolicText, heartRateText, mapText, progressText;
     private Button startBtn;
     private Button stopBtn;
-    Button saveBtn;
+    Button saveReadingBtn;
     private ProgressBar progressBar, progress;
     int i = 0;
 
@@ -85,7 +83,7 @@ public class ReadingData extends AppCompatActivity {
         progressBar = findViewById(R.id.progress_bar);
         startBtn = findViewById(R.id.start_reading);
         stopBtn = findViewById(R.id.stop_reading);
-
+//        saveReadingBtn = (Button) findViewById(R.id.save_result1);
 
         deviceAddress = getIntent().getStringExtra("Device");
         intentFilter = new IntentFilter(BluetoothDevice.ACTION_PAIRING_REQUEST);
@@ -189,6 +187,8 @@ public class ReadingData extends AppCompatActivity {
                         diastolicText.setText(String.valueOf(mBluetoothLeService.dystolic));
                         heartRateText.setText(String.valueOf(mBluetoothLeService.rate));
                         mapText.setText(String.valueOf(mBluetoothLeService.range));
+                        localDB.saveTask(deviceAddress, mBluetoothLeService.systalic, mBluetoothLeService.dystolic, mBluetoothLeService.rate, mBluetoothLeService.range, ReadingData.this);
+                        Constants.is_finalResult = false;
                     }
                 }
             }
@@ -209,15 +209,14 @@ public class ReadingData extends AppCompatActivity {
             }
         });
 
-        saveBtn = findViewById(R.id.save_result1);
-        saveBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                progress.setVisibility(View.VISIBLE);
-                localDB.saveTask(deviceAddress, mBluetoothLeService.systalic, mBluetoothLeService.dystolic, mBluetoothLeService.rate, mBluetoothLeService.range, ReadingData.this);
-                progress.setVisibility(View.GONE);
-            }
-        });
+//        saveReadingBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                progress.setVisibility(View.VISIBLE);
+//                localDB.saveTask(deviceAddress, mBluetoothLeService.systalic, mBluetoothLeService.dystolic, mBluetoothLeService.rate, mBluetoothLeService.range, ReadingData.this);
+//                progress.setVisibility(View.GONE);
+//            }
+//        });
     }
 
     // To check cuff replacement is reset or not.
