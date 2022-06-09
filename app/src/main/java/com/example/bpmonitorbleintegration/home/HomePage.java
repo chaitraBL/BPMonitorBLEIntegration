@@ -55,11 +55,13 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.TimeZone;
 
 public class HomePage extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
-    TextView bloodpressureText, pulseText, nameText, addressText, dateText, no_data_txt;
-    private String TAG = HomePage.class.getName();
+    TextView bloodpressureText, pulseText, nameText, addressText, dateText;
+    private final String TAG = HomePage.class.getName();
     List<BloodPressureDB> newTask = new ArrayList<>();
     BottomNavigationView bottomNavigationView;
     ArrayList<BloodPressureDB> pressureVal = new ArrayList<>();
@@ -70,6 +72,8 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
     ArrayList<String> timeList = new ArrayList<>();
     ImageButton previousDateBtn, nextDateBtn;
     ProgressBar progressBar1, progressBar2;
+    String selectedDate = null;
+    String year = null;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -91,7 +95,6 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
         bottomNavigationView.setOnNavigationItemSelectedListener(HomePage.this);
         bottomNavigationView.setSelectedItemId(R.id.home);
         dateText = findViewById(R.id.date_text);
-        no_data_txt = findViewById(R.id.txt_no_chart_data);
 
         nextDateBtn.setBackgroundDrawable(null);
         previousDateBtn.setBackgroundDrawable(null);
@@ -122,15 +125,14 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             public void onClick(View view) {
                 newTask.clear();
                 combinedChart.clear();
-                Date incrementedDate = incrementDateByOne(dateText.getText().toString());
+                String newDateFormat = dateText.getText().toString() + "-" + year;
+                String changedDate = convertDateStringFormat(newDateFormat,"dd-MMM-yyyy", "dd-MM-yyyy");
+                Date incrementedDate = incrementDateByOne(changedDate);
                 String newDate = df1.format(incrementedDate);
-                dateText.setText(newDate);
-//                Log.i(TAG, "onClick: pressure val in next " + pressureVal);
+                selectedDate = changeDateFormat(newDate);
+                dateText.setText(selectedDate);
                 for (BloodPressureDB i : pressureVal) {
-//                    Log.i(TAG, "onClick: datetext next" + dateText.getText().toString());
-                    if (dateText.getText().toString().equals(i.getDate())) {
-                        no_data_txt.setVisibility(View.INVISIBLE);
-//                        Log.i(TAG, "onClick: date in model next " + i.getDate());
+                    if (newDate.equals(i.getDate())) {
                         newTask.add(i);
                         Log.i(TAG, "onClick: new task in next " + newTask);
                         if (newTask.size() > 0) {
@@ -143,18 +145,12 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                             combinedChart.setNoDataText("No chart data found");
                             combinedChart.notifyDataSetChanged();
                             combinedChart.invalidate();
-
-//                        combinedChart.setVisibility(View.INVISIBLE);
-//                        no_data_txt.setVisibility(View.VISIBLE);
                         }
                     }
                     else {
                         combinedChart.setNoDataText("No chart data found");
                         combinedChart.notifyDataSetChanged();
                         combinedChart.invalidate();
-
-//                        combinedChart.setVisibility(View.INVISIBLE);
-//                        no_data_txt.setVisibility(View.VISIBLE);
                     }
 
                 }
@@ -167,14 +163,15 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             public void onClick(View view) {
                 newTask.clear();
                 combinedChart.clear();
-                Date decrementedDate = decrementDateByOne(dateText.getText().toString());
+                String newDateFormat = dateText.getText().toString() + "-" + year;
+                String changedDate = convertDateStringFormat(newDateFormat,"dd-MMM-yyyy", "dd-MM-yyyy");
+
+                Date decrementedDate = decrementDateByOne(changedDate);
                 String newDate = df1.format(decrementedDate);
-                dateText.setText(newDate);
-//                Log.i(TAG, "onClick: pressure val in previous " + pressureVal);
-//                Log.i(TAG, "onClick: datetext previous" + dateText.getText().toString());
+                selectedDate = changeDateFormat(newDate);
+                dateText.setText(selectedDate);
                 for (BloodPressureDB i : pressureVal) {
-                    if (dateText.getText().toString().equals(i.getDate())) {
-                        no_data_txt.setVisibility(View.INVISIBLE);
+                    if (newDate.equals(i.getDate())) {
 //                        Log.i(TAG, "onClick: date in model previous " + i.getDate());
                         newTask.add(i);
                         Log.i(TAG, "onClick: new task in previous " + newTask);
@@ -189,8 +186,6 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                             combinedChart.notifyDataSetChanged();
                             combinedChart.invalidate();
 
-//                        combinedChart.setVisibility(View.INVISIBLE);
-//                        no_data_txt.setVisibility(View.VISIBLE);
                         }
                     }
                     else {
@@ -198,13 +193,24 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                         combinedChart.notifyDataSetChanged();
                         combinedChart.invalidate();
 
-//                        combinedChart.setVisibility(View.INVISIBLE);
-//                        no_data_txt.setVisibility(View.VISIBLE);
                     }
                 }
 
             }
         });
+    }
+
+    //To convert date into specified format.
+    public String convertDateStringFormat(String strDate, String fromFormat, String toFormat){
+        try{
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat(fromFormat);
+            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat2 = new SimpleDateFormat(toFormat.trim());
+            return dateFormat2.format(Objects.requireNonNull(sdf.parse(strDate)));
+        }catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 
     //Menu item.
@@ -257,8 +263,9 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                     @SuppressLint("SimpleDateFormat") DateFormat df1 = new SimpleDateFormat("dd-MM-yyyy"); // Format date
                     Date date1 = new Date();
                     String date = df1.format(Calendar.getInstance().getTime());
+                    selectedDate = changeDateFormat(date);
 //                    Log.i(TAG, "onPostExecute: date " + date);
-                    dateText.setText("ALL");
+                    dateText.setText(selectedDate);
 
                     BloodPressureDB list = tasks.get(tasks.size() - 1);
 
@@ -301,6 +308,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
         Date date1= null;
         try {
             date1 = new SimpleDateFormat("dd-MM-yyyy").parse(date);
+//            date1 = new SimpleDateFormat("MMM-dd").parse(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -318,8 +326,10 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
      */
     public Date decrementDateByOne(String date) {
         Date date1= null;
+
         try {
             date1 = new SimpleDateFormat("dd-MM-yyyy").parse(date);
+//            date1 = new SimpleDateFormat("MMM-dd").parse(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -333,6 +343,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
     private String changeDateFormat(String date) {
         String[] showDate = date.split("-");
         String holder = null;
+        year = showDate[2];
 
         // Changing the date format
         if (showDate[1].equalsIgnoreCase("01")) {
