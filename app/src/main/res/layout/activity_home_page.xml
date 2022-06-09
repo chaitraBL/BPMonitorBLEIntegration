@@ -73,7 +73,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="25dp"
         android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginBottom="10dp"
@@ -355,7 +355,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         android:orientation="horizontal">
 
         <ImageButton
@@ -363,6 +364,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginEnd="15dp"
+            android:layout_marginStart="80dp"
             android:src="@drawable/ic_baseline_arrow_back_ios_24"
             android:background="#000000"/>
 
@@ -385,6 +387,20 @@
             android:background="#000000"
             android:src="@drawable/ic_baseline_arrow_forward_ios_24" />
 
+        <Button
+            android:layout_width="70dp"
+            android:layout_height="35dp"
+            android:text="@string/all"
+            android:textColor="?android:textColorPrimary"
+            android:textStyle="bold"
+            android:textSize="10sp"
+            android:id="@+id/all_values"
+            android:fontFamily="@font/arial"
+            android:background="@drawable/bg_transparent"
+            android:layout_marginStart="40dp"
+            tools:ignore="SmallSp" />
+
+
     </LinearLayout>
 
 <!--    <com.github.mikephil.charting.charts.CandleStickChart-->
@@ -396,20 +412,13 @@
 <!--        android:layout_marginBottom="10dp"-->
 <!--        android:layout_marginStart="10dp"-->
 <!--        android:layout_marginEnd="10dp"/>-->
-    <RelativeLayout
+
+    <com.github.mikephil.charting.charts.CombinedChart
+        android:id="@+id/reading_list"
         android:layout_width="match_parent"
         android:layout_height="240dp"
-        android:id="@+id/list_layout"
-        android:layout_marginTop="5dp">
-
-        <com.github.mikephil.charting.charts.CombinedChart
-            android:id="@+id/reading_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp" />
-
-    </RelativeLayout>
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"

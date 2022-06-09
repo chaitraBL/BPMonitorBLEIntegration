@@ -2,12 +2,14 @@ package com.example.bpmonitorbleintegration.home;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
@@ -17,6 +19,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -44,7 +47,12 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.renderer.XAxisRenderer;
 import com.github.mikephil.charting.utils.EntryXComparator;
+import com.github.mikephil.charting.utils.MPPointF;
+import com.github.mikephil.charting.utils.Transformer;
+import com.github.mikephil.charting.utils.Utils;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.DateFormat;
@@ -74,6 +82,8 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
     ProgressBar progressBar1, progressBar2;
     String selectedDate = null;
     String year = null;
+    boolean isData = false;
+    Button allBtn;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -95,6 +105,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
         bottomNavigationView.setOnNavigationItemSelectedListener(HomePage.this);
         bottomNavigationView.setSelectedItemId(R.id.home);
         dateText = findViewById(R.id.date_text);
+        allBtn = findViewById(R.id.all_values);
 
         nextDateBtn.setBackgroundDrawable(null);
         previousDateBtn.setBackgroundDrawable(null);
@@ -125,6 +136,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             public void onClick(View view) {
                 newTask.clear();
                 combinedChart.clear();
+//                allBtn.setBackgroundColor(0);
                 String newDateFormat = dateText.getText().toString() + "-" + year;
                 String changedDate = convertDateStringFormat(newDateFormat,"dd-MMM-yyyy", "dd-MM-yyyy");
                 Date incrementedDate = incrementDateByOne(changedDate);
@@ -134,7 +146,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                 for (BloodPressureDB i : pressureVal) {
                     if (newDate.equals(i.getDate())) {
                         newTask.add(i);
-                        Log.i(TAG, "onClick: new task in next " + newTask);
+//                        Log.i(TAG, "onClick: new task in next " + newTask);
                         if (newTask.size() > 0) {
                             plotForSelectedDate(newTask);
                             combinedChart.notifyDataSetChanged();
@@ -163,6 +175,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             public void onClick(View view) {
                 newTask.clear();
                 combinedChart.clear();
+//                allBtn.setBackgroundColor(0);
                 String newDateFormat = dateText.getText().toString() + "-" + year;
                 String changedDate = convertDateStringFormat(newDateFormat,"dd-MMM-yyyy", "dd-MM-yyyy");
 
@@ -174,7 +187,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                     if (newDate.equals(i.getDate())) {
 //                        Log.i(TAG, "onClick: date in model previous " + i.getDate());
                         newTask.add(i);
-                        Log.i(TAG, "onClick: new task in previous " + newTask);
+//                        Log.i(TAG, "onClick: new task in previous " + newTask);
                         if (newTask.size() > 0) {
                             plotForSelectedDate(newTask);
                             combinedChart.notifyDataSetChanged();
@@ -194,6 +207,27 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                         combinedChart.invalidate();
 
                     }
+                }
+
+            }
+        });
+
+        allBtn.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("ResourceType")
+            @Override
+            public void onClick(View view) {
+//                allBtn.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), Color.parseColor("#FFA500")));
+                if (pressureVal.size() > 0) {
+                    for (int i = 0; i < pressureVal.size(); i++) {
+                        plotCombinedChart(pressureVal);
+                        combinedChart.notifyDataSetChanged();
+                        combinedChart.invalidate();
+                    }
+                }
+                else {
+                    combinedChart.setNoDataText("No chart data found");
+                    combinedChart.notifyDataSetChanged();
+                    combinedChart.invalidate();
                 }
 
             }
@@ -259,6 +293,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                 newTask.clear();
 //                candleStick.clear();
                 combinedChart.clear();
+                pressureVal.clear();
                 if (tasks.size() > 0) {
                     @SuppressLint("SimpleDateFormat") DateFormat df1 = new SimpleDateFormat("dd-MM-yyyy"); // Format date
                     Date date1 = new Date();
@@ -433,6 +468,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
         timeList.clear();
         combinedChart.clear();
 
+        isData = false;
         if (task != null && task.size() > 0) {
             combinedChart.getDescription().setEnabled(false);
 //            combinedChart.setBackgroundColor(Color.parseColor("#f9f9f9"));
@@ -465,7 +501,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
             xAxis.setLabelCount(timeList.size());
             xAxis.setValueFormatter(new IndexAxisValueFormatter(timeList));
-            xAxis.setAvoidFirstLastClipping(true);
+            xAxis.setAvoidFirstLastClipping(false);
             xAxis.setLabelRotationAngle(-45);
             xAxis.setDrawGridLines(false);
             xAxis.setDrawAxisLine(false);
@@ -475,8 +511,8 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             xAxis.setTextSize(8);
             xAxis.setEnabled(true);
             xAxis.setSpaceMin(0.4f);
-            xAxis.setSpaceMax(0.4f);
-
+            xAxis.setSpaceMax(0.7f);
+            combinedChart.setXAxisRenderer(new CustomXAxisRenderer(combinedChart.getViewPortHandler(), combinedChart.getXAxis(), combinedChart.getTransformer(YAxis.AxisDependency.LEFT)));
 
             //Y axis
             YAxis yAxisRight = combinedChart.getAxisRight();
@@ -534,20 +570,17 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
         timeList.clear();
         combinedChart.clear();
 
+        isData = true;
         if (task != null && task.size() > 0) {
             combinedChart.getDescription().setEnabled(false);
-//            combinedChart.setBackgroundColor(Color.parseColor("#f9f9f9"));
             combinedChart.setDrawGridBackground(false);
             combinedChart.setDrawBarShadow(false);
             combinedChart.setHighlightFullBarEnabled(false);
 
-            String changedDate = null;
-            ArrayList<String> dayList = new ArrayList<>();
+            String changedDate;
             for (BloodPressureDB list : task) {
-
                 changedDate = changeDateFormat(list.getDate());
-                timeList.add(changedDate+ " " +list.getTime());
-//                dayList.add(changedDate);
+                timeList.add(changedDate+ "\n\r" +list.getTime());
 
             }
 
@@ -572,7 +605,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
             xAxis.setLabelCount(timeList.size());
             xAxis.setValueFormatter(new IndexAxisValueFormatter(timeList));
-            xAxis.setAvoidFirstLastClipping(true);
+            xAxis.setAvoidFirstLastClipping(false);
             xAxis.setLabelRotationAngle(-45);
             xAxis.setDrawGridLines(false);
             xAxis.setDrawAxisLine(false);
@@ -582,8 +615,8 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             xAxis.setTextSize(8);
             xAxis.setEnabled(true);
             xAxis.setSpaceMin(0.4f);
-            xAxis.setSpaceMax(0.4f);
-
+            xAxis.setSpaceMax(0.7f);
+            combinedChart.setXAxisRenderer(new CustomXAxisRenderer(combinedChart.getViewPortHandler(), combinedChart.getXAxis(), combinedChart.getTransformer(YAxis.AxisDependency.LEFT)));
 
             //Y axis
             YAxis yAxisRight = combinedChart.getAxisRight();
@@ -681,6 +714,9 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             return d;
         }
 
+        //https://stackoverflow.com/questions/56459470/how-to-highlight-the-whole-stacked-bar
+    //https://stackoverflow.com/questions/53283496/how-to-draw-range-chart-mpandroidchart-with-negative-and-positive-value
+
     // Line chart time based.
         private LineData generateLineData(List<BloodPressureDB> task) {
             LineData d = null;
@@ -775,4 +811,22 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
         }
             return d;
         }
+
+    public class CustomXAxisRenderer extends XAxisRenderer {
+        public CustomXAxisRenderer(ViewPortHandler viewPortHandler, XAxis xAxis, Transformer trans) {
+            super(viewPortHandler, xAxis, trans);
+        }
+
+        @Override
+        protected void drawLabel(Canvas c, String formattedLabel, float x, float y, MPPointF anchor, float angleDegrees) {
+            String line[] = formattedLabel.split("\n");
+            if (isData == true) {
+                Utils.drawXAxisValue(c, line[0], x, y, mAxisLabelPaint, anchor, angleDegrees);
+                Utils.drawXAxisValue(c, line[1], x + mAxisLabelPaint.getTextSize(), y + mAxisLabelPaint.getTextSize(), mAxisLabelPaint, anchor, angleDegrees);
+            }
+            else {
+                Utils.drawXAxisValue(c, line[0], x, y, mAxisLabelPaint, anchor, angleDegrees);
+            }
+        }
+    }
     }
