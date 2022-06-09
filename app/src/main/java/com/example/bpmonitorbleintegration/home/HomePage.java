@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -61,10 +62,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 public class HomePage extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -236,7 +239,14 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
 //                allBtn.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), Color.parseColor("#FFA500")));
                 if (pressureVal.size() > 0) {
                     for (int i = 0; i < pressureVal.size(); i++) {
+//                        Comparator<BloodPressureDB> firstNameSorter = (o1, o2) -> o1.getDate().compareTo(o2.getDate());
+//                        Collections.sort(pressureVal, firstNameSorter);
+//                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                            pressureVal.sort(Comparator.comparing(BloodPressureDB::getDate));
+//                        }
+                        Log.i(TAG, "onClick: sorted val " + pressureVal);
                         plotCombinedChart(pressureVal);
+//                        plotCombinedChart(sortedList);
                         combinedChart.notifyDataSetChanged();
                         combinedChart.invalidate();
                     }

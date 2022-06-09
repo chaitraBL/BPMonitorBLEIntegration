@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import com.example.bpmonitorbleintegration.R;
 
+import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -41,8 +42,8 @@ public class RoomDB {
 
                 BloodPressureDB reading = new BloodPressureDB();
                 reading.setName(sAddress);
-                reading.setDate("08-06-2022");
-                reading.setTime("04:20 PM");
+                reading.setDate(date);
+                reading.setTime(Timein12hourFormat);
                 reading.setDystolic(dystolic);
                 reading.setSystolic(systolic);
                 reading.setHeartRate(heartRate);
