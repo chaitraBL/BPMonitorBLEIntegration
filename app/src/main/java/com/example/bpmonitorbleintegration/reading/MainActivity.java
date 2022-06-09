@@ -201,10 +201,10 @@ public class MainActivity extends AppCompatActivity {
 
             case android.R.id.home:
                 //To refresh activity
-//                Intent i = new Intent(this, HomePage.class);
+                Intent i = new Intent(this, HomePage.class);
 //                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                startActivity(i);
-                this.finish();
+                startActivity(i);
+//                this.finish();
                 return true;
 
             default:

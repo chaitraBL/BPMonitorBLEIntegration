@@ -84,6 +84,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
     String year = null;
     boolean isData = false;
     Button allBtn;
+    ProgressBar progress;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -106,6 +107,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
         bottomNavigationView.setSelectedItemId(R.id.home);
         dateText = findViewById(R.id.date_text);
         allBtn = findViewById(R.id.all_values);
+        progress = findViewById(R.id.progress_home);
 
         nextDateBtn.setBackgroundDrawable(null);
         previousDateBtn.setBackgroundDrawable(null);
@@ -128,17 +130,20 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
         nameText.setText("Welcome Chaitra");
         addressText.setText("Bangalore");
 
+        progress.setVisibility(View.VISIBLE);
         getManualTasks();
 
         @SuppressLint("SimpleDateFormat") DateFormat df1 = new SimpleDateFormat("dd-MM-yyyy"); // Format date
         nextDateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                progress.setVisibility(View.VISIBLE);
                 newTask.clear();
                 combinedChart.clear();
+                dateText.setTextColor(Color.BLACK);
 //                allBtn.setBackgroundColor(0);
                 String newDateFormat = dateText.getText().toString() + "-" + year;
-                String changedDate = convertDateStringFormat(newDateFormat,"dd-MMM-yyyy", "dd-MM-yyyy");
+                String changedDate = convertDateStringFormat(newDateFormat,"dd - MMM-yyyy", "dd-MM-yyyy");
                 Date incrementedDate = incrementDateByOne(changedDate);
                 String newDate = df1.format(incrementedDate);
                 selectedDate = changeDateFormat(newDate);
@@ -151,18 +156,21 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                             plotForSelectedDate(newTask);
                             combinedChart.notifyDataSetChanged();
                             combinedChart.invalidate();
+                            progress.setVisibility(View.GONE);
 
                         }
                         else{
                             combinedChart.setNoDataText("No chart data found");
                             combinedChart.notifyDataSetChanged();
                             combinedChart.invalidate();
+                            progress.setVisibility(View.GONE);
                         }
                     }
                     else {
                         combinedChart.setNoDataText("No chart data found");
                         combinedChart.notifyDataSetChanged();
                         combinedChart.invalidate();
+                        progress.setVisibility(View.GONE);
                     }
 
                 }
@@ -175,9 +183,11 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             public void onClick(View view) {
                 newTask.clear();
                 combinedChart.clear();
+                dateText.setTextColor(Color.BLACK);
 //                allBtn.setBackgroundColor(0);
+                progress.setVisibility(View.VISIBLE);
                 String newDateFormat = dateText.getText().toString() + "-" + year;
-                String changedDate = convertDateStringFormat(newDateFormat,"dd-MMM-yyyy", "dd-MM-yyyy");
+                String changedDate = convertDateStringFormat(newDateFormat,"dd - MMM-yyyy", "dd-MM-yyyy");
 
                 Date decrementedDate = decrementDateByOne(changedDate);
                 String newDate = df1.format(decrementedDate);
@@ -192,12 +202,14 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                             plotForSelectedDate(newTask);
                             combinedChart.notifyDataSetChanged();
                             combinedChart.invalidate();
+                            progress.setVisibility(View.GONE);
 
                         }
                         else {
                             combinedChart.setNoDataText("No chart data found");
                             combinedChart.notifyDataSetChanged();
                             combinedChart.invalidate();
+                            progress.setVisibility(View.GONE);
 
                         }
                     }
@@ -205,7 +217,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                         combinedChart.setNoDataText("No chart data found");
                         combinedChart.notifyDataSetChanged();
                         combinedChart.invalidate();
-
+                        progress.setVisibility(View.GONE);
                     }
                 }
 
@@ -216,6 +228,11 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             @SuppressLint("ResourceType")
             @Override
             public void onClick(View view) {
+                dateText.setTextColor(Color.GRAY);
+                String date = df1.format(Calendar.getInstance().getTime());
+                selectedDate = changeDateFormat(date);
+//                    Log.i(TAG, "onPostExecute: date " + date);
+                dateText.setText(selectedDate);
 //                allBtn.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), Color.parseColor("#FFA500")));
                 if (pressureVal.size() > 0) {
                     for (int i = 0; i < pressureVal.size(); i++) {
@@ -294,6 +311,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
 //                candleStick.clear();
                 combinedChart.clear();
                 pressureVal.clear();
+                dateText.setTextColor(Color.GRAY);
                 if (tasks.size() > 0) {
                     @SuppressLint("SimpleDateFormat") DateFormat df1 = new SimpleDateFormat("dd-MM-yyyy"); // Format date
                     Date date1 = new Date();
@@ -311,18 +329,11 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                    changeDiastolicProgress(list.getDystolic());
 
                     for (int i = 0; i < tasks.size(); i++) {
-//                    if (date.equals(tasks.get(i).getDate())) {
-//                        newTask.add(tasks.get(i));
-//                        plotCandleStickTimeWise(newTask);
                         pressureVal.add(tasks.get(i));
                         plotCombinedChart(tasks);
                         combinedChart.notifyDataSetChanged();
                         combinedChart.invalidate();
-
-//                        candleStick.invalidate();
-//                        candleStick.notifyDataSetChanged();
-//                    }
-//                        int index = i;
+                        progress.setVisibility(View.GONE);
                 }
                 }
                 else {
@@ -339,6 +350,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
      *
      * @param date date
      */
+    @SuppressLint("SimpleDateFormat")
     public Date incrementDateByOne(String date) {
         Date date1= null;
         try {
@@ -359,6 +371,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
      *
      * @param date date
      */
+    @SuppressLint("SimpleDateFormat")
     public Date decrementDateByOne(String date) {
         Date date1= null;
 
@@ -382,29 +395,29 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
 
         // Changing the date format
         if (showDate[1].equalsIgnoreCase("01")) {
-            holder = showDate[0]+"-"+getString(R.string.jan);
+            holder = showDate[0]+" - "+getString(R.string.jan);
         }else if(showDate[1].equalsIgnoreCase("02")){
-            holder = showDate[0]+"-"+getString(R.string.feb);
+            holder = showDate[0]+" - "+getString(R.string.feb);
         }else if(showDate[1].equalsIgnoreCase("03")){
-            holder = showDate[0]+"-"+getString(R.string.mar);
+            holder = showDate[0]+" - "+getString(R.string.mar);
         }else if(showDate[1].equalsIgnoreCase("04")){
-            holder = showDate[0]+"-"+getString(R.string.apr);
+            holder = showDate[0]+" - "+getString(R.string.apr);
         }else if(showDate[1].equalsIgnoreCase("05")){
-            holder = showDate[0]+"-"+getString(R.string.may);
+            holder = showDate[0]+" - "+getString(R.string.may);
         }else if(showDate[1].equalsIgnoreCase("06")){
-            holder = showDate[0]+"-"+getString(R.string.jun);
+            holder = showDate[0]+" - "+getString(R.string.jun);
         }else if(showDate[1].equalsIgnoreCase("07")){
-            holder = showDate[0]+"-"+getString(R.string.jly);
+            holder = showDate[0]+" - "+getString(R.string.jly);
         }else if(showDate[1].equalsIgnoreCase("08")){
-            holder = showDate[0]+"-"+getString(R.string.aug);
+            holder = showDate[0]+" - "+getString(R.string.aug);
         }else if(showDate[1].equalsIgnoreCase("09")){
-            holder = showDate[0]+"-"+getString(R.string.sep);
+            holder = showDate[0]+" - "+getString(R.string.sep);
         }else if(showDate[1].equalsIgnoreCase("10")){
-            holder = showDate[0]+"-"+getString(R.string.oct);
+            holder = showDate[0]+" - "+getString(R.string.oct);
         }else if(showDate[1].equalsIgnoreCase("11")){
-            holder = showDate[0]+"-"+getString(R.string.nov);
+            holder = showDate[0]+" - "+getString(R.string.nov);
         }else if(showDate[1].equalsIgnoreCase("12")){
-            holder = showDate[0]+"-"+getString(R.string.dec);
+            holder = showDate[0]+" - "+getString(R.string.dec);
         }
         return holder;
     }
