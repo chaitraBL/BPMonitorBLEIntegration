@@ -70,7 +70,7 @@ public class ReadingData extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_reading_data);
+        setContentView(R.layout.activity_reading_data1);
 
         statusText = findViewById(R.id.actual_status);
         batteryText = findViewById(R.id.battery_level);
@@ -83,7 +83,7 @@ public class ReadingData extends AppCompatActivity {
         progressBar = findViewById(R.id.progress_bar);
         startBtn = findViewById(R.id.start_reading);
         stopBtn = findViewById(R.id.stop_reading);
-//        saveReadingBtn = (Button) findViewById(R.id.save_result1);
+        saveReadingBtn = (Button) findViewById(R.id.save_result1);
 
         deviceAddress = getIntent().getStringExtra("Device");
         intentFilter = new IntentFilter(BluetoothDevice.ACTION_PAIRING_REQUEST);
@@ -187,7 +187,7 @@ public class ReadingData extends AppCompatActivity {
                         diastolicText.setText(String.valueOf(mBluetoothLeService.dystolic));
                         heartRateText.setText(String.valueOf(mBluetoothLeService.rate));
                         mapText.setText(String.valueOf(mBluetoothLeService.range));
-                        localDB.saveTask(deviceAddress, mBluetoothLeService.systalic, mBluetoothLeService.dystolic, mBluetoothLeService.rate, mBluetoothLeService.range, ReadingData.this);
+//                        localDB.saveTask(deviceAddress, mBluetoothLeService.systalic, mBluetoothLeService.dystolic, mBluetoothLeService.rate, mBluetoothLeService.range, ReadingData.this);
                         Constants.is_finalResult = false;
                     }
                 }
@@ -205,18 +205,45 @@ public class ReadingData extends AppCompatActivity {
                     mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.startValue);
                 }
 
+                systolicText.setText("");
+                diastolicText.setText("");
+                heartRateText.setText("");
+                mapText.setText("");
 //                startBtn.setText("Cancel");
             }
         });
 
-//        saveReadingBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                progress.setVisibility(View.VISIBLE);
-//                localDB.saveTask(deviceAddress, mBluetoothLeService.systalic, mBluetoothLeService.dystolic, mBluetoothLeService.rate, mBluetoothLeService.range, ReadingData.this);
-//                progress.setVisibility(View.GONE);
-//            }
-//        });
+        saveReadingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                progress.setVisibility(View.VISIBLE);
+                if (systolicText.getText().toString().equals("")) {
+                    Toast.makeText(getApplicationContext(), getApplicationContext().getResources().getString(R.string.enter_systolic_value), Toast.LENGTH_SHORT).show();
+                    progress.setVisibility(View.GONE);
+                }
+                else if (diastolicText.getText().toString().equals(""))
+                {
+                    Toast.makeText(getApplicationContext(), getApplicationContext().getResources().getString(R.string.enter_diastolic_value),Toast.LENGTH_SHORT).show();
+                    progress.setVisibility(View.GONE);
+                }
+                else if (heartRateText.getText().toString().equals("")) {
+                    Toast.makeText(getApplicationContext(), getApplicationContext().getResources().getString(R.string.enter_heart_rate),Toast.LENGTH_SHORT).show();
+                    progress.setVisibility(View.GONE);
+                }
+                else if (mapText.getText().toString().equals("")) {
+                    Toast.makeText(getApplicationContext(), getApplicationContext().getResources().getString(R.string.enter_map),Toast.LENGTH_SHORT).show();
+                    progress.setVisibility(View.GONE);
+                }
+                else {
+                    localDB.saveTask(deviceAddress, Integer.parseInt(systolicText.getText().toString()), Integer.parseInt(diastolicText.getText().toString()), Integer.parseInt(heartRateText.getText().toString()), Integer.parseInt(mapText.getText().toString()), ReadingData.this);
+                    systolicText.setText("");
+                    diastolicText.setText("");
+                    heartRateText.setText("");
+                    mapText.setText("");
+                    progress.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 
     // To check cuff replacement is reset or not.
@@ -271,9 +298,9 @@ public class ReadingData extends AppCompatActivity {
                                             mCountDownTimer.cancel();
 //                                    Log.i(TAG, "run: ack in cancel condition " + Constants.is_ackReceived);
                                             dialog1.dismiss();
-//                                            Constants.is_cuffReplaced = false;
+//
                                         }
-//                                        Constants.is_cuffReplaced = false;
+//
                                     }
                                 };
                                 mCountDownTimer.start();
@@ -327,10 +354,10 @@ public class ReadingData extends AppCompatActivity {
                                 if (Constants.is_ackReceived == true) {
                                     mCountDownTimer.cancel();
 //                            Log.i(TAG, "run: ack in condition " + Constants.is_ackReceived);
-//                                    Constants.is_cuffReplaced = false;
+//
                                     dialog1.dismiss();
                                 }
-//                        Constants.is_cuffReplaced = false;
+//
                     }
                 });
             }
@@ -348,12 +375,12 @@ public class ReadingData extends AppCompatActivity {
                             mBluetoothLeService.writeCharacteristics(mNotifyCharacteristic, Constants.resetValue);
                             start();
                         }
-//                        Constants.is_cuffReplaced = false;
+//
                     }
                 });
             }
         }.start();
-//        Constants.is_cuffReplaced = false;
+//
     }
 
     @Override
@@ -562,6 +589,7 @@ public class ReadingData extends AppCompatActivity {
                                                     progressText.setText("");
 //                                                    Log.i(TAG, "run: cuff replaced before alert start " + Constants.is_cuffReplaced);
                                                     alertDialogForReset();
+                                                    Constants.is_cuffReplaced = false;
 
                                                 }
                                             }
@@ -571,7 +599,7 @@ public class ReadingData extends AppCompatActivity {
                                     @Override
                                     public void onFinish() {
                                         if ((Constants.is_resultReceived == false) || (Constants.is_readingStarted == false)) {
-                                            Toast.makeText(getApplicationContext(), getApplicationContext().getResources().getString(R.string.please_start_again), Toast.LENGTH_SHORT).show();
+//                                            Toast.makeText(getApplicationContext(), getApplicationContext().getResources().getString(R.string.please_start_again), Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 }.start();

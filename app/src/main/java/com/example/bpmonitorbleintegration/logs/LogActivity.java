@@ -3,6 +3,7 @@ package com.example.bpmonitorbleintegration.logs;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,6 +35,7 @@ import com.example.bpmonitorbleintegration.database.BloodPressureDB;
 import com.example.bpmonitorbleintegration.database.DatabaseClient;
 import com.example.bpmonitorbleintegration.home.HomePage;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -51,6 +53,7 @@ public class LogActivity extends AppCompatActivity implements BottomNavigationVi
 
     private final String TAG = LogActivity.class.getName();
     List<BloodPressureDB> newTask = new ArrayList<>();
+    ArrayList<BloodPressureDB> recylerDateBP = new ArrayList<>();
     BottomNavigationView logBottomNavigationView;
     List<Date> resultDate = new ArrayList<>();
 
@@ -268,6 +271,7 @@ private  void endDateCalendar() {
 
                                 //Compare start and end date and filter values display in recycler view.
                                 for (BloodPressureDB i : tasks) {
+                                    recylerDateBP.add(i);
                                     if (dates.size() > 0) {
                                         for (Date d : dates) {
                                             DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
@@ -295,6 +299,36 @@ private  void endDateCalendar() {
                             }
                         }
                     });
+
+//                    new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.RIGHT) {
+//                        @Override
+//                        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+//                            return false;
+//                        }
+//
+//                        @Override
+//                        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+//                            BloodPressureDB deletedItem = recylerDateBP.get(viewHolder.getAdapterPosition());
+//
+//                            int position = viewHolder.getAdapterPosition();
+//
+//                            recylerDateBP.remove(viewHolder.getAdapterPosition());
+//
+//                            adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+//
+//                            Snackbar.make(logRecycleView,deletedItem.getName(),Snackbar.LENGTH_LONG).setAction("Undo", new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View view) {
+//                                    recylerDateBP.add(position,deletedItem);
+//
+//                                    adapter.notifyItemInserted(position);
+//                                }
+//                            }).show();
+//
+//
+//
+//                        }
+//                    }).attachToRecyclerView(logRecycleView);
                 }
             }
         }
@@ -445,12 +479,14 @@ private  void endDateCalendar() {
                         shareDialog.dismiss();
                         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                         sharingIntent.setType("text/plain");
-                        String shareBody = getString(R.string.name) +task.getName()+"\n"+
-                                getString(R.string.bloodpressure_reading) +systolicText.getText().toString() + " / " + diastolicText.getText().toString() + " / " + heartRateText.getText().toString() +"\n"+
-                                getString(R.string.date)+ dateText.getText().toString()+"\n"+
-                                getString(R.string.time)+ task.getTime()+"\n"+
-                                getString(R.string.status_1)+ statusText.getText().toString();
-                        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.bp_for)+task.getName());
+                        String shareBody = getString(R.string.logName) +"            " + task.getName()+"\r \n"+
+                                getString(R.string.log_date)+ "              " + dateText.getText().toString()+"\r \n"+
+                                getString(R.string.log_time)+ "              " + task.getTime()+"\r \n"+
+                                getString(R.string.systolic_log) + "         " + systolicText.getText().toString() + "\r \n" +
+                                getString(R.string.diastolic_log) +"        " + diastolicText.getText().toString() + "\r \n" +
+                                getString(R.string.heartrate_log) +"     " + heartRateText.getText().toString() +"\r \n"+
+                                getString(R.string.status_1)+"             " + statusText.getText().toString();
+                        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.bp_for)+ "   " + task.getName() +"\n");
                         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
                         startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_via)));
                     }
@@ -468,35 +504,23 @@ private  void endDateCalendar() {
             // Status according to sys/dia ranges.
             private String changeStatus(int systolic, int diastolic) {
                 String msg = null;
-                if ((systolic < 50) && (diastolic < 33)) {
-                    msg = getString(R.string.very_serious_hypotension);
-                }
-                else if ((systolic <= 60) && (diastolic <= 40)) {
-                    msg = getString(R.string.serious_hypotension);
-                }
-                else if ((systolic <= 90) && (diastolic <= 60)) {
-                    msg = getString(R.string.borderline_hypotension);
-                }
-                else if ((systolic <= 110) && (diastolic <= 75)) {
+                if ((systolic < 80) || (diastolic < 60)) {
                     msg = getString(R.string.low_bp);
                 }
                 else if ((systolic <= 120) && (diastolic <= 80)) {
                     msg = getString(R.string.normal_bp);
                 }
-                else if ((systolic <= 130) && (diastolic <= 85)) {
+                else if ((systolic <= 139) || (diastolic <= 89)) {
                     msg = getString(R.string.high_normal_bp);
                 }
-                else if ((systolic <= 140) && (diastolic <= 90)) {
+                else if ((systolic <= 159) || (diastolic <= 99)) {
                     msg = getString(R.string.hypertension_stage_1);
                 }
-                else if ((systolic <= 160) && (diastolic <= 100)) {
+                else if ((systolic <= 179) || (diastolic <= 109)) {
                     msg = getString(R.string.hypertension_stage_2);
                 }
-                else if ((systolic <= 180) && (diastolic <= 110)) {
-                    msg = getString(R.string.hypertension_stage_3);
-                }
                 else {
-                    msg = getString(R.string.hypertension_stage_4);
+                    msg = getString(R.string.high_bp_crisis);
                 }
                 return msg;
             }

@@ -629,11 +629,11 @@ public class Statistics extends AppCompatActivity {
 
             int count = 0;
             for (BloodPressureDB list : tasks) {
-//                if (date.equals(list.getDate())) {
+                if (date.equals(list.getDate())) {
                     yAxisCandleStick1.add(new CandleEntry(count, list.getSystolic(),list.getDystolic(),list.getSystolic(),list.getDystolic()));
                     timeList.add(list.getTime());
                     count++;
-//                }
+                }
 //                else{
 //                    Log.i(TAG, "No date");
 //                }

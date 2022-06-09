@@ -48,25 +48,27 @@ import com.github.mikephil.charting.utils.EntryXComparator;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class HomePage extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
-    TextView bloodpressureText, pulseText, nameText, addressText;
+    TextView bloodpressureText, pulseText, nameText, addressText, dateText, no_data_txt;
     private String TAG = HomePage.class.getName();
     List<BloodPressureDB> newTask = new ArrayList<>();
     BottomNavigationView bottomNavigationView;
-//    ArrayList<CandleEntry> yVal = new ArrayList<>();
+    ArrayList<BloodPressureDB> pressureVal = new ArrayList<>();
 //    CandleStickChart candleStick;
     ArrayList<CombinedChart> yVal = new ArrayList<>();
     CombinedChart combinedChart;
 
     ArrayList<String> timeList = new ArrayList<>();
-    ImageButton analyticBtn;
+    ImageButton previousDateBtn, nextDateBtn;
     ProgressBar progressBar1, progressBar2;
 
     @SuppressLint("SetTextI18n")
@@ -82,13 +84,17 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
         combinedChart = findViewById(R.id.reading_list);
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
 //        candleStick = findViewById(R.id.reading_list);
-        analyticBtn = findViewById(R.id.next_btn);
+        nextDateBtn = findViewById(R.id.next_btn);
+        previousDateBtn = findViewById(R.id.previous_btn);
         progressBar1 = findViewById(R.id.pb_systa);
         progressBar2 = findViewById(R.id.pb_diasta);
         bottomNavigationView.setOnNavigationItemSelectedListener(HomePage.this);
         bottomNavigationView.setSelectedItemId(R.id.home);
+        dateText = findViewById(R.id.date_text);
+        no_data_txt = findViewById(R.id.txt_no_chart_data);
 
-        analyticBtn.setBackgroundDrawable(null);
+        nextDateBtn.setBackgroundDrawable(null);
+        previousDateBtn.setBackgroundDrawable(null);
 
         LinearLayout linearLayout = findViewById(R.id.linear_bp);
         linearLayout.setOnClickListener(new View.OnClickListener() {
@@ -110,10 +116,93 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
 
         getManualTasks();
 
-        analyticBtn.setOnClickListener(new View.OnClickListener() {
+        @SuppressLint("SimpleDateFormat") DateFormat df1 = new SimpleDateFormat("dd-MM-yyyy"); // Format date
+        nextDateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(HomePage.this, Statistics.class));
+                newTask.clear();
+                combinedChart.clear();
+                Date incrementedDate = incrementDateByOne(dateText.getText().toString());
+                String newDate = df1.format(incrementedDate);
+                dateText.setText(newDate);
+//                Log.i(TAG, "onClick: pressure val in next " + pressureVal);
+                for (BloodPressureDB i : pressureVal) {
+//                    Log.i(TAG, "onClick: datetext next" + dateText.getText().toString());
+                    if (dateText.getText().toString().equals(i.getDate())) {
+                        no_data_txt.setVisibility(View.INVISIBLE);
+//                        Log.i(TAG, "onClick: date in model next " + i.getDate());
+                        newTask.add(i);
+                        Log.i(TAG, "onClick: new task in next " + newTask);
+                        if (newTask.size() > 0) {
+                            plotForSelectedDate(newTask);
+                            combinedChart.notifyDataSetChanged();
+                            combinedChart.invalidate();
+
+                        }
+                        else{
+                            combinedChart.setNoDataText("No chart data found");
+                            combinedChart.notifyDataSetChanged();
+                            combinedChart.invalidate();
+
+//                        combinedChart.setVisibility(View.INVISIBLE);
+//                        no_data_txt.setVisibility(View.VISIBLE);
+                        }
+                    }
+                    else {
+                        combinedChart.setNoDataText("No chart data found");
+                        combinedChart.notifyDataSetChanged();
+                        combinedChart.invalidate();
+
+//                        combinedChart.setVisibility(View.INVISIBLE);
+//                        no_data_txt.setVisibility(View.VISIBLE);
+                    }
+
+                }
+
+            }
+        });
+
+        previousDateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                newTask.clear();
+                combinedChart.clear();
+                Date decrementedDate = decrementDateByOne(dateText.getText().toString());
+                String newDate = df1.format(decrementedDate);
+                dateText.setText(newDate);
+//                Log.i(TAG, "onClick: pressure val in previous " + pressureVal);
+//                Log.i(TAG, "onClick: datetext previous" + dateText.getText().toString());
+                for (BloodPressureDB i : pressureVal) {
+                    if (dateText.getText().toString().equals(i.getDate())) {
+                        no_data_txt.setVisibility(View.INVISIBLE);
+//                        Log.i(TAG, "onClick: date in model previous " + i.getDate());
+                        newTask.add(i);
+                        Log.i(TAG, "onClick: new task in previous " + newTask);
+                        if (newTask.size() > 0) {
+                            plotForSelectedDate(newTask);
+                            combinedChart.notifyDataSetChanged();
+                            combinedChart.invalidate();
+
+                        }
+                        else {
+                            combinedChart.setNoDataText("No chart data found");
+                            combinedChart.notifyDataSetChanged();
+                            combinedChart.invalidate();
+
+//                        combinedChart.setVisibility(View.INVISIBLE);
+//                        no_data_txt.setVisibility(View.VISIBLE);
+                        }
+                    }
+                    else {
+                        combinedChart.setNoDataText("No chart data found");
+                        combinedChart.notifyDataSetChanged();
+                        combinedChart.invalidate();
+
+//                        combinedChart.setVisibility(View.INVISIBLE);
+//                        no_data_txt.setVisibility(View.VISIBLE);
+                    }
+                }
+
             }
         });
     }
@@ -166,7 +255,10 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                 combinedChart.clear();
                 if (tasks.size() > 0) {
                     @SuppressLint("SimpleDateFormat") DateFormat df1 = new SimpleDateFormat("dd-MM-yyyy"); // Format date
+                    Date date1 = new Date();
                     String date = df1.format(Calendar.getInstance().getTime());
+//                    Log.i(TAG, "onPostExecute: date " + date);
+                    dateText.setText("ALL");
 
                     BloodPressureDB list = tasks.get(tasks.size() - 1);
 
@@ -177,15 +269,18 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                    changeDiastolicProgress(list.getDystolic());
 
                     for (int i = 0; i < tasks.size(); i++) {
-                    if (date.equals(tasks.get(i).getDate())) {
-                        newTask.add(tasks.get(i));
+//                    if (date.equals(tasks.get(i).getDate())) {
+//                        newTask.add(tasks.get(i));
 //                        plotCandleStickTimeWise(newTask);
-                        plotCombinedChart(newTask);
-                        combinedChart.invalidate();
+                        pressureVal.add(tasks.get(i));
+                        plotCombinedChart(tasks);
                         combinedChart.notifyDataSetChanged();
+                        combinedChart.invalidate();
+
 //                        candleStick.invalidate();
 //                        candleStick.notifyDataSetChanged();
-                    }
+//                    }
+//                        int index = i;
                 }
                 }
                 else {
@@ -195,6 +290,77 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
         }
         GetTasks gt = new GetTasks();
         gt.execute();
+    }
+
+    /**
+     * Get next date from current selected date
+     *
+     * @param date date
+     */
+    public Date incrementDateByOne(String date) {
+        Date date1= null;
+        try {
+            date1 = new SimpleDateFormat("dd-MM-yyyy").parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Calendar c = Calendar.getInstance();
+        c.setTime(date1);
+        c.add(Calendar.DATE, 1);
+        Date nextDate = c.getTime();
+        return nextDate;
+    }
+
+    /**
+     * Get previous date from current selected date
+     *
+     * @param date date
+     */
+    public Date decrementDateByOne(String date) {
+        Date date1= null;
+        try {
+            date1 = new SimpleDateFormat("dd-MM-yyyy").parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Calendar c = Calendar.getInstance();
+        c.setTime(date1);
+        c.add(Calendar.DATE, -1);
+        Date previousDate = c.getTime();
+        return previousDate;
+    }
+
+    private String changeDateFormat(String date) {
+        String[] showDate = date.split("-");
+        String holder = null;
+
+        // Changing the date format
+        if (showDate[1].equalsIgnoreCase("01")) {
+            holder = showDate[0]+"-"+getString(R.string.jan);
+        }else if(showDate[1].equalsIgnoreCase("02")){
+            holder = showDate[0]+"-"+getString(R.string.feb);
+        }else if(showDate[1].equalsIgnoreCase("03")){
+            holder = showDate[0]+"-"+getString(R.string.mar);
+        }else if(showDate[1].equalsIgnoreCase("04")){
+            holder = showDate[0]+"-"+getString(R.string.apr);
+        }else if(showDate[1].equalsIgnoreCase("05")){
+            holder = showDate[0]+"-"+getString(R.string.may);
+        }else if(showDate[1].equalsIgnoreCase("06")){
+            holder = showDate[0]+"-"+getString(R.string.jun);
+        }else if(showDate[1].equalsIgnoreCase("07")){
+            holder = showDate[0]+"-"+getString(R.string.jly);
+        }else if(showDate[1].equalsIgnoreCase("08")){
+            holder = showDate[0]+"-"+getString(R.string.aug);
+        }else if(showDate[1].equalsIgnoreCase("09")){
+            holder = showDate[0]+"-"+getString(R.string.sep);
+        }else if(showDate[1].equalsIgnoreCase("10")){
+            holder = showDate[0]+"-"+getString(R.string.oct);
+        }else if(showDate[1].equalsIgnoreCase("11")){
+            holder = showDate[0]+"-"+getString(R.string.nov);
+        }else if(showDate[1].equalsIgnoreCase("12")){
+            holder = showDate[0]+"-"+getString(R.string.dec);
+        }
+        return holder;
     }
 
     private void changeSystolicProgress(int systolic) {
@@ -252,7 +418,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
     }
 
     // Combined chart with candle stick & line chart.
-    public void plotCombinedChart(List<BloodPressureDB> task) {
+    public void plotForSelectedDate(List<BloodPressureDB> task) {
         timeList.clear();
         combinedChart.clear();
 
@@ -280,6 +446,8 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
             legend.setDrawInside(true);
             legend.setEnabled(false);
+            legend.setYEntrySpace(0.5f);
+            legend.setXEntrySpace(0.5f);
 
 //            X axis
             XAxis xAxis = combinedChart.getXAxis();
@@ -297,6 +465,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             xAxis.setEnabled(true);
             xAxis.setSpaceMin(0.4f);
             xAxis.setSpaceMax(0.4f);
+
 
             //Y axis
             YAxis yAxisRight = combinedChart.getAxisRight();
@@ -335,6 +504,120 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
 
             data.setData(generateCandleData(task));
             data.setData(generateLineData(task));
+            if (timeList.size() >= 5) {
+                combinedChart.setVisibleXRangeMaximum(5);
+            }
+            else
+            {
+                combinedChart.invalidate();
+            }
+
+            combinedChart.setData(data);
+            combinedChart.notifyDataSetChanged();
+            combinedChart.invalidate();
+        }
+    }
+
+    // Combined chart with candle stick & line chart.
+    public void plotCombinedChart(List<BloodPressureDB> task) {
+        timeList.clear();
+        combinedChart.clear();
+
+        if (task != null && task.size() > 0) {
+            combinedChart.getDescription().setEnabled(false);
+//            combinedChart.setBackgroundColor(Color.parseColor("#f9f9f9"));
+            combinedChart.setDrawGridBackground(false);
+            combinedChart.setDrawBarShadow(false);
+            combinedChart.setHighlightFullBarEnabled(false);
+
+            String changedDate = null;
+            ArrayList<String> dayList = new ArrayList<>();
+            for (BloodPressureDB list : task) {
+
+                changedDate = changeDateFormat(list.getDate());
+                timeList.add(changedDate+ " " +list.getTime());
+//                dayList.add(changedDate);
+
+            }
+
+            // draw bars behind lines
+            combinedChart.setDrawOrder(new CombinedChart.DrawOrder[]{
+                    CombinedChart.DrawOrder.CANDLE, CombinedChart.DrawOrder.LINE
+            });
+
+            // Legend
+            Legend legend = combinedChart.getLegend();
+            legend.setWordWrapEnabled(false);
+            legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+            legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+            legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+            legend.setDrawInside(true);
+            legend.setEnabled(false);
+            legend.setYEntrySpace(0.5f);
+            legend.setXEntrySpace(0.5f);
+
+//            X axis
+            XAxis xAxis = combinedChart.getXAxis();
+            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+            xAxis.setLabelCount(timeList.size());
+            xAxis.setValueFormatter(new IndexAxisValueFormatter(timeList));
+            xAxis.setAvoidFirstLastClipping(true);
+            xAxis.setLabelRotationAngle(-45);
+            xAxis.setDrawGridLines(false);
+            xAxis.setDrawAxisLine(false);
+            xAxis.setGranularity(1f);
+            xAxis.setGranularityEnabled(true);
+            xAxis.setCenterAxisLabels(false);
+            xAxis.setTextSize(8);
+            xAxis.setEnabled(true);
+            xAxis.setSpaceMin(0.4f);
+            xAxis.setSpaceMax(0.4f);
+
+
+            //Y axis
+            YAxis yAxisRight = combinedChart.getAxisRight();
+            yAxisRight.setEnabled(false);
+            YAxis yAxisLeft = combinedChart.getAxisLeft();
+            yAxisLeft.setLabelCount(6,true);
+            yAxisLeft.setDrawAxisLine(false);
+            yAxisLeft.setTextSize(8);
+            yAxisLeft.setAxisMinimum(50);
+            yAxisLeft.setAxisMaximum(200);
+
+            // Set color as per the mode - Dark mode/Light mode.
+            switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+                case Configuration.UI_MODE_NIGHT_YES:
+                    xAxis.setTextColor(Color.WHITE);
+                    yAxisLeft.setTextColor(Color.WHITE);
+                    yAxisRight.setTextColor(Color.WHITE);
+                    break;
+
+                case Configuration.UI_MODE_NIGHT_NO:
+                    xAxis.setTextColor(Color.BLACK);
+                    yAxisLeft.setTextColor(Color.BLACK);
+                    yAxisRight.setTextColor(Color.BLACK);
+                    break;
+            }
+
+            combinedChart.setDragEnabled(true);
+            combinedChart.setScaleEnabled(true);
+
+            // force pinch zoom along both axis
+            combinedChart.setPinchZoom(true);
+
+            // enable touch gestures
+            combinedChart.setTouchEnabled(true);
+            CombinedData data = new CombinedData();
+
+            data.setData(generateCandleData(task));
+            data.setData(generateLineData(task));
+            if (timeList.size() >= 5) {
+                combinedChart.setVisibleXRangeMaximum(5);
+            }
+            else
+            {
+                combinedChart.invalidate();
+            }
 
             combinedChart.setData(data);
             combinedChart.notifyDataSetChanged();
@@ -368,6 +651,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             cds.setIncreasingPaintStyle(Paint.Style.STROKE);
             cds.setDrawValues(false);
             cds.setNeutralColor(Color.BLUE);
+            cds.setDrawHighlightIndicators(false);
             CustomMarkerView mv = new CustomMarkerView(HomePage.this, R.layout.marker_view);
                 // Set the marker to the chart
                  mv.setChartView(combinedChart);
@@ -419,6 +703,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             set.enableDashedLine(10,5,0);
             set.setValueTextSize(10f);
             set.setDrawValues(true);
+            set.setDrawHighlightIndicators(false);
 
             Collections.sort(entries1,new EntryXComparator());
             LineDataSet set2 = new LineDataSet(entries1,"");
@@ -432,6 +717,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             set2.setCircleRadius(5f);
             set2.setValueTextSize(10f);
             set2.setDrawValues(true);
+            set2.setDrawHighlightIndicators(false);
 
                 // Set color as per the mode - Dark mode/Light mode.
                 switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {

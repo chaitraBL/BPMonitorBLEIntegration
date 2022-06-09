@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".reading.MainActivity">
 
     <LinearLayout
@@ -11,7 +12,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:id="@+id/linear_layout"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:weightSum="2"
@@ -70,13 +71,12 @@
         android:id="@+id/linear_layout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/linear_layout"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="15dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="10dp"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -199,11 +199,11 @@
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/black"
+                    android:layout_height="match_parent"
                     android:layout_marginStart="5dp"
-                    android:text="@string/range_120_80"
                     android:fontFamily="@font/arial"
+                    android:text="@string/range_120_80"
+                    android:textColor="@color/black"
                     android:textSize="10sp"
                     tools:ignore="SmallSp" />
 
@@ -330,26 +330,62 @@
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/analytics"
-        android:id="@+id/analytics_home"
-        android:textColor="?android:textColorPrimary"
-        android:fontFamily="@font/arial"
-        android:textStyle="bold"
-        android:layout_marginStart="20dp"
-        android:layout_below="@id/linear_layout2"/>
+<!--    <TextView-->
+<!--        android:id="@+id/analytics_home"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@id/linear_layout2"-->
+<!--        android:layout_marginStart="20dp"-->
+<!--        android:fontFamily="@font/arial"-->
+<!--        android:text="@string/analytics"-->
+<!--        android:textColor="?android:textColorPrimary"-->
+<!--        android:textStyle="bold" />-->
 
-    <ImageButton
-        android:id="@+id/next_btn"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_below="@+id/linear_layout2"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="15dp"
-        android:background="#000000"
-        android:src="@drawable/ic_baseline_arrow_forward_ios_24" />
+<!--    <ImageButton-->
+<!--        android:id="@+id/next_btn"-->
+<!--        android:layout_width="20dp"-->
+<!--        android:layout_height="20dp"-->
+<!--        android:layout_below="@+id/linear_layout2"-->
+<!--        android:layout_alignParentEnd="true"-->
+<!--        android:layout_marginEnd="15dp"-->
+<!--        android:background="#000000"-->
+<!--        android:src="@drawable/ic_baseline_arrow_forward_ios_24" />-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/previous_btn"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginEnd="15dp"
+            android:src="@drawable/ic_baseline_arrow_back_ios_24"
+            android:background="#000000"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:id="@+id/date_text"
+            android:textColor="?android:textColorPrimary"
+            android:fontFamily="@font/arial"
+            android:layout_marginEnd="15dp"/>
+
+        <ImageButton
+            android:id="@+id/next_btn"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginEnd="15dp"
+            android:background="#000000"
+            android:src="@drawable/ic_baseline_arrow_forward_ios_24" />
+
+    </LinearLayout>
 
 <!--    <com.github.mikephil.charting.charts.CandleStickChart-->
 <!--        android:id="@+id/reading_list"-->
@@ -360,26 +396,39 @@
 <!--        android:layout_marginBottom="10dp"-->
 <!--        android:layout_marginStart="10dp"-->
 <!--        android:layout_marginEnd="10dp"/>-->
-
-    <com.github.mikephil.charting.charts.CombinedChart
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="240dp"
-        android:id="@+id/reading_list"
-        android:layout_below="@+id/analytics_home"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"/>
+        android:id="@+id/list_layout"
+        android:layout_marginTop="5dp">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:id="@+id/txt_no_chart_data"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:text="@string/no_chart_data_available"
+        android:visibility="invisible"/>
+
+        <com.github.mikephil.charting.charts.CombinedChart
+            android:id="@+id/reading_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp" />
+
+    </RelativeLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/reading_list"
-        android:layout_alignParentBottom="true"
         android:background="@color/white"
         app:itemIconTint="@drawable/navigation_item_color"
         app:itemTextColor="@drawable/navigation_item_color"
         app:menu="@menu/bottom_nav_menu" />
     <!--    android:background="#151B54"-->
 
-</RelativeLayout>
+</LinearLayout>
