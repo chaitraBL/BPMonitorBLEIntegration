@@ -146,6 +146,9 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
         progress.setVisibility(View.VISIBLE);
         getManualTasks();
 
+        @SuppressLint("SimpleDateFormat") DateFormat df1 = new SimpleDateFormat("dd-MM-yyyy"); // Format date
+        @SuppressLint("SimpleDateFormat") DateFormat df2 = new SimpleDateFormat("hh:mm aa"); // Format time
+
         calendarBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -166,15 +169,168 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                                 Log.d(TAG,"day:::"+day);
                                 if(get_month < 10){
                                     dateInCal = (day+"-"+"0"+get_month+"-"+year);
+                                    for (BloodPressureDB i : pressureVal) {
+                                        if (dateInCal.equals(i.getDate())) {
+                                            newTask.add(i);
+//                        Log.i(TAG, "onClick: new task in next " + newTask);
+                                            if (newTask.size() > 0) {
+                                                //Sort the arraylist in ascending order
+                                                Collections.sort(newTask, new Comparator<BloodPressureDB>() {
+                                                    @Override
+                                                    public int compare(BloodPressureDB bloodPressureDB, BloodPressureDB t1) {
+                                                        try {
+                                                            if (df2.parse(bloodPressureDB.getTime()).before(df2.parse(t1.getTime()))){
+                                                                return -1;
+                                                            }
+                                                        } catch (ParseException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                        return 1;
+                                                    }
+                                                });
+                                                plotForSelectedDate(newTask);
+                                                combinedChart.notifyDataSetChanged();
+                                                combinedChart.invalidate();
+                                                progress.setVisibility(View.GONE);
+                                            }
+                                            else{
+                                                combinedChart.setNoDataText("No chart data found");
+                                                combinedChart.notifyDataSetChanged();
+                                                combinedChart.invalidate();
+                                                progress.setVisibility(View.GONE);
+                                            }
+                                        }
+                                        else {
+                                            combinedChart.setNoDataText("No chart data found");
+                                            combinedChart.notifyDataSetChanged();
+                                            combinedChart.invalidate();
+                                            progress.setVisibility(View.GONE);
+                                        }
+
+                                    }
                                 }else {
 
                                     dateInCal = (day+"-"+get_month+"-"+year);
+                                    for (BloodPressureDB i : pressureVal) {
+                                        if (dateInCal.equals(i.getDate())) {
+                                            newTask.add(i);
+//                        Log.i(TAG, "onClick: new task in next " + newTask);
+                                            if (newTask.size() > 0) {
+                                                //Sort the arraylist in ascending order
+                                                Collections.sort(newTask, new Comparator<BloodPressureDB>() {
+                                                    @Override
+                                                    public int compare(BloodPressureDB bloodPressureDB, BloodPressureDB t1) {
+                                                        try {
+                                                            if (df2.parse(bloodPressureDB.getTime()).before(df2.parse(t1.getTime()))){
+                                                                return -1;
+                                                            }
+                                                        } catch (ParseException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                        return 1;
+                                                    }
+                                                });
+                                                plotForSelectedDate(newTask);
+                                                combinedChart.notifyDataSetChanged();
+                                                combinedChart.invalidate();
+                                                progress.setVisibility(View.GONE);
+                                            }
+                                            else{
+                                                combinedChart.setNoDataText("No chart data found");
+                                                combinedChart.notifyDataSetChanged();
+                                                combinedChart.invalidate();
+                                                progress.setVisibility(View.GONE);
+                                            }
+                                        }
+                                        else {
+                                            combinedChart.setNoDataText("No chart data found");
+                                            combinedChart.notifyDataSetChanged();
+                                            combinedChart.invalidate();
+                                            progress.setVisibility(View.GONE);
+                                        }
+                                    }
                                 }
                             }else {
                                 if(get_month < 10){
                                     dateInCal = (dayOfMonth+"-"+"0"+get_month+"-"+year);
+                                    for (BloodPressureDB i : pressureVal) {
+                                        if (dateInCal.equals(i.getDate())) {
+                                            newTask.add(i);
+//                        Log.i(TAG, "onClick: new task in next " + newTask);
+                                            if (newTask.size() > 0) {
+                                                //Sort the arraylist in ascending order
+                                                Collections.sort(newTask, new Comparator<BloodPressureDB>() {
+                                                    @Override
+                                                    public int compare(BloodPressureDB bloodPressureDB, BloodPressureDB t1) {
+                                                        try {
+                                                            if (df2.parse(bloodPressureDB.getTime()).before(df2.parse(t1.getTime()))){
+                                                                return -1;
+                                                            }
+                                                        } catch (ParseException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                        return 1;
+                                                    }
+                                                });
+                                                plotForSelectedDate(newTask);
+                                                combinedChart.notifyDataSetChanged();
+                                                combinedChart.invalidate();
+                                                progress.setVisibility(View.GONE);
+                                            }
+                                            else{
+                                                combinedChart.setNoDataText("No chart data found");
+                                                combinedChart.notifyDataSetChanged();
+                                                combinedChart.invalidate();
+                                                progress.setVisibility(View.GONE);
+                                            }
+                                        }
+                                        else {
+                                            combinedChart.setNoDataText("No chart data found");
+                                            combinedChart.notifyDataSetChanged();
+                                            combinedChart.invalidate();
+                                            progress.setVisibility(View.GONE);
+                                        }
+                                    }
                                 }else {
                                     dateInCal = (dayOfMonth+"-"+get_month+"-"+year);
+                                    for (BloodPressureDB i : pressureVal) {
+                                        if (dateInCal.equals(i.getDate())) {
+                                            newTask.add(i);
+//                        Log.i(TAG, "onClick: new task in next " + newTask);
+                                            if (newTask.size() > 0) {
+                                                //Sort the arraylist in ascending order
+                                                Collections.sort(newTask, new Comparator<BloodPressureDB>() {
+                                                    @Override
+                                                    public int compare(BloodPressureDB bloodPressureDB, BloodPressureDB t1) {
+                                                        try {
+                                                            if (df2.parse(bloodPressureDB.getTime()).before(df2.parse(t1.getTime()))){
+                                                                return -1;
+                                                            }
+                                                        } catch (ParseException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                        return 1;
+                                                    }
+                                                });
+                                                plotForSelectedDate(newTask);
+                                                combinedChart.notifyDataSetChanged();
+                                                combinedChart.invalidate();
+                                                progress.setVisibility(View.GONE);
+                                            }
+                                            else{
+                                                combinedChart.setNoDataText("No chart data found");
+                                                combinedChart.notifyDataSetChanged();
+                                                combinedChart.invalidate();
+                                                progress.setVisibility(View.GONE);
+                                            }
+                                        }
+                                        else {
+                                            combinedChart.setNoDataText("No chart data found");
+                                            combinedChart.notifyDataSetChanged();
+                                            combinedChart.invalidate();
+                                            progress.setVisibility(View.GONE);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -183,8 +339,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                     datePickerDialog.show();
                 }
             });
-        @SuppressLint("SimpleDateFormat") DateFormat df1 = new SimpleDateFormat("dd-MM-yyyy"); // Format date
-        @SuppressLint("SimpleDateFormat") DateFormat df2 = new SimpleDateFormat("hh:mm aa"); // Format time
+
 //        nextDateBtn.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
@@ -649,7 +804,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             XAxis xAxis = combinedChart.getXAxis();
             xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
             xAxis.setLabelCount(timeList.size());
-            xAxis.setValueFormatter(new IndexAxisValueFormatter(timeList));
+            xAxis.setValueFormatter(new IndexAxisValueFormatter(xAxisLabel));
             xAxis.setAvoidFirstLastClipping(false);
             xAxis.setLabelRotationAngle(-45);
             xAxis.setDrawGridLines(false);
@@ -707,7 +862,6 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             {
                 combinedChart.invalidate();
             }
-
             combinedChart.setData(data);
             combinedChart.notifyDataSetChanged();
             combinedChart.invalidate();
@@ -1120,7 +1274,6 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             xAxis.setCenterAxisLabels(true); //don't center the x labels as we are using a custom XAxisRenderer to set the label x, y position
             xAxis.setValueFormatter(new IndexAxisValueFormatter(timeList));
 //            combinedChart.setXAxisRenderer(new CustomXAxisRenderer(combinedChart.getViewPortHandler(), combinedChart.getXAxis(), combinedChart.getTransformer(YAxis.AxisDependency.LEFT)));
-
 
             //initialize Y-Right-Axis
             YAxis rightAxis = combinedChart.getAxisRight();
