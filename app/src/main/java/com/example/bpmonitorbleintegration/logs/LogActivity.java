@@ -44,6 +44,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -210,12 +212,28 @@ private  void endDateCalendar() {
             protected void onPostExecute(List<BloodPressureDB> tasks) {
                 super.onPostExecute(tasks);
 
+                @SuppressLint("SimpleDateFormat") DateFormat df1 = new SimpleDateFormat("dd-MM-yyyy"); // Format date
                 // Display all values in recycler view.
                 if (tasks.size() == 0) {
                     no_data_found.setVisibility(View.VISIBLE);
                     logRecycleView.setVisibility(View.INVISIBLE);
                 }
                 else {
+
+                    //Sort the arraylist in ascending order
+                    Collections.sort(tasks, new Comparator<BloodPressureDB>() {
+                        @Override
+                        public int compare(BloodPressureDB bloodPressureDB, BloodPressureDB t1) {
+                            try {
+                                if (df1.parse(bloodPressureDB.getDate()).before(df1.parse(t1.getDate()))){
+                                    return -1;
+                                }
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            return 1;
+                        }
+                    });
                     no_data_found.setVisibility(View.INVISIBLE);
                     logRecycleView.setVisibility(View.VISIBLE);
                         ReadingsAdapter adapter = new ReadingsAdapter(LogActivity.this, tasks);
@@ -274,9 +292,9 @@ private  void endDateCalendar() {
                                     recylerDateBP.add(i);
                                     if (dates.size() > 0) {
                                         for (Date d : dates) {
-                                            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-                                            String strDate = dateFormat.format(d);
-                                            System.out.println("Converted String: " + strDate);
+//                                            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                                            String strDate = df1.format(d);
+//                                            System.out.println("Converted String: " + strDate);
                                             if (i.getDate().equals(strDate)) {
                                                 newTask.add(i);
                                             }
@@ -285,6 +303,21 @@ private  void endDateCalendar() {
                                                     no_data_found.setVisibility(View.VISIBLE);
                                                     logRecycleView.setVisibility(View.INVISIBLE);
                                                 } else {
+//                                                @SuppressLint("SimpleDateFormat") DateFormat df1 = new SimpleDateFormat("dd-MM-yyyy"); // Format date
+                                                //Sort the arraylist in ascending order
+                                                Collections.sort(newTask, new Comparator<BloodPressureDB>() {
+                                                    @Override
+                                                    public int compare(BloodPressureDB bloodPressureDB, BloodPressureDB t1) {
+                                                        try {
+                                                            if (df1.parse(bloodPressureDB.getDate()).before(df1.parse(t1.getDate()))){
+                                                                return -1;
+                                                            }
+                                                        } catch (ParseException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                        return 1;
+                                                    }
+                                                });
                                                     no_data_found.setVisibility(View.INVISIBLE);
                                                     logRecycleView.setVisibility(View.VISIBLE);
                                                     ReadingsAdapter adapter = new ReadingsAdapter(LogActivity.this, newTask);

@@ -358,54 +358,91 @@
 <!--        android:background="#000000"-->
 <!--        android:src="@drawable/ic_baseline_arrow_forward_ios_24" />-->
 
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:gravity="center"-->
+<!--        android:layout_marginTop="5dp"-->
+<!--        android:layout_marginBottom="5dp"-->
+<!--        android:orientation="horizontal">-->
+
+<!--        <ImageButton-->
+<!--            android:id="@+id/previous_btn"-->
+<!--            android:layout_width="20dp"-->
+<!--            android:layout_height="20dp"-->
+<!--            android:layout_marginEnd="15dp"-->
+<!--            android:layout_marginStart="90dp"-->
+<!--            android:src="@drawable/ic_baseline_arrow_back_ios_24"-->
+<!--            android:background="#000000"/>-->
+
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="-"-->
+<!--            android:textStyle="bold"-->
+<!--            android:textSize="14sp"-->
+<!--            android:id="@+id/date_text"-->
+<!--            android:textColor="?android:textColorPrimary"-->
+<!--            android:fontFamily="@font/arial"-->
+<!--            android:layout_marginEnd="15dp"/>-->
+
+<!--        <ImageButton-->
+<!--            android:id="@+id/next_btn"-->
+<!--            android:layout_width="20dp"-->
+<!--            android:layout_height="20dp"-->
+<!--            android:background="#000000"-->
+<!--            android:src="@drawable/ic_baseline_arrow_forward_ios_24" />-->
+
+<!--        <Button-->
+<!--            android:layout_width="70dp"-->
+<!--            android:layout_height="35dp"-->
+<!--            android:text="@string/all"-->
+<!--            android:textColor="?android:textColorPrimary"-->
+<!--            android:textStyle="bold"-->
+<!--            android:textSize="10sp"-->
+<!--            android:id="@+id/all_values"-->
+<!--            android:fontFamily="@font/arial"-->
+<!--            android:background="@drawable/bg_transparent"-->
+<!--            android:layout_marginStart="30dp"-->
+<!--            tools:ignore="SmallSp" />-->
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:orientation="horizontal">
-
-        <ImageButton
-            android:id="@+id/previous_btn"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginStart="90dp"
-            android:src="@drawable/ic_baseline_arrow_back_ios_24"
-            android:background="#000000"/>
+        android:orientation="horizontal"
+        android:gravity="center">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/date_tv"
             android:text="-"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:id="@+id/date_text"
+            android:textStyle="normal"
             android:textColor="?android:textColorPrimary"
             android:fontFamily="@font/arial"
-            android:layout_marginEnd="15dp"/>
+            android:textSize="12sp"
+            android:layout_marginEnd="5dp"/>
 
-        <ImageButton
-            android:id="@+id/next_btn"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:background="#000000"
-            android:src="@drawable/ic_baseline_arrow_forward_ios_24" />
-
-        <Button
-            android:layout_width="70dp"
-            android:layout_height="35dp"
-            android:text="@string/all"
-            android:textColor="?android:textColorPrimary"
-            android:textStyle="bold"
-            android:textSize="10sp"
-            android:id="@+id/all_values"
-            android:fontFamily="@font/arial"
-            android:background="@drawable/bg_transparent"
-            android:layout_marginStart="30dp"
-            tools:ignore="SmallSp" />
-
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_calendar_today_24"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="10dp"
+        android:background="#000000"
+        android:id="@+id/calendar_home"/>
+    <Button
+    android:layout_width="70dp"
+    android:layout_height="35dp"
+    android:text="@string/all"
+    android:textColor="?android:textColorPrimary"
+    android:textStyle="bold"
+    android:textSize="10sp"
+    android:id="@+id/all_values"
+    android:fontFamily="@font/arial"
+    android:background="@drawable/bg_transparent"
+    android:layout_marginStart="30dp"
+    tools:ignore="SmallSp" />
 
     </LinearLayout>
 
@@ -418,13 +455,26 @@
 <!--        android:layout_marginBottom="10dp"-->
 <!--        android:layout_marginStart="10dp"-->
 <!--        android:layout_marginEnd="10dp"/>-->
-
-    <com.github.mikephil.charting.charts.CombinedChart
-        android:id="@+id/reading_list"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="240dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp" />
+        android:padding="4dp"
+        android:gravity="center"
+        android:id="@+id/relativeLayout">
+
+        <com.github.mikephil.charting.charts.CombinedChart
+            android:id="@+id/reading_list"
+            android:layout_width="390dp"
+            android:layout_height="240dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp" />
+
+    </RelativeLayout>
+
+<!--    <com.github.mikephil.charting.charts.BarChart-->
+<!--        android:id="@+id/barChart"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="300dp" />-->
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"

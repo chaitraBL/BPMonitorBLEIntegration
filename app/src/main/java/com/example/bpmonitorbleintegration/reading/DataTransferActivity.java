@@ -395,7 +395,15 @@ public class DataTransferActivity extends AppCompatActivity{
                     Toast.makeText(getApplicationContext(),"Please enter MAP value",Toast.LENGTH_SHORT).show();
                 }
                 else {
+                    if ((mBluetoothLeService.systalic < 30) || (mBluetoothLeService.systalic > 200)){
+                        Toast.makeText(getApplicationContext(), getApplicationContext().getResources().getString(R.string.systolic_range_fault), Toast.LENGTH_SHORT).show();
+                    }
+                    else if ((mBluetoothLeService.dystolic < 40) || (mBluetoothLeService.dystolic > 120)) {
+                        Toast.makeText(getApplicationContext(), getApplicationContext().getResources().getString(R.string.diastolic_range_fault), Toast.LENGTH_SHORT).show();
+                    }
+                    else {
                     localDB.saveTask(deviceAddress, mBluetoothLeService.systalic, mBluetoothLeService.dystolic, mBluetoothLeService.rate, mBluetoothLeService.range, DataTransferActivity.this);
+                }
                 }
                 progress.setVisibility(View.GONE);
             }

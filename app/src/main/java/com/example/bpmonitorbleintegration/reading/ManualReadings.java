@@ -79,15 +79,25 @@ public class ManualReadings extends AppCompatActivity {
                 else {
                     //Calculates mean arterial pressure(MAP) value.
                     map = decoder.calculateMAP(Integer.parseInt(systolic.getText().toString()),Integer.parseInt(diastolic.getText().toString()));
-                    //Saves to local database.
-                    database.saveTask("No device",Integer.parseInt(systolic.getText().toString()),Integer.parseInt(diastolic.getText().toString()),Integer.parseInt(heartRate.getText().toString()),map,ManualReadings.this);
-                    //After saving data make textfield empty.
-                    systolic.setText("");
-                    diastolic.setText("");
-                    heartRate.setText("");
-                    progressBar.setVisibility(View.GONE);
-                }
 
+                    if ((Integer.parseInt(systolic.getText().toString()) < 30) || (Integer.parseInt(systolic.getText().toString()) > 200)){
+                        Toast.makeText(getApplicationContext(),  getApplicationContext().getResources().getString(R.string.systolic_range_fault), Toast.LENGTH_SHORT).show();
+                        progressBar.setVisibility(View.GONE);
+                    }
+                    else if ((Integer.parseInt(diastolic.getText().toString()) < 40) || (Integer.parseInt(diastolic.getText().toString()) > 120)) {
+                        Toast.makeText(getApplicationContext(), getApplicationContext().getResources().getString(R.string.diastolic_range_fault), Toast.LENGTH_SHORT).show();
+                        progressBar.setVisibility(View.GONE);
+                    }
+                    else {
+                        //Saves to local database.
+                        database.saveTask("No device",Integer.parseInt(systolic.getText().toString()),Integer.parseInt(diastolic.getText().toString()),Integer.parseInt(heartRate.getText().toString()),map,ManualReadings.this);
+                        //After saving data make textfield empty.
+                        systolic.setText("");
+                        diastolic.setText("");
+                        heartRate.setText("");
+                        progressBar.setVisibility(View.GONE);
+                    }
+                }
             }
         });
 

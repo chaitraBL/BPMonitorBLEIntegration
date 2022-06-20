@@ -114,5 +114,7 @@
     <string name="high_bp_crisis">High Blood Pressure Crisis</string>
     <string name="enter_map">Please enter map value</string>
     <string name="no_chart_data_available">No chart data available</string>
+    <string name="systolic_range_fault">Systolic range should be between 30 t0 200, Please check the readings</string>
+    <string name="diastolic_range_fault">Diastolic range should be between 40 to 120, Please check the readings</string>
 
 </resources>
