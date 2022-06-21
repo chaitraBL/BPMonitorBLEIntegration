@@ -446,35 +446,20 @@
 
     </LinearLayout>
 
-<!--    <com.github.mikephil.charting.charts.CandleStickChart-->
-<!--        android:id="@+id/reading_list"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="230dp"-->
-<!--        android:layout_below="@+id/analytics_home"-->
-<!--        android:layout_marginTop="10dp"-->
-<!--        android:layout_marginBottom="10dp"-->
-<!--        android:layout_marginStart="10dp"-->
-<!--        android:layout_marginEnd="10dp"/>-->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="240dp"
-        android:padding="4dp"
+        android:layout_height="260dp"
         android:gravity="center"
         android:id="@+id/relativeLayout">
 
         <com.github.mikephil.charting.charts.CombinedChart
             android:id="@+id/reading_list"
-            android:layout_width="390dp"
-            android:layout_height="240dp"
+            android:layout_width="400dp"
+            android:layout_height="match_parent"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp" />
 
     </RelativeLayout>
-
-<!--    <com.github.mikephil.charting.charts.BarChart-->
-<!--        android:id="@+id/barChart"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="300dp" />-->
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"

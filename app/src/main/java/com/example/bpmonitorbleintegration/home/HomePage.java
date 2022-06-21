@@ -158,15 +158,15 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
         @SuppressLint("SimpleDateFormat") DateFormat df1 = new SimpleDateFormat("dd-MM-yyyy"); // Format date
         @SuppressLint("SimpleDateFormat") DateFormat df2 = new SimpleDateFormat("hh:mm aa"); // Format time
 
-        combinedChart.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                String xAxisVal = newDateList.get((int) view.getX());
-                Log.i(TAG, "onTouch: xAxisVal " + xAxisVal);
-                selectedDateText.setText(xAxisVal);
-                return false;
-            }
-        });
+//        combinedChart.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View view, MotionEvent motionEvent) {
+//                String xAxisVal = newDateList.get((int) view.getX());
+//                Log.i(TAG, "onTouch: xAxisVal " + xAxisVal);
+//                selectedDateText.setText(xAxisVal);
+//                return false;
+//            }
+//        });
 
 //        combinedChart.setOnTouchListener(new onSwipeGuestureListner(HomePage.this) {
 //            @Override
