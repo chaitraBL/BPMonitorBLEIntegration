@@ -453,20 +453,19 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                                                 combinedChart.invalidate();
                                                 progress.setVisibility(View.GONE);
                                             } else {
-                                                combinedChart.setNoDataText("No chart data found");
+                                                combinedChart.setNoDataText(getApplication().getResources().getString(R.string.no_chart_data_available));
                                                 combinedChart.notifyDataSetChanged();
                                                 combinedChart.invalidate();
                                                 progress.setVisibility(View.GONE);
                                             }
                                         } else {
-                                            combinedChart.setNoDataText("No chart data found");
+                                            combinedChart.setNoDataText(getApplication().getResources().getString(R.string.no_chart_data_available));
                                             combinedChart.notifyDataSetChanged();
                                             combinedChart.invalidate();
                                             progress.setVisibility(View.GONE);
                                         }
                                     }
                                 }else {
-
                                     dateInCal = (day+"-"+get_month+"-"+year);
                                     selectedDate = changeDateFormat(dateInCal);
                                     selectedDateText.setText(selectedDate);
@@ -496,14 +495,14 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                                                 progress.setVisibility(View.GONE);
                                             }
                                             else{
-                                                combinedChart.setNoDataText("No chart data found");
+                                                combinedChart.setNoDataText(getApplication().getResources().getString(R.string.no_chart_data_available));
                                                 combinedChart.notifyDataSetChanged();
                                                 combinedChart.invalidate();
                                                 progress.setVisibility(View.GONE);
                                             }
                                         }
                                         else {
-                                            combinedChart.setNoDataText("No chart data found");
+                                            combinedChart.setNoDataText(getApplication().getResources().getString(R.string.no_chart_data_available));
                                             combinedChart.notifyDataSetChanged();
                                             combinedChart.invalidate();
                                             progress.setVisibility(View.GONE);
@@ -541,14 +540,14 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                                                 progress.setVisibility(View.GONE);
                                             }
                                             else{
-                                                combinedChart.setNoDataText("No chart data found");
+                                                combinedChart.setNoDataText(getApplication().getResources().getString(R.string.no_chart_data_available));
                                                 combinedChart.notifyDataSetChanged();
                                                 combinedChart.invalidate();
                                                 progress.setVisibility(View.GONE);
                                             }
                                         }
                                         else {
-                                            combinedChart.setNoDataText("No chart data found");
+                                            combinedChart.setNoDataText(getApplication().getResources().getString(R.string.no_chart_data_available));
                                             combinedChart.notifyDataSetChanged();
                                             combinedChart.invalidate();
                                             progress.setVisibility(View.GONE);
@@ -584,14 +583,14 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                                                 progress.setVisibility(View.GONE);
                                             }
                                             else{
-                                                combinedChart.setNoDataText("No chart data found");
+                                                combinedChart.setNoDataText(getApplication().getResources().getString(R.string.no_chart_data_available));
                                                 combinedChart.notifyDataSetChanged();
                                                 combinedChart.invalidate();
                                                 progress.setVisibility(View.GONE);
                                             }
                                         }
                                         else {
-                                            combinedChart.setNoDataText("No chart data found");
+                                            combinedChart.setNoDataText(getApplication().getResources().getString(R.string.no_chart_data_available));
                                             combinedChart.notifyDataSetChanged();
                                             combinedChart.invalidate();
                                             progress.setVisibility(View.GONE);
@@ -758,7 +757,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
 //                    }
                 }
                 else {
-                    combinedChart.setNoDataText("No chart data found");
+                    combinedChart.setNoDataText(getApplication().getResources().getString(R.string.no_chart_data_available));
                     combinedChart.notifyDataSetChanged();
                     combinedChart.invalidate();
                 }
@@ -1074,7 +1073,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             Legend legend = combinedChart.getLegend();
             legend.setWordWrapEnabled(false);
             legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
-            legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+            legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT); //LEFT
             legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
             legend.setDrawInside(true);
             legend.setEnabled(false);
@@ -1422,7 +1421,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             combinedChart.setDrawGridBackground(false);
             combinedChart.setDrawBarShadow(false);
             combinedChart.setHighlightFullBarEnabled(false);
-            combinedChart.setNoDataText("No chart data found");
+            combinedChart.setNoDataText(getApplication().getResources().getString(R.string.no_chart_data_available));
             combinedChart.setTouchEnabled(true);
             combinedChart.setDragEnabled(true);
             combinedChart.setScaleEnabled(true);

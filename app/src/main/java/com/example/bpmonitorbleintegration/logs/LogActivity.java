@@ -332,36 +332,6 @@ private  void endDateCalendar() {
                             }
                         }
                     });
-
-//                    new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.RIGHT) {
-//                        @Override
-//                        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-//                            return false;
-//                        }
-//
-//                        @Override
-//                        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-//                            BloodPressureDB deletedItem = recylerDateBP.get(viewHolder.getAdapterPosition());
-//
-//                            int position = viewHolder.getAdapterPosition();
-//
-//                            recylerDateBP.remove(viewHolder.getAdapterPosition());
-//
-//                            adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
-//
-//                            Snackbar.make(logRecycleView,deletedItem.getName(),Snackbar.LENGTH_LONG).setAction("Undo", new View.OnClickListener() {
-//                                @Override
-//                                public void onClick(View view) {
-//                                    recylerDateBP.add(position,deletedItem);
-//
-//                                    adapter.notifyItemInserted(position);
-//                                }
-//                            }).show();
-//
-//
-//
-//                        }
-//                    }).attachToRecyclerView(logRecycleView);
                 }
             }
         }
@@ -386,11 +356,11 @@ private  void endDateCalendar() {
         }
 
         Calendar cal1 = Calendar.getInstance();
-        cal1.setTime(date1);
+        cal1.setTime(Objects.requireNonNull(date1));
 
 
         Calendar cal2 = Calendar.getInstance();
-        cal2.setTime(date2);
+        cal2.setTime(Objects.requireNonNull(date2));
 
         while(!cal1.after(cal2))
         {
