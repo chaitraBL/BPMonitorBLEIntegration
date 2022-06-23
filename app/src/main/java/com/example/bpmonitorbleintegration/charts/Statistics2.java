@@ -3,6 +3,7 @@ package com.example.bpmonitorbleintegration.charts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -41,6 +42,7 @@ public class Statistics2 extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         setContentView(R.layout.activity_statistics2);
         ActionBar actioBar = getSupportActionBar();
         actioBar.setTitle("Analytics");

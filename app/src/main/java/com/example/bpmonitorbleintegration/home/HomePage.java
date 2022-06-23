@@ -3,6 +3,7 @@ package com.example.bpmonitorbleintegration.home;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
@@ -108,6 +109,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         setContentView(R.layout.activity_home_page);
 //        Activity.reCreate();
         nameText = findViewById(R.id.profile_name);
@@ -286,7 +288,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
 //                }
 //            }
 //        });
-
+//
 //        layout.setOnTouchListener(new onSwipeGuestureListner(HomePage.this) {
 //            @Override
 //            public void onSwipeLeft() {
@@ -423,7 +425,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
 
                             if(dayOfMonth < 10){
                                 String day = "0"+dayOfMonth;
-                                Log.d(TAG,"day:::"+day);
+//                                Log.d(TAG,"day:::"+day);
                                 if(get_month < 10) {
                                     dateInCal = (day + "-" + "0" + get_month + "-" + year);
                                     selectedDate = changeDateFormat(dateInCal);
@@ -1345,10 +1347,10 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             set.enableDashedLine(10,5,0);
             set.setValueTextSize(10f);
             set.setDrawValues(true);
-
             set.setDrawHighlightIndicators(false);
 
             Collections.sort(entries1,new EntryXComparator());
+
             LineDataSet set2 = new LineDataSet(entries1,"");
             set2.setDrawHorizontalHighlightIndicator(false);
             set2.setDrawVerticalHighlightIndicator(false);
@@ -1476,7 +1478,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
 
             //initialize Y-Right-Axis
             YAxis rightAxis = combinedChart.getAxisRight();
-            rightAxis.setTextColor(Color.BLACK);
+//            rightAxis.setTextColor(Color.BLACK);
             rightAxis.setTextSize(8);
             rightAxis.setDrawAxisLine(true);
             rightAxis.setAxisLineColor(Color.BLACK);
@@ -1487,6 +1489,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             rightAxis.setAxisMaximum(200f);
             rightAxis.setLabelCount(4, true); //labels (Y-Values) for 4 horizontal grid lines
             rightAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
+
 
             //initialize Y-Left-Axis
             YAxis leftAxis = combinedChart.getAxisLeft();
@@ -1499,6 +1502,22 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                     return "";
                 }
             });
+
+            // Set color as per the mode - Dark mode/Light mode.
+            switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+                case Configuration.UI_MODE_NIGHT_YES:
+                    xAxis.setTextColor(Color.WHITE);
+                    leftAxis.setTextColor(Color.WHITE);
+                    rightAxis.setTextColor(Color.WHITE);
+                    break;
+
+                case Configuration.UI_MODE_NIGHT_NO:
+                    xAxis.setTextColor(Color.BLACK);
+                    leftAxis.setTextColor(Color.BLACK);
+                    rightAxis.setTextColor(Color.BLACK);
+                    break;
+            }
+
 
             data.setData(generateCandleData(task));
             data.setData(generateLineData(task));
