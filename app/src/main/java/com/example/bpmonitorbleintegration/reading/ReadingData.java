@@ -108,6 +108,9 @@ public class ReadingData extends AppCompatActivity {
                 mBluetoothLeService.disconnect();
                 mBluetoothLeService.stopSelf();
                 boolean result = mBluetoothLeService.connect(deviceAddress);
+                if (result == false) {
+                    finish();
+                }
             }
         }
 
@@ -575,8 +578,6 @@ public class ReadingData extends AppCompatActivity {
 //                                }
 //                                Constants.is_readingStarted = false;
                             }
-//                            Log.i(TAG, "run: reading before condion in displayDate " + Constants.is_readingStarted);
-//                            Log.i(TAG, "run: result before condion in displayDate " + Constants.is_resultReceived);
 
                             if ((Constants.is_resultReceived == true) || (Constants.is_readingStarted == true)) {
                                 mCountDownTimer = new CountDownTimer(startTime, 10) {
@@ -696,7 +697,10 @@ public class ReadingData extends AppCompatActivity {
                 mBluetoothLeService.close();
                 mBluetoothLeService.disconnect();
                 mBluetoothLeService.stopSelf();
-                mBluetoothLeService.connect(deviceAddress);
+                boolean result = mBluetoothLeService.connect(deviceAddress);
+                if (result == false) {
+                    finish();
+                }
 //                mBluetoothLeService.setHandler(myHandler);
             }
         }
