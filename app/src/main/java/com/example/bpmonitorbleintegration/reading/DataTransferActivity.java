@@ -163,7 +163,7 @@ public class DataTransferActivity extends AppCompatActivity{
 
                                                 //Alert controller to start readings.
                                                 builder = new AlertDialog.Builder(DataTransferActivity.this);
-                                                builder.setTitle("Readings");
+                                                builder.setTitle(getApplication().getResources().getString(R.string.readings));
                                                 LayoutInflater layoutInflater = getLayoutInflater();
 
                                                 //this is custom dialog
@@ -176,7 +176,7 @@ public class DataTransferActivity extends AppCompatActivity{
 //                                    tv.setText(resultData);
 
                                                 //Send request to force STOP the readings.
-                                                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                                builder.setNegativeButton(getApplication().getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                                                     @Override
                                                     public void onClick(DialogInterface dialogInterface, int i) {
                                                         // Nothing done here.
@@ -184,7 +184,7 @@ public class DataTransferActivity extends AppCompatActivity{
                                                 });
 
                                                 //Send Ack - received readings.
-                                                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                                builder.setPositiveButton(getApplication().getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
                                                     @Override
                                                     public void onClick(DialogInterface dialogInterface, int i) {
                                                         if (mNotifyCharacteristic != null) {
@@ -363,7 +363,7 @@ public class DataTransferActivity extends AppCompatActivity{
                             public void run() {
                                 if (Constants.is_ackReceived == false){
                                     mCountDownTimer.cancel();
-                                    Toast.makeText(getApplicationContext(), "Please start again", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), getApplication().getResources().getString(R.string.please_start_again), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -407,9 +407,9 @@ public class DataTransferActivity extends AppCompatActivity{
     // To check cuff replacement is reset or not.
     private void alertDialogForReset() {
         builder1 = new AlertDialog.Builder(DataTransferActivity.this);
-        builder1.setTitle("Message");
-        builder1.setMessage("Have you replaced the cuff?");
-        builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder1.setTitle(getApplication().getResources().getString(R.string.message));
+        builder1.setMessage(getApplication().getResources().getString(R.string.cuff_replaced));
+        builder1.setPositiveButton(getApplication().getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog1, int which) {
                         Log.i(TAG, "onClick: cuff replaced after alert " + Constants.is_cuffReplaced);
@@ -421,7 +421,7 @@ public class DataTransferActivity extends AppCompatActivity{
                         setTimerForResetVal();
                     }
                 });
-        builder1.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder1.setNegativeButton(getApplication().getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                             Constants.noResetValue = decoder.computeCheckSum(Constants.noResetValue);
@@ -589,9 +589,9 @@ public class DataTransferActivity extends AppCompatActivity{
 
         if (item.getItemId() == R.id.disable_bluetooth) {
             dialog = new AlertDialog.Builder(DataTransferActivity.this)
-                    .setTitle("Message")
-                    .setMessage("Are you sure, disable bluetooth")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    .setTitle(getApplication().getResources().getString(R.string.message))
+                    .setMessage(getApplication().getResources().getString(R.string.are_you_sure_disable_bluetooth))
+                    .setPositiveButton(getApplication().getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
@@ -607,7 +607,7 @@ public class DataTransferActivity extends AppCompatActivity{
                             }
                         }
                     })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    .setNegativeButton(getApplication().getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             dialog.dismiss();
@@ -681,7 +681,7 @@ public class DataTransferActivity extends AppCompatActivity{
 
     private  void displayData(String data) {
 
-        Log.i(TAG, "received data before " + data);
+//        Log.i(TAG, "received data before " + data);
         if (data != null) {
 //           Log.i(TAG, "reading started and result received " + Constants.is_readingStarted + " " + Constants.is_resultReceived);
             mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
@@ -698,10 +698,10 @@ public class DataTransferActivity extends AppCompatActivity{
                             {
                                 mCountDownTimer.cancel();
                                 if ((mBluetoothLeService.systalic < 30) || (mBluetoothLeService.systalic > 200)){
-                                    Toast.makeText(getApplicationContext(), "Systolic reading is not proper, Please start again", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), getApplication().getResources().getString(R.string.systolic_error), Toast.LENGTH_SHORT).show();
                                 }
                                 else if ((mBluetoothLeService.dystolic < 40) || (mBluetoothLeService.dystolic > 120)) {
-                                    Toast.makeText(getApplicationContext(), "Diastolic reading is not proper, Please start again", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), getApplication().getResources().getString(R.string.diastolic_error), Toast.LENGTH_SHORT).show();
                                 }
                                 else {
                                     tv.setText(data);
@@ -732,7 +732,7 @@ public class DataTransferActivity extends AppCompatActivity{
                         public void run() {
                             if (Constants.is_readingStarted == false){
                                 mCountDownTimer.cancel();
-                                Toast.makeText(DataTransferActivity.this,"Please start again",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(DataTransferActivity.this,getApplication().getResources().getString(R.string.please_start_again),Toast.LENGTH_SHORT).show();
                                 ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
                                 ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
 //                                dialog.dismiss();
@@ -775,7 +775,7 @@ public class DataTransferActivity extends AppCompatActivity{
                     public void run() {
                         if (Constants.is_batterValueReceived == false){
                             mCountDownTimer.cancel();
-                            Toast.makeText(DataTransferActivity.this,"Something went wrong please connect again!!!",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(DataTransferActivity.this,getApplication().getResources().getString(R.string.please_connect_again),Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -795,7 +795,7 @@ public class DataTransferActivity extends AppCompatActivity{
         }
         else if (mBluetoothLeService.batteryLevel == Constants.LOW_BATTERY) {
             batteryLevel.setBackgroundColor(Color.parseColor("#FF0000"));
-            Toast.makeText(getApplicationContext(), "Battery is low, Please Change battery",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), getApplication().getResources().getString(R.string.low_battery),Toast.LENGTH_SHORT).show();
         }
 //        Constants.is_batterValueReceived = false;
     }
@@ -834,9 +834,9 @@ public class DataTransferActivity extends AppCompatActivity{
 
                 if (status.equals("Disconnected")){
                     new AlertDialog.Builder(DataTransferActivity.this)
-                            .setTitle("Message")
-                            .setMessage("Connection terminated!, please connect again")
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            .setTitle(getApplication().getResources().getString(R.string.message))
+                            .setMessage(getApplication().getResources().getString(R.string.connection_terminated))
+                            .setPositiveButton(getApplication().getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
 
