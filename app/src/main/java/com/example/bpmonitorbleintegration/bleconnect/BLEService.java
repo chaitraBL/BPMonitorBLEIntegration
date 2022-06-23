@@ -59,24 +59,24 @@ public class BLEService extends Service implements DecodeListener {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public boolean connect(String address) {
         if (mBluetoothAdapter == null || address == null) {
-            Toast.makeText(getApplicationContext(), "BluetoothAdapter not initialize or unspecified address", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), getApplication().getResources().getString(R.string.adapter_not_initialised), Toast.LENGTH_SHORT).show();
             return false;
         }
         bluetoothGattCallback.onConnectionStateChange(mBluetoothGatt, BluetoothGatt.GATT_SUCCESS, BluetoothProfile.STATE_CONNECTING);
         if (mBluetoothAdapter != null && address.equals(bluetoothAddress) && mBluetoothGatt != null) {
-            Toast.makeText(getApplicationContext(), "Try to use existing connection", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), getApplication().getResources().getString(R.string.existing_connection), Toast.LENGTH_SHORT).show();
             if (mBluetoothGatt.connect()) {
                 mConnectionState = Constants.STATE_CONNECTING;
-                Toast.makeText(getApplicationContext(), "Connecting...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getApplication().getResources().getString(R.string.connecting), Toast.LENGTH_SHORT).show();
                 return true;
             } else {
-                Toast.makeText(getApplicationContext(), "Cannot connect, Please check device connectivity...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getApplication().getResources().getString(R.string.cannot_connect), Toast.LENGTH_SHORT).show();
                 return false;
             }
         }
         final BluetoothDevice bluetoothDevice = Objects.requireNonNull(mBluetoothAdapter).getRemoteDevice(address);
         if (bluetoothDevice == null) {
-            Toast.makeText(getApplicationContext(), "Device not found ", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), getApplication().getResources().getString(R.string.device_not_found), Toast.LENGTH_SHORT).show();
             return false;
         }
         if (Build.VERSION.SDK_INT >= 23) {

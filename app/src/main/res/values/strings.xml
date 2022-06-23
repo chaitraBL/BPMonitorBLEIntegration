@@ -118,5 +118,10 @@
     <string name="diastolic_range_fault">Diastolic range should be between 40 to 120, Please check the readings</string>
     <string name="systolic_error">Systolic reading is not proper, Please start again</string>
     <string name="diastolic_error">Diastolic reading is not proper, Please start again</string>
+    <string name="adapter_not_initialised">BluetoothAdapter not initialize or unspecified address</string>
+    <string name="existing_connection">Try to use existing connection</string>
+    <string name="connecting">Connecting…</string>
+    <string name="cannot_connect">Cannot connect, Please check device connectivity…</string>
+    <string name="device_not_found">Device not found </string>
 
 </resources>
