@@ -75,10 +75,10 @@ public class DataTransferActivity extends AppCompatActivity{
     private CountDownTimer mCountDownTimer;
     private boolean mTimerRunning;
     private long mTimeLeftInMillis = 2000;
-    private long startTime = 50;
+    private final long startTime = 50;
     View customView;
 
-    private Handler myHandler = new Handler(new Handler.Callback() {
+    private final Handler myHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(@NonNull Message message) {
             switch (message.what) {
