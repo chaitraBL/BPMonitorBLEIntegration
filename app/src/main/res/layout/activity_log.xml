@@ -210,6 +210,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:background="@color/white"
             app:menu="@menu/bottom_nav_menu"
+            app:itemIconTint="@drawable/navigation_item_color"
+            app:itemTextColor="@drawable/navigation_item_color"
             android:id="@+id/log_bottomNavigationView">
 
         </com.google.android.material.bottomnavigation.BottomNavigationView>

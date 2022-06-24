@@ -343,6 +343,13 @@ private  void endDateCalendar() {
         gt.execute();
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+//        bottomNavigationView.setOnNavigationItemSelectedListener(HomePage.this);
+        logBottomNavigationView.setSelectedItemId(R.id.home);
+    }
+
     //Filter dates between 2 dates.
     private static List<Date> getDates(String dateString1, String dateString2)
     {

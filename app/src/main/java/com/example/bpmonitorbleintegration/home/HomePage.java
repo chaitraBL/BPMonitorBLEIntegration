@@ -909,6 +909,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
         }
     }
 
+
     // Combined chart with candle stick & line chart.
     public void plotForSelectedDate(List<BloodPressureDB> task) {
         timeList.clear();
