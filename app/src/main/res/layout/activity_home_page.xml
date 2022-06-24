@@ -453,7 +453,7 @@
 
         <com.github.mikephil.charting.charts.CombinedChart
             android:id="@+id/reading_list"
-            android:layout_width="400dp"
+            android:layout_width="350dp"
             android:layout_height="match_parent"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp" />
