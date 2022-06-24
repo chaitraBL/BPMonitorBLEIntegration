@@ -236,6 +236,7 @@ private  void endDateCalendar() {
                             return 1;
                         }
                     });
+                    Collections.reverse(tasks);
                     no_data_found.setVisibility(View.INVISIBLE);
                     logRecycleView.setVisibility(View.VISIBLE);
                         ReadingsAdapter adapter = new ReadingsAdapter(LogActivity.this, tasks);
@@ -320,6 +321,7 @@ private  void endDateCalendar() {
                                                         return 1;
                                                     }
                                                 });
+                                                Collections.reverse(newTask);
                                                     no_data_found.setVisibility(View.INVISIBLE);
                                                     logRecycleView.setVisibility(View.VISIBLE);
                                                     ReadingsAdapter adapter = new ReadingsAdapter(LogActivity.this, newTask);

@@ -14,6 +14,7 @@
     <color name="rebeccaPurple">#663399</color>
     <color name="sky_blue">#87CEEB</color>
     <color name="light_gray">#dfdddd</color>
+    <color name="progress_back_color">#dfdddd</color>
     <!--    <Color name="platinum_100">#FFAEADAD</Color>-->
 
     <array name="colors_hex_code">

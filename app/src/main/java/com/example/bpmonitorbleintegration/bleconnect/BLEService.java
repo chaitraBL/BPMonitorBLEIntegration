@@ -332,6 +332,8 @@ public class BLEService extends Service implements DecodeListener {
                             case 6:
                                 Constants.is_cuffReplaced = true;
                                 msg = getString(R.string.cuff_replacement);
+
+
                                 intent.putExtra(Constants.EXTRA_DATA, msg);
                                 break;
                             default:

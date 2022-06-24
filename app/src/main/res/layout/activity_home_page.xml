@@ -455,20 +455,52 @@
             android:id="@+id/reading_list"
             android:layout_width="350dp"
             android:layout_height="match_parent"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp" />
+            android:layout_marginTop="5dp" />
 
     </RelativeLayout>
 
+<!--    <RelativeLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_marginBottom="5dp"-->
+<!--        android:gravity="center">-->
+
+<!--        <com.google.android.material.bottomnavigation.BottomNavigationView-->
+<!--            android:id="@+id/bottomNavigationView"-->
+<!--            style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_alignParentBottom="true"-->
+<!--            android:background="@color/white"-->
+<!--            app:itemIconTint="@drawable/navigation_item_color"-->
+<!--            app:itemTextColor="@drawable/navigation_item_color"-->
+<!--            app:menu="@menu/bottom_nav_menu" />-->
+<!--        &lt;!&ndash;    android:background="#151B54"&ndash;&gt;-->
+
+<!--    </RelativeLayout>-->
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        app:layout_constraintBottom_toTopOf="@id/reading_list"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:id="@+id/bottom_view"
+        android:background="@color/progress_back_color">
+
+    </View>
+
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigationView"
-        style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:background="@color/white"
-        app:itemIconTint="@drawable/navigation_item_color"
-        app:itemTextColor="@drawable/navigation_item_color"
-        app:menu="@menu/bottom_nav_menu" />
-    <!--    android:background="#151B54"-->
+        app:menu="@menu/bottom_nav_menu"
+        android:id="@+id/bottomNavigationView">
+
+    </com.google.android.material.bottomnavigation.BottomNavigationView>
 
 </LinearLayout>

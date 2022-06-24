@@ -97,7 +97,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
     ImageButton calendarBtn;
     ProgressBar progressBar1, progressBar2;
     String selectedDate = null;
-    String year = null;
+    String year = null, latestDate = null;
     boolean isData = false;
     Button allBtn;
     ProgressBar progress;
@@ -160,125 +160,6 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
         @SuppressLint("SimpleDateFormat") DateFormat df1 = new SimpleDateFormat("dd-MM-yyyy"); // Format date
         @SuppressLint("SimpleDateFormat") DateFormat df2 = new SimpleDateFormat("hh:mm aa"); // Format time
 
-//        combinedChart.setOnTouchListener(new onSwipeGuestureListner(HomePage.this) {
-//            @Override
-//            public void onSwipeLeft() {
-//                super.onSwipeLeft();
-////                Toast.makeText(HomePage.this, "Swipe Left gesture detected", Toast.LENGTH_SHORT).show();
-//                progress.setVisibility(View.VISIBLE);
-//                newTask.clear();
-//                combinedChart.clear();
-//                selectedDateText.setTextColor(Color.BLACK);
-////                allBtn.setBackgroundColor(0);
-//                String newDateFormat = selectedDateText.getText().toString() + "-" + year;
-//                String changedDate = convertDateStringFormat(newDateFormat,"dd - MMM-yyyy", "dd-MM-yyyy");
-//                Date incrementedDate = incrementDateByOne(changedDate);
-//                String newDate = df1.format(incrementedDate);
-//                selectedDate = changeDateFormat(newDate);
-//                selectedDateText.setText(selectedDate);
-//                for (BloodPressureDB i : pressureVal) {
-//                    if (newDate.equals(i.getDate())) {
-//                        newTask.add(i);
-////                        Log.i(TAG, "onClick: new task in next " + newTask);
-//                        if (newTask.size() > 0) {
-//                            //Sort the arraylist in ascending order
-//                            Collections.sort(newTask, new Comparator<BloodPressureDB>() {
-//                                @Override
-//                                public int compare(BloodPressureDB bloodPressureDB, BloodPressureDB t1) {
-//                                    try {
-//                                        if (df2.parse(bloodPressureDB.getTime()).before(df2.parse(t1.getTime()))){
-//                                            return -1;
-//                                        }
-//                                    } catch (ParseException e) {
-//                                        e.printStackTrace();
-//                                    }
-//                                    return 1;
-//                                }
-//                            });
-//                            plotForSelectedDate(newTask);
-//                            combinedChart.notifyDataSetChanged();
-//                            combinedChart.invalidate();
-//                            progress.setVisibility(View.GONE);
-//
-//                        }
-////                        else{
-////                            combinedChart.setNoDataText("No chart data found");
-////                            combinedChart.notifyDataSetChanged();
-////                            combinedChart.invalidate();
-////                            progress.setVisibility(View.GONE);
-////                        }
-//                    }
-////                    else {
-////                        combinedChart.setNoDataText("No chart data found");
-////                        combinedChart.notifyDataSetChanged();
-////                        combinedChart.invalidate();
-////                        progress.setVisibility(View.GONE);
-////                    }
-//
-//                }
-//            }
-//
-//            @Override
-//            public void onSwipeRight() {
-//                super.onSwipeRight();
-////                Toast.makeText(HomePage.this, "Swipe Right gesture detected", Toast.LENGTH_SHORT).show();
-//                progress.setVisibility(View.VISIBLE);
-//                newTask.clear();
-//                combinedChart.clear();
-//                selectedDateText.setTextColor(Color.BLACK);
-////                allBtn.setBackgroundColor(0);
-//                String newDateFormat = selectedDateText.getText().toString() + "-" + year;
-//                String changedDate = convertDateStringFormat(newDateFormat,"dd - MMM-yyyy", "dd-MM-yyyy");
-//
-//                Date decrementedDate = decrementDateByOne(changedDate);
-//                String newDate = df1.format(decrementedDate);
-//                selectedDate = changeDateFormat(newDate);
-//                selectedDateText.setText(selectedDate);
-//                for (BloodPressureDB i : pressureVal) {
-//                    if (newDate.equals(i.getDate())) {
-////                        Log.i(TAG, "onClick: date in model previous " + i.getDate());
-//                        newTask.add(i);
-////                        Log.i(TAG, "onClick: new task in previous " + newTask);
-//                        if (newTask.size() > 0) {
-//
-//                            //Sort the arraylist in ascending order
-//                            Collections.sort(newTask, new Comparator<BloodPressureDB>() {
-//                                @Override
-//                                public int compare(BloodPressureDB bloodPressureDB, BloodPressureDB t1) {
-//                                    try {
-//                                        if (df2.parse(bloodPressureDB.getTime()).before(df2.parse(t1.getTime()))){
-//                                            return -1;
-//                                        }
-//                                    } catch (ParseException e) {
-//                                        e.printStackTrace();
-//                                    }
-//                                    return 1;
-//                                }
-//                            });
-//                            plotForSelectedDate(newTask);
-//                            combinedChart.notifyDataSetChanged();
-//                            combinedChart.invalidate();
-//                            progress.setVisibility(View.GONE);
-//
-//                        }
-////                        else {
-////                            combinedChart.setNoDataText("No chart data found");
-////                            combinedChart.notifyDataSetChanged();
-////                            combinedChart.invalidate();
-////                            progress.setVisibility(View.GONE);
-////
-////                        }
-//                    }
-////                    else {
-////                        combinedChart.setNoDataText("No chart data found");
-////                        combinedChart.notifyDataSetChanged();
-////                        combinedChart.invalidate();
-////                        progress.setVisibility(View.GONE);
-////                    }
-//                }
-//            }
-//        });
-//
         layout.setOnTouchListener(new onSwipeGuestureListner(HomePage.this) {
             @Override
             public void onSwipeLeft() {
@@ -314,6 +195,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                                     return 1;
                                 }
                             });
+                            Collections.reverse(newTask);
                             plotForSelectedDate(newTask);
                             combinedChart.notifyDataSetChanged();
                             combinedChart.invalidate();
@@ -360,7 +242,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
 //                        Log.i(TAG, "onClick: new task in previous " + newTask);
                         if (newTask.size() > 0) {
 
-                            //Sort the arraylist in ascending order
+//                            //Sort the arraylist in ascending order
                             Collections.sort(newTask, new Comparator<BloodPressureDB>() {
                                 @Override
                                 public int compare(BloodPressureDB bloodPressureDB, BloodPressureDB t1) {
@@ -374,6 +256,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                                     return 1;
                                 }
                             });
+                            Collections.reverse(newTask);
                             plotForSelectedDate(newTask);
                             combinedChart.notifyDataSetChanged();
                             combinedChart.invalidate();
@@ -442,6 +325,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                                                         return 1;
                                                     }
                                                 });
+                                                Collections.reverse(newTask);
                                                 plotForSelectedDate(newTask);
                                                 combinedChart.notifyDataSetChanged();
                                                 combinedChart.invalidate();
@@ -483,6 +367,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                                                         return 1;
                                                     }
                                                 });
+                                                Collections.reverse(newTask);
                                                 plotForSelectedDate(newTask);
                                                 combinedChart.notifyDataSetChanged();
                                                 combinedChart.invalidate();
@@ -528,6 +413,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                                                         return 1;
                                                     }
                                                 });
+                                                Collections.reverse(newTask);
                                                 plotForSelectedDate(newTask);
                                                 combinedChart.notifyDataSetChanged();
                                                 combinedChart.invalidate();
@@ -571,6 +457,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                                                         return 1;
                                                     }
                                                 });
+                                                Collections.reverse(newTask);
                                                 plotForSelectedDate(newTask);
                                                 combinedChart.notifyDataSetChanged();
                                                 combinedChart.invalidate();
@@ -723,9 +610,12 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             @Override
             public void onClick(View view) {
 //                String date = df1.format(Calendar.getInstance().getTime());
-//                selectedDate = changeDateFormat(date);
-//                selectedDateText.setText(selectedDate);
-//                Log.i(TAG, "onClick: size " + pressureVal.size());
+                //For latest updated value
+//                BloodPressureDB list = pressureVal.get(pressureVal.size() - 1);
+//                Log.i(TAG, "onClick: date in all " + list.getDate());
+//                selectedDate = changeDateFormat(list.getDate());
+                selectedDateText.setText(latestDate);
+                Log.i(TAG, "onClick: size " + pressureVal);
                 if (pressureVal.size() > 0) {
                     for (int i = 0; i < pressureVal.size(); i++) {
                         //Sort the arraylist in ascending order
@@ -742,8 +632,8 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                                 return 1;
                             }
                         });
-//                        Log.i(TAG, "onClick: sorted val " + pressureVal);
-//                        plotCombinedChart(pressureVal);
+
+                        Collections.reverse(pressureVal);
                     plotCombinedChart(pressureVal);
 //                        plotCombinedChartTimeline(pressureVal);
                         combinedChart.notifyDataSetChanged();
@@ -823,22 +713,25 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
 //                dateText.setTextColor(Color.GRAY);
                 if (tasks.size() > 0) {
                     @SuppressLint("SimpleDateFormat") DateFormat df1 = new SimpleDateFormat("dd-MM-yyyy"); // Format date
-                    Date date1 = new Date();
+                   //For current date
                     String date = df1.format(Calendar.getInstance().getTime());
 
-                    selectedDate = changeDateFormat(date);
-//                    Log.i(TAG, "onPostExecute: date " + date);
-//
-//                    selectedDate = changeDateFormat("25-05-2022");
-                    selectedDateText.setText(selectedDate);
-
+                    //For latest updated value
                     BloodPressureDB list = tasks.get(tasks.size() - 1);
 
                     bloodpressureText.setText(list.getSystolic() + " / " + list.getDystolic() + " mmHg");
                     pulseText.setText(list.getHeartRate() + " bpm");
+                    selectedDate = changeDateFormat(list.getDate());
+//                    Log.i(TAG, "onPostExecute: date " + date);
+                    latestDate = selectedDate;
+//
+//                    selectedDate = changeDateFormat("25-05-2022");
+                    selectedDateText.setText(selectedDate);
 
                    changeSystolicProgress(list.getSystolic());
                    changeDiastolicProgress(list.getDystolic());
+
+                   pressureVal.addAll(tasks);
 
                     for (int i = 0; i < tasks.size(); i++) {
 //                        //Sort the arraylist in ascending order
@@ -856,7 +749,9 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                             }
                         });
 
-                        pressureVal.add(tasks.get(i));
+                        Collections.reverse(tasks);
+
+//                        pressureVal.add(tasks.get(i));
                         if (date.equals(tasks.get(i).getDate()))
                         {
                             plotForSelectedDate(tasks);
@@ -987,7 +882,6 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
         }
     }
 
-//    https://play.google.com/store/apps/details?id=bloodpressuremonitor.bloodpressureapp.bpmonitor&hl=en_IN&gl=US
     private void changeDiastolicProgress(int diastolic) {
         if (diastolic < 60) {
             progressBar2.setProgress(diastolic);
@@ -1028,29 +922,6 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             combinedChart.setDrawBarShadow(false);
             combinedChart.setHighlightFullBarEnabled(false);
 
-            //initialize x Axis Labels (labels for 25 vertical grid lines)
-//            final ArrayList<String> xAxisLabel = new ArrayList<>();
-//            for(int i = 0; i < 24; i++){
-//                switch (i){
-//                    case 0:
-//                        xAxisLabel.add("12 AM"); //12AM - 5AM
-//                        break;
-//                    case 6:
-//                        xAxisLabel.add("6"); //6AM - 11AM
-//                        break;
-//                    case 12:
-//                        xAxisLabel.add("12 PM"); //12PM - 5PM
-//                        break;
-//                    case 18:
-//                        xAxisLabel.add("6"); //6PM - 11PM
-//                        break;
-//                    default:
-//                        xAxisLabel.add(String.format(Locale.US, "%02d", i)+":00");
-//                        break;
-//                }
-//            }
-//            xAxisLabel.add(""); //empty label for the last vertical grid line on Y-Right Axis
-
             for (BloodPressureDB list : task) {
                 timeList.add(list.getTime());
             }
@@ -1090,7 +961,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             xAxis.setCenterAxisLabels(false);
             xAxis.setTextSize(8);
             xAxis.setEnabled(true);
-            xAxis.setSpaceMin(0.4f);
+            xAxis.setSpaceMin(0.7f);
             xAxis.setSpaceMax(0.7f);
 //            xAxis.setAxisMinimum(0 + 0.5f); //to center the bars inside the vertical grid lines we need + 0.5 step
             combinedChart.setXAxisRenderer(new CustomXAxisRenderer(combinedChart.getViewPortHandler(), combinedChart.getXAxis(), combinedChart.getTransformer(YAxis.AxisDependency.LEFT)));
@@ -1199,7 +1070,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             xAxis.setCenterAxisLabels(false);
             xAxis.setTextSize(8);
             xAxis.setEnabled(true);
-            xAxis.setSpaceMin(0.4f);
+            xAxis.setSpaceMin(0.7f);
             xAxis.setSpaceMax(0.7f);
 
             combinedChart.setXAxisRenderer(new CustomXAxisRenderer(combinedChart.getViewPortHandler(), combinedChart.getXAxis(), combinedChart.getTransformer(YAxis.AxisDependency.LEFT)));
@@ -1388,18 +1259,6 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             {
                 combinedChart.invalidate();
             }
-
-//                if (entries1.size() > 1){
-//                    Entry lastEntry = entries1.get(entries1.size()-1);
-//                    Highlight highlight = new Highlight(lastEntry.getX(), lastEntry.getY(), 0);
-//                    highlight.setDataIndex(0);
-//                    combinedChart.highlightValue(highlight);
-//                    combinedChart.moveViewToX(timeList.size()-1);
-//                }
-//                else
-//                {
-//                    Log.i(TAG, "No data found!!!");
-//                }
         }
         return d;
     }
