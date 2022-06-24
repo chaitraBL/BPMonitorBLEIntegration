@@ -558,6 +558,18 @@ public class ReadingData extends AppCompatActivity {
                                 stopBtn.setVisibility(View.VISIBLE);
                                 stopBtn.setEnabled(true);
                                 progressText.setText(data);
+
+                                if (Constants.is_finalResult == true) {
+                                    if ((mBluetoothLeService.systalic < 30) || (mBluetoothLeService.systalic > 200)){
+                                    Toast.makeText(getApplicationContext(), getApplication().getResources().getString(R.string.systolic_error), Toast.LENGTH_SHORT).show();
+                                }
+                                else if ((mBluetoothLeService.dystolic < 40) || (mBluetoothLeService.dystolic > 120)) {
+                                    Toast.makeText(getApplicationContext(), getApplication().getResources().getString(R.string.diastolic_error), Toast.LENGTH_SHORT).show();
+                                }
+                                else {
+                                        progressText.setText(data);
+                                }
+                                }
 //                                startBtn.setText("Cancel");
 //                                if (counter < mTimeLeftInMillis) {
 //                                    counter = counter++;

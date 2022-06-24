@@ -401,6 +401,8 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
         calendarBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                newTask.clear();
+                combinedChart.clear();
                 //Formatting the dates.
                     Calendar c=Calendar.getInstance();
                     int month=c.get(Calendar.MONTH);
@@ -725,28 +727,28 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
 //                selectedDateText.setText(selectedDate);
 //                Log.i(TAG, "onClick: size " + pressureVal.size());
                 if (pressureVal.size() > 0) {
-//                    for (int i = 0; i < pressureVal.size(); i++) {
+                    for (int i = 0; i < pressureVal.size(); i++) {
                         //Sort the arraylist in ascending order
-//                        Collections.sort(pressureVal, new Comparator<BloodPressureDB>() {
-//                            @Override
-//                            public int compare(BloodPressureDB bloodPressureDB, BloodPressureDB t1) {
-//                                try {
-//                                    if (df1.parse(bloodPressureDB.getDate()).before(df1.parse(t1.getDate()))){
-//                                        return -1;
-//                                    }
-//                                } catch (ParseException e) {
-//                                    e.printStackTrace();
-//                                }
-//                                return 1;
-//                            }
-//                        });
+                        Collections.sort(pressureVal, new Comparator<BloodPressureDB>() {
+                            @Override
+                            public int compare(BloodPressureDB bloodPressureDB, BloodPressureDB t1) {
+                                try {
+                                    if (df1.parse(bloodPressureDB.getDate()).before(df1.parse(t1.getDate()))){
+                                        return -1;
+                                    }
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+                                return 1;
+                            }
+                        });
 //                        Log.i(TAG, "onClick: sorted val " + pressureVal);
 //                        plotCombinedChart(pressureVal);
                     plotCombinedChart(pressureVal);
 //                        plotCombinedChartTimeline(pressureVal);
                         combinedChart.notifyDataSetChanged();
                         combinedChart.invalidate();
-//                    }
+                    }
                 }
                 else {
                     combinedChart.setNoDataText(getApplication().getResources().getString(R.string.no_chart_data_available));
