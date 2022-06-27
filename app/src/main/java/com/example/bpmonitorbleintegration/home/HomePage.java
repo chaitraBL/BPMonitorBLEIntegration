@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
@@ -48,6 +49,7 @@ import com.example.bpmonitorbleintegration.database.DatabaseClient;
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.CandleData;
@@ -59,6 +61,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.renderer.XAxisRenderer;
 import com.github.mikephil.charting.utils.EntryXComparator;
 import com.github.mikephil.charting.utils.MPPointF;
@@ -99,6 +102,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
     String selectedDate = null;
     String year = null, latestDate = null;
     boolean isData = false;
+    boolean dateScroll = false;
     Button allBtn;
     ProgressBar progress;
     String dateInCal = null;
@@ -609,11 +613,6 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             @SuppressLint("ResourceType")
             @Override
             public void onClick(View view) {
-//                String date = df1.format(Calendar.getInstance().getTime());
-                //For latest updated value
-//                BloodPressureDB list = pressureVal.get(pressureVal.size() - 1);
-//                Log.i(TAG, "onClick: date in all " + list.getDate());
-//                selectedDate = changeDateFormat(list.getDate());
                 selectedDateText.setText(latestDate);
                 Log.i(TAG, "onClick: size " + pressureVal);
                 if (pressureVal.size() > 0) {
@@ -633,7 +632,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                             }
                         });
 
-                        Collections.reverse(pressureVal);
+//                        Collections.reverse(pressureVal);
                     plotCombinedChart(pressureVal);
 //                        plotCombinedChartTimeline(pressureVal);
                         combinedChart.notifyDataSetChanged();
@@ -749,7 +748,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                             }
                         });
 
-                        Collections.reverse(tasks);
+//                        Collections.reverse(tasks);
 
 //                        pressureVal.add(tasks.get(i));
                         if (date.equals(tasks.get(i).getDate()))
@@ -763,9 +762,8 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                             progress.setVisibility(View.GONE);
                         }
                         plotCombinedChart(tasks);
-//                        plotCombinedChartTimeline(tasks);
-//                        combinedChart.notifyDataSetChanged();
-//                        combinedChart.invalidate();
+                        combinedChart.notifyDataSetChanged();
+                        combinedChart.invalidate();
 
                 }
                 }
@@ -976,21 +974,9 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             yAxisLeft.setTextSize(8);
             yAxisLeft.setAxisMinimum(50);
             yAxisLeft.setAxisMaximum(200);
-
-            // Set color as per the mode - Dark mode/Light mode.
-            switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
-                case Configuration.UI_MODE_NIGHT_YES:
-                    xAxis.setTextColor(Color.WHITE);
-                    yAxisLeft.setTextColor(Color.WHITE);
-                    yAxisRight.setTextColor(Color.WHITE);
-                    break;
-
-                case Configuration.UI_MODE_NIGHT_NO:
-                    xAxis.setTextColor(Color.BLACK);
-                    yAxisLeft.setTextColor(Color.BLACK);
-                    yAxisRight.setTextColor(Color.BLACK);
-                    break;
-            }
+            xAxis.setTextColor(Color.BLACK);
+            yAxisLeft.setTextColor(Color.BLACK);
+            yAxisRight.setTextColor(Color.BLACK);
 
             combinedChart.setDragEnabled(true);
             combinedChart.setScaleEnabled(true);
@@ -1004,13 +990,6 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
 
             data.setData(generateCandleData1(task));
             data.setData(generateLineData1(task));
-//            if (timeList.size() >= 5) {
-//                combinedChart.setVisibleXRangeMaximum(5);
-//            }
-//            else
-//            {
-//                combinedChart.invalidate();
-//            }
             combinedChart.setData(data);
             combinedChart.notifyDataSetChanged();
             combinedChart.invalidate();
@@ -1085,21 +1064,9 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             yAxisLeft.setTextSize(8);
             yAxisLeft.setAxisMinimum(50);
             yAxisLeft.setAxisMaximum(200);
-
-            // Set color as per the mode - Dark mode/Light mode.
-            switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
-                case Configuration.UI_MODE_NIGHT_YES:
-                    xAxis.setTextColor(Color.WHITE);
-                    yAxisLeft.setTextColor(Color.WHITE);
-                    yAxisRight.setTextColor(Color.WHITE);
-                    break;
-
-                case Configuration.UI_MODE_NIGHT_NO:
-                    xAxis.setTextColor(Color.BLACK);
-                    yAxisLeft.setTextColor(Color.BLACK);
-                    yAxisRight.setTextColor(Color.BLACK);
-                    break;
-            }
+            xAxis.setTextColor(Color.BLACK);
+            yAxisLeft.setTextColor(Color.BLACK);
+            yAxisRight.setTextColor(Color.BLACK);
 
             combinedChart.setDragEnabled(true);
             combinedChart.setScaleEnabled(true);
@@ -1113,15 +1080,9 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
 
             data.setData(generateCandleData1(task));
             data.setData(generateLineData1(task));
-            if (timeList.size() >= 5) {
-                combinedChart.setVisibleXRangeMaximum(5);
-            }
-            else
-            {
-                combinedChart.invalidate();
-            }
 
             combinedChart.setData(data);
+
             combinedChart.notifyDataSetChanged();
             combinedChart.invalidate();
         }
@@ -1154,7 +1115,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             cds.setDrawValues(false);
             cds.setNeutralColor(Color.BLUE);
             cds.setDrawHighlightIndicators(false);
-            CustomMarkerView mv = new CustomMarkerView(HomePage.this, R.layout.marker_view);
+            CustomMarkerView1 mv = new CustomMarkerView1(HomePage.this, R.layout.marker_view);
             // Set the marker to the chart
             mv.setChartView(combinedChart);
             combinedChart.setMarker(mv);
@@ -1163,11 +1124,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
                 combinedChart.setTouchEnabled(false);
             }
 
-//            XAxis xAxis = combinedChart.getXAxis();
-//            xAxis.setAxisMinimum(entries1.size() + 0.5f); //to center the bars inside the vertical grid lines we need + 0.5 step
-
             d = new CandleData(cds);
-//            combinedChart.invalidate();
 
             if (entries1.size() >= 5) {
                 combinedChart.setVisibleXRangeMaximum(5);
@@ -1176,12 +1133,18 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             {
                 combinedChart.invalidate();
             }
+            if(entries1.size() > 1){
+//                Entry lastEntry = entries1.get(entries1.size()-1);
+//                Highlight highlight = new Highlight(lastEntry.getX(), lastEntry.getY(), 0);
+//                highlight.setDataIndex(0);
+//                combinedChart.highlightValue(highlight);
+                combinedChart.moveViewToX(timeList.size()-1);
+            }else {
+                Log.d(TAG,"no value found::::::::");
+            }
         }
         return d;
     }
-
-    //https://stackoverflow.com/questions/56459470/how-to-highlight-the-whole-stacked-bar
-    //https://stackoverflow.com/questions/53283496/how-to-draw-range-chart-mpandroidchart-with-negative-and-positive-value
 
     // Line chart time based.
     private LineData generateLineData1(List<BloodPressureDB> task) {
@@ -1244,7 +1207,6 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             d.addDataSet(set);
             d.addDataSet(set2);
 
-//            combinedChart.invalidate();
             if (entries.size() >= 5) {
                 combinedChart.setVisibleXRangeMaximum(5);
             }
@@ -1260,301 +1222,29 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             {
                 combinedChart.invalidate();
             }
+
+            if(entries.size() > 1){
+//                Entry lastEntry = entries.get(entries.size()-1);
+//                Highlight highlight = new Highlight(lastEntry.getX(), lastEntry.getY(), 0);
+//                highlight.setDataIndex(0);
+//                combinedChart.highlightValue(highlight);
+                combinedChart.moveViewToX(timeList.size()-1);
+            }else {
+                Log.d(TAG,"no value found::::::::");
+            }
+
+            if(entries1.size() > 1){
+//                Entry lastEntry = entries1.get(entries1.size()-1);
+//                Highlight highlight = new Highlight(lastEntry.getX(), lastEntry.getY(), 0);
+//                highlight.setDataIndex(0);
+//                combinedChart.highlightValue(highlight);
+                combinedChart.moveViewToX(timeList.size()-1);
+            }else {
+                Log.d(TAG,"no value found::::::::");
+            }
         }
         return d;
     }
-
-    // Combined chart with candle stick & line chart.
-    public void plotCombinedChartTimeline(List<BloodPressureDB> task) {
-        timeList.clear();
-        combinedChart.clear();
-
-        isData = true;
-        ArrayList<String> dateList = new ArrayList<>();
-        if (task != null && task.size() > 0) {
-            combinedChart.getDescription().setEnabled(false);
-            combinedChart.setDrawGridBackground(false);
-            combinedChart.setDrawBarShadow(false);
-            combinedChart.setHighlightFullBarEnabled(false);
-            combinedChart.setNoDataText(getApplication().getResources().getString(R.string.no_chart_data_available));
-            combinedChart.setTouchEnabled(true);
-            combinedChart.setDragEnabled(true);
-            combinedChart.setScaleEnabled(true);
-            combinedChart.setDrawGridBackground(false);
-            combinedChart.setPinchZoom(true);
-            combinedChart.setBackgroundColor(Color.LTGRAY);
-
-            String changedDate = null;
-            for (BloodPressureDB list : task) {
-                changedDate = changeDateFormat(list.getDate());
-                timeList.add(changedDate+ "\n\r" +list.getTime());
-                dateList.add(changedDate);
-            }
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                newDateList = dateList.stream().distinct().collect(Collectors.toList());
-            }
-
-            Log.i(TAG, "plotCombinedChartTimeline: new date list " + newDateList);
-            // draw bars behind lines
-            combinedChart.setDrawOrder(new CombinedChart.DrawOrder[]{
-                    CombinedChart.DrawOrder.CANDLE, CombinedChart.DrawOrder.LINE
-            });
-
-            CombinedData data = new CombinedData();
-            data.setValueTextColor(Color.BLACK);
-
-            Legend l = combinedChart.getLegend();
-
-            l.setForm(Legend.LegendForm.LINE);
-            l.setTextColor(Color.BLACK);
-
-            //initialize xAxis
-            XAxis xAxis = combinedChart.getXAxis();
-            xAxis.enableGridDashedLine(10f, 10f, 0f);
-            xAxis.setTextColor(Color.BLACK);
-            xAxis.setLabelRotationAngle(-45);
-            xAxis.setTextSize(8);
-            xAxis.setDrawAxisLine(true);
-            xAxis.setAxisLineColor(Color.BLACK);
-            xAxis.setDrawGridLines(true);
-            xAxis.setGranularity(1f);
-            xAxis.setGranularityEnabled(true);
-            xAxis.setAxisMinimum(0 + 0.5f); //to center the bars inside the vertical grid lines we need + 0.5 step
-//            xAxis.setLabelCount(5, true); //show only 5 labels (5 vertical grid lines)
-            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-            xAxis.setXOffset(0f); //labels x offset in dps
-            xAxis.setYOffset(0f); //labels y offset in dps
-            xAxis.setCenterAxisLabels(true); //don't center the x labels as we are using a custom XAxisRenderer to set the label x, y position
-            xAxis.setValueFormatter(new IndexAxisValueFormatter(timeList));
-//            combinedChart.setXAxisRenderer(new CustomXAxisRenderer(combinedChart.getViewPortHandler(), combinedChart.getXAxis(), combinedChart.getTransformer(YAxis.AxisDependency.LEFT)));
-
-            //initialize Y-Right-Axis
-            YAxis rightAxis = combinedChart.getAxisRight();
-//            rightAxis.setTextColor(Color.BLACK);
-            rightAxis.setTextSize(8);
-            rightAxis.setDrawAxisLine(true);
-            rightAxis.setAxisLineColor(Color.BLACK);
-            rightAxis.setDrawGridLines(true);
-            rightAxis.setGranularity(1f);
-            rightAxis.setGranularityEnabled(true);
-            rightAxis.setAxisMinimum(0);
-            rightAxis.setAxisMaximum(200f);
-            rightAxis.setLabelCount(4, true); //labels (Y-Values) for 4 horizontal grid lines
-            rightAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
-
-
-            //initialize Y-Left-Axis
-            YAxis leftAxis = combinedChart.getAxisLeft();
-            leftAxis.setAxisMinimum(0);
-            leftAxis.setDrawAxisLine(true);
-            leftAxis.setLabelCount(0, true);
-            leftAxis.setValueFormatter(new IAxisValueFormatter() {
-                @Override
-                public String getFormattedValue(float value, AxisBase axis) {
-                    return "";
-                }
-            });
-
-            // Set color as per the mode - Dark mode/Light mode.
-            switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
-                case Configuration.UI_MODE_NIGHT_YES:
-                    xAxis.setTextColor(Color.WHITE);
-                    leftAxis.setTextColor(Color.WHITE);
-                    rightAxis.setTextColor(Color.WHITE);
-                    break;
-
-                case Configuration.UI_MODE_NIGHT_NO:
-                    xAxis.setTextColor(Color.BLACK);
-                    leftAxis.setTextColor(Color.BLACK);
-                    rightAxis.setTextColor(Color.BLACK);
-                    break;
-            }
-
-
-            data.setData(generateCandleData(task));
-            data.setData(generateLineData(task));
-            combinedChart.setData(data);
-
-//            combinedChart.setXAxisRenderer(new XAxisRenderer(combinedChart.getViewPortHandler(), combinedChart.getXAxis(), combinedChart.getTransformer(YAxis.AxisDependency.LEFT)){
-//                @Override
-//                protected void drawLabel(Canvas c, String formattedLabel, float x, float y, MPPointF anchor, float angleDegrees) {
-//                    //for 6AM and 6PM set the correct label x position based on your needs
-//                    if(!TextUtils.isEmpty(formattedLabel) && formattedLabel.equals("6"))
-//                        Utils.drawXAxisValue(c, formattedLabel, x+Utils.convertDpToPixel(5f), y+Utils.convertDpToPixel(1f), mAxisLabelPaint, anchor, angleDegrees);
-//                        //for 12AM and 12PM set the correct label x position based on your needs
-//                    else
-//                        Utils.drawXAxisValue(c, formattedLabel, x+Utils.convertDpToPixel(20f), y+Utils.convertDpToPixel(1f), mAxisLabelPaint, anchor, angleDegrees);
-//                }
-//            });
-
-            combinedChart.notifyDataSetChanged();
-            combinedChart.setFitsSystemWindows(true);
-            combinedChart.invalidate();
-            combinedChart.moveViewToX(5f);
-            progress.setVisibility(View.GONE);
-        }
-        else {
-            progress.setVisibility(View.GONE);
-        }
-    }
-
-    // Candle stick chart time based.
-        private CandleData generateCandleData(List<BloodPressureDB> task) {
-            CandleData d = null;
-
-            if (task != null && task.size() > 0) {
-
-                 int count = 0;
-                ArrayList<CandleEntry> entries1 = new ArrayList<>();
-
-            for (BloodPressureDB list : task) {
-                entries1.add(new CandleEntry(count, list.getSystolic(),list.getDystolic(),list.getSystolic(),list.getDystolic()));
-                count++;
-            }
-
-            Collections.sort(entries1,new EntryXComparator());
-
-            CandleDataSet cds = new CandleDataSet(entries1, "");
-//            cds = d.getDataSetByIndex(0)
-            cds.setColor(Color.rgb(80, 80, 80));
-            cds.setShadowColor(Color.DKGRAY);
-            cds.setBarSpace(1f);
-            cds.setDecreasingColor(Color.parseColor("#FFA500"));
-            cds.setDecreasingPaintStyle(Paint.Style.FILL);
-            cds.setIncreasingColor(Color.parseColor("#FFA500"));
-            cds.setIncreasingPaintStyle(Paint.Style.STROKE);
-            cds.setDrawValues(false);
-            cds.setNeutralColor(Color.BLUE);
-            cds.setDrawHighlightIndicators(false);
-            CustomMarkerView mv = new CustomMarkerView(HomePage.this, R.layout.marker_view);
-                // Set the marker to the chart
-                 mv.setChartView(combinedChart);
-                combinedChart.setMarker(mv);
-
-                XAxis xAxis = combinedChart.getXAxis();
-                xAxis.setAxisMaximum(entries1.size() + 0.5f);
-
-            d = new CandleData(cds);
-
-            if (entries1.size() >= 5) {
-                combinedChart.setVisibleXRangeMaximum(5);
-            }
-            else
-            {
-                combinedChart.invalidate();
-            }
-        }
-            return d;
-        }
-
-        //https://stackoverflow.com/questions/56459470/how-to-highlight-the-whole-stacked-bar
-    //https://stackoverflow.com/questions/53283496/how-to-draw-range-chart-mpandroidchart-with-negative-and-positive-value
-
-    // Line chart time based.
-        private LineData generateLineData(List<BloodPressureDB> task) {
-            LineData d = null;
-            if (task != null && task.size() > 0) {
-
-            d = new LineData();
-//            ArrayList<Integer> colors = new ArrayList<Integer>();
-//            for (String color : details.getSequenceColors()) {
-//                colors.add(Color.parseColor(color));
-//            }
-            ArrayList<Entry> entries = new ArrayList<>();
-            ArrayList<Entry> entries1 = new ArrayList<>();
-            int count = 0;
-            for (BloodPressureDB i : task) {
-                entries.add(new Entry(count, i.getSystolic()));
-                entries1.add(new Entry(count,i.getDystolic()));
-                count++;
-            }
-
-            Collections.sort(entries,new EntryXComparator());
-            LineDataSet set = new LineDataSet(entries, "");
-            set.setDrawHorizontalHighlightIndicator(false);
-//            set.setAxisDependency(YAxis.AxisDependency.LEFT);
-//            set.setCubicIntensity(0.2f);
-            set.setLineWidth(2f);
-            set.setDrawVerticalHighlightIndicator(false);
-            set.setDrawCircles(true);
-            set.setColors(Color.MAGENTA);
-            set.setCircleColor(Color.parseColor("#50EBEC"));
-            set.setCircleRadius(5f);
-            set.setDrawCircleHole(false);
-            set.enableDashedLine(10,5,0);
-            set.setValueTextSize(10f);
-            set.setValueTextColor(Color.WHITE);
-            set.setDrawValues(true);
-            set.setDrawHighlightIndicators(false);
-
-            Collections.sort(entries1,new EntryXComparator());
-            LineDataSet set2 = new LineDataSet(entries1,"");
-            set2.setDrawHorizontalHighlightIndicator(false);
-//            set2.setCubicIntensity(0.2f);
-//            set2.setAxisDependency(YAxis.AxisDependency.LEFT);
-            set2.setDrawHorizontalHighlightIndicator(false);
-            set2.setDrawVerticalHighlightIndicator(false);
-            set2.setLineWidth(2f);
-            set2.setDrawCircles(true);
-            set2.setDrawCircleHole(false);
-            set2.enableDashedLine(10,5,0);
-            set2.setColors(Color.RED);
-            set2.setCircleColor(Color.parseColor("#50EBEC"));
-            set2.setCircleRadius(5f);
-            set2.setValueTextSize(10f);
-            set2.setDrawValues(true);
-            set.setValueTextColor(Color.WHITE);
-            set2.setDrawHighlightIndicators(false);
-
-                // Set color as per the mode - Dark mode/Light mode.
-                switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
-                    case Configuration.UI_MODE_NIGHT_YES:
-                        set.setValueTextColor(Color.WHITE);
-                        set2.setValueTextColor(Color.WHITE);
-                        break;
-                    case Configuration.UI_MODE_NIGHT_NO:
-                        set.setValueTextColor(Color.BLACK);
-                        set2.setValueTextColor(Color.BLACK);
-                        break;
-                }
-
-                XAxis xAxis = combinedChart.getXAxis();
-                xAxis.setAxisMaximum(entries1.size() + 0.5f);
-
-                d.addDataSet(set);
-                d.addDataSet(set2);
-
-                if (entries.size() >= 5) {
-                    combinedChart.setVisibleXRangeMaximum(5);
-                }
-                else
-                {
-                    combinedChart.invalidate();
-                }
-
-                if (entries1.size() >= 5) {
-                    combinedChart.setVisibleXRangeMaximum(5);
-                }
-                else
-                {
-                    combinedChart.invalidate();
-                }
-
-//                if (entries1.size() > 1){
-//                    Entry lastEntry = entries1.get(entries1.size()-1);
-//                    Highlight highlight = new Highlight(lastEntry.getX(), lastEntry.getY(), 0);
-//                    highlight.setDataIndex(0);
-//                    combinedChart.highlightValue(highlight);
-//                    combinedChart.moveViewToX(timeList.size()-1);
-//                }
-//                else
-//                {
-//                    Log.i(TAG, "No data found!!!");
-//                }
-        }
-            return d;
-        }
 
     public class CustomXAxisRenderer extends XAxisRenderer {
         public CustomXAxisRenderer(ViewPortHandler viewPortHandler, XAxis xAxis, Transformer trans) {
@@ -1566,6 +1256,7 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             String line[] = formattedLabel.split("\n");
             if (isData == true) {
                 Utils.drawXAxisValue(c, line[0], x, y, mAxisLabelPaint, anchor, angleDegrees);
+                selectedDateText.setText(line[0]);
                 Utils.drawXAxisValue(c, line[1], x + mAxisLabelPaint.getTextSize(), y + mAxisLabelPaint.getTextSize(), mAxisLabelPaint, anchor, angleDegrees);
             }
             else {
@@ -1573,4 +1264,59 @@ public class HomePage extends AppCompatActivity implements BottomNavigationView.
             }
         }
     }
+
+    public class CustomMarkerView1 extends MarkerView {
+        private TextView markerText;
+        List<String> mXLabels;
+
+        /**
+         * Constructor. Sets up the MarkerView with a custom layout resource.
+         *
+         * @param context
+         * @param layoutResource the layout resource to use for the MarkerView
+         */
+
+        public CustomMarkerView1(Context context, int layoutResource) {
+            super(context, layoutResource);
+            markerText = findViewById(R.id.tvContent);
+        }
+
+        @Override
+        public void refreshContent(Entry e, Highlight highlight) {
+            super.refreshContent(e, highlight);
+            if (e instanceof CandleEntry) {
+                CandleEntry ce = (CandleEntry) e;
+                markerText.setText("Systolic: " + Utils.formatNumber(ce.getHigh(), 0, true) + " \n" + "Diastolic: " + Utils.formatNumber(ce.getLow(),0,true) + " ");
+//                selectedDateText.setText(line[0]);
+            }
+            else{
+                markerText.setText("" + Utils.formatNumber(e.getY(),0,true));
+            }
+
+        }
+
+        @Override
+        public float getX() {
+            return -(getWidth()/2);
+        }
+
+        @Override
+        public float getY() {
+            return -getHeight();
+        }
+
+        private MPPointF mOffset;
+        @Override
+        public MPPointF getOffsetForDrawingAtPoint(float posX, float posY) {
+            if(mOffset == null) {
+                // center the marker horizontally and fixed Y position at the top
+
+                mOffset = new MPPointF(-(getWidth() / 2f), -150);
+
+            }
+
+            return mOffset;
+        }
+    }
+
     }
