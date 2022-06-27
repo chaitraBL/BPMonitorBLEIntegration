@@ -681,6 +681,8 @@ public class DataTransferActivity extends AppCompatActivity{
         }
     };
 
+//    https://designcode.io/uikit-ios15-part2-version-control
+
     private  void displayData(String data) {
 
 //        Log.i(TAG, "received data before " + data);
